@@ -4,8 +4,8 @@ import com.ktu.xsports.api.converter.PageableConverter;
 import com.ktu.xsports.api.domain.user.User;
 import com.ktu.xsports.api.dto.request.user.UserRequest;
 import com.ktu.xsports.api.dto.response.user.UserResponse;
-import com.ktu.xsports.api.service.user.internal.UserCreatorImpl;
-import com.ktu.xsports.api.service.user.internal.UserRetrieverImpl;
+import com.ktu.xsports.api.exceptions.RoleException;
+import com.ktu.xsports.api.service.user.UserService;
 import lombok.RequiredArgsConstructor;
 import org.modelmapper.ModelMapper;
 import org.springframework.data.domain.Page;
@@ -23,8 +23,7 @@ import java.util.Optional;
 @RequestMapping("users")
 public class UserController {
 
-    private final UserRetrieverImpl userRetriever;
-    private final UserCreatorImpl userCreator;
+    private final UserService userService;
     private final ModelMapper modelMapper;
 
     @GetMapping()
@@ -33,7 +32,7 @@ public class UserController {
             @RequestParam(defaultValue = "20", name = "per_page") int size
     ) {
         Pageable pageable = PageRequest.of(page - 1, size);
-        Page<User> usersPage = userRetriever.findUser(pageable);
+        Page<User> usersPage = userService.findUser(pageable);
         Page<UserResponse> userResponsePage = usersPage.map(
                 user -> modelMapper.map(user, UserResponse.class)
         );
@@ -45,7 +44,7 @@ public class UserController {
 
     @GetMapping("/{id}")
     public ResponseEntity<?> findUser(@PathVariable long id) {
-        Optional<User> user = userRetriever.findById(id);
+        Optional<User> user = userService.findById(id);
 
         return ResponseEntity.of(user.map(
                 u -> Map.of("data", modelMapper.map(u, UserResponse.class))
@@ -53,19 +52,36 @@ public class UserController {
     }
 
     @PostMapping()
-    public ResponseEntity<?> addUser(@RequestBody @Valid UserRequest userRequest) {
+    public ResponseEntity<?> addUser(
+            @RequestBody @Valid UserRequest userRequest)
+            throws RoleException {
         User user = userRequest.toUser();
-        User newUser = userCreator.createUser(user);
-        return ResponseEntity.ok("ToDo");
+        Optional<User> newUser = userService.createUser(user);
+
+        return ResponseEntity.of(
+                newUser.map(u ->
+                        Map.of("data", modelMapper.map(u, UserResponse.class))));
     }
 
-    @PutMapping()
-    public ResponseEntity<?> updateUser() {
-        return ResponseEntity.ok("Todo");
+    @PutMapping("/{id}")
+    public ResponseEntity<?> updateUser(
+            @RequestBody @Valid UserRequest userRequest,
+            @PathVariable long id
+    ) {
+        User user = userRequest.toUser();
+        Optional<User> updatedUser = userService.updateUser(user, id);
+
+        return ResponseEntity.of(
+                updatedUser.map(u ->
+                        Map.of("data", modelMapper.map(u, UserResponse.class))));
     }
 
     @DeleteMapping("/{id}")
     public ResponseEntity<?> deleteUser(@PathVariable long id) {
-        return ResponseEntity.ok(id);
+        Optional<User> deletedUser = userService.removeUser(id);
+
+        return ResponseEntity.of(
+                deletedUser.map(u ->
+                        Map.of("data", modelMapper.map(u, UserResponse.class))));
     }
 }
