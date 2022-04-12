@@ -2,6 +2,7 @@ package com.ktu.xsports.api.service.user;
 
 import com.ktu.xsports.api.domain.user.FindUser;
 import com.ktu.xsports.api.domain.user.User;
+import com.ktu.xsports.api.service.user.internal.UserCreatorImpl;
 import com.ktu.xsports.api.service.user.internal.UserRetrieverImpl;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
@@ -12,7 +13,7 @@ import java.util.Optional;
 
 @Service
 @RequiredArgsConstructor
-public class UserService implements UserRetrieverImpl {
+public class UserService implements UserRetrieverImpl, UserCreatorImpl {
     private final FindUser findUser;
 
     @Override
@@ -22,6 +23,11 @@ public class UserService implements UserRetrieverImpl {
 
     @Override
     public Optional<User> findById(long id) {
-        return Optional.empty();
+        return findUser.findById(id);
+    }
+
+    @Override
+    public User createUser(User user) {
+        return null;
     }
 }
