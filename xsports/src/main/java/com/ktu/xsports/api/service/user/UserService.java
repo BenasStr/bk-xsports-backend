@@ -1,15 +1,14 @@
 package com.ktu.xsports.api.service.user;
 
 import com.ktu.xsports.api.domain.role.Role;
-import com.ktu.xsports.api.domain.user.FindUser;
 import com.ktu.xsports.api.domain.user.User;
 import com.ktu.xsports.api.exceptions.RoleException;
-import com.ktu.xsports.api.repository.RoleRepository;
-import com.ktu.xsports.api.repository.UserRepository;
-import com.ktu.xsports.api.service.user.internal.UserCreatorImpl;
-import com.ktu.xsports.api.service.user.internal.UserRemoverImpl;
-import com.ktu.xsports.api.service.user.internal.UserRetrieverImpl;
-import com.ktu.xsports.api.service.user.internal.UserUpdaterImpl;
+import com.ktu.xsports.api.repository.role.RoleRepository;
+import com.ktu.xsports.api.repository.user.UserRepository;
+import com.ktu.xsports.api.service.user.internal.UserCreator;
+import com.ktu.xsports.api.service.user.internal.UserRemover;
+import com.ktu.xsports.api.service.user.internal.UserRetriever;
+import com.ktu.xsports.api.service.user.internal.UserUpdater;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -19,7 +18,7 @@ import java.util.Optional;
 
 @Service
 @RequiredArgsConstructor
-public class UserService implements UserRetrieverImpl, UserCreatorImpl, UserUpdaterImpl, UserRemoverImpl {
+public class UserService implements UserRetriever, UserCreator, UserUpdater, UserRemover {
     private final UserRepository userRepository;
     private final RoleRepository roleRepository;
 

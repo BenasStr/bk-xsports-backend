@@ -1,6 +1,6 @@
 package com.ktu.xsports.api.controller;
 
-import com.ktu.xsports.api.domain.role.FindRole;
+import com.ktu.xsports.api.repository.role.internal.FindRole;
 import com.ktu.xsports.api.domain.role.Role;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;

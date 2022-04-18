@@ -6,7 +6,7 @@ import org.springframework.data.domain.Pageable;
 
 import java.util.Optional;
 
-public interface UserRetrieverImpl {
+public interface UserRetriever {
 
     Page<User> findUser(Pageable pageable);
 

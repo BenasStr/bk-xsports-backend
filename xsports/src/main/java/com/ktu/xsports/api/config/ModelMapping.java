@@ -6,7 +6,6 @@ import org.springframework.stereotype.Service;
 
 @Service
 public class ModelMapping {
-
     @Bean
     public ModelMapper modelMapper() {
         ModelMapper modelMapper = new ModelMapper();
