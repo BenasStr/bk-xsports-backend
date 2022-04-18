@@ -1,4 +1,4 @@
-package com.ktu.xsports.api.domain.sport;
+package com.ktu.xsports.api.domain;
 
 import lombok.AllArgsConstructor;
 import lombok.Builder;

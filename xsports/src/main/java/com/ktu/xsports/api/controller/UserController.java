@@ -1,7 +1,7 @@
 package com.ktu.xsports.api.controller;
 
 import com.ktu.xsports.api.converter.PageableConverter;
-import com.ktu.xsports.api.domain.user.User;
+import com.ktu.xsports.api.domain.User;
 import com.ktu.xsports.api.dto.request.UserRequest;
 import com.ktu.xsports.api.dto.response.UserResponse;
 import com.ktu.xsports.api.exceptions.RoleException;

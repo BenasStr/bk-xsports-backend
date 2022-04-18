@@ -1,4 +1,4 @@
-package com.ktu.xsports.api.domain.role;
+package com.ktu.xsports.api.domain;
 
 import lombok.AllArgsConstructor;
 import lombok.Builder;

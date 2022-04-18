@@ -1,6 +1,6 @@
 package com.ktu.xsports.api.dto.request;
 
-import com.ktu.xsports.api.domain.user.User;
+import com.ktu.xsports.api.domain.User;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;

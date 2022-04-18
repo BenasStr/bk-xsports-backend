@@ -1,6 +1,6 @@
-package com.ktu.xsports.api.domain.user;
+package com.ktu.xsports.api.domain;
 
-import com.ktu.xsports.api.domain.role.Role;
+import com.ktu.xsports.api.domain.Role;
 import com.sun.istack.NotNull;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -17,7 +17,7 @@ import javax.persistence.*;
 public class User {
 
     @Id
-    @GeneratedValue(strategy= GenerationType.IDENTITY)
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private long id;
 
     @NotNull

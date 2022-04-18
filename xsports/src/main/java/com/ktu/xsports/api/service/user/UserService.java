@@ -1,10 +1,10 @@
 package com.ktu.xsports.api.service.user;
 
-import com.ktu.xsports.api.domain.role.Role;
-import com.ktu.xsports.api.domain.user.User;
+import com.ktu.xsports.api.domain.Role;
+import com.ktu.xsports.api.domain.User;
 import com.ktu.xsports.api.exceptions.RoleException;
-import com.ktu.xsports.api.repository.role.RoleRepository;
-import com.ktu.xsports.api.repository.user.UserRepository;
+import com.ktu.xsports.api.repository.RoleRepository;
+import com.ktu.xsports.api.repository.UserRepository;
 import com.ktu.xsports.api.service.user.internal.UserCreator;
 import com.ktu.xsports.api.service.user.internal.UserRemover;
 import com.ktu.xsports.api.service.user.internal.UserRetriever;

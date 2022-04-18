@@ -1,6 +1,6 @@
 package com.ktu.xsports.api.service.user.internal;
 
-import com.ktu.xsports.api.domain.user.User;
+import com.ktu.xsports.api.domain.User;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 
