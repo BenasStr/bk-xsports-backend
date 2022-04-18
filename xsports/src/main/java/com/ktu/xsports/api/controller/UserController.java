@@ -2,8 +2,8 @@ package com.ktu.xsports.api.controller;
 
 import com.ktu.xsports.api.converter.PageableConverter;
 import com.ktu.xsports.api.domain.user.User;
-import com.ktu.xsports.api.dto.request.user.UserRequest;
-import com.ktu.xsports.api.dto.response.user.UserResponse;
+import com.ktu.xsports.api.dto.request.UserRequest;
+import com.ktu.xsports.api.dto.response.UserResponse;
 import com.ktu.xsports.api.exceptions.RoleException;
 import com.ktu.xsports.api.service.user.UserService;
 import lombok.RequiredArgsConstructor;
@@ -52,7 +52,7 @@ public class UserController {
     }
 
     @PostMapping()
-    public ResponseEntity<?> addUser(
+    public ResponseEntity<?> createUser(
             @RequestBody @Valid UserRequest userRequest)
             throws RoleException {
         User user = userRequest.toUser();

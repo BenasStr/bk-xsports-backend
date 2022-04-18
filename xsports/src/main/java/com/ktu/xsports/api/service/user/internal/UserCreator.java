@@ -5,6 +5,6 @@ import com.ktu.xsports.api.exceptions.RoleException;
 
 import java.util.Optional;
 
-public interface UserCreatorImpl {
+public interface UserCreator {
     Optional<User> createUser(User user) throws RoleException;
 }
