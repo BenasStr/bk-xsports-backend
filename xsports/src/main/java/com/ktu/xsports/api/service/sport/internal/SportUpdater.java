@@ -1,6 +1,6 @@
 package com.ktu.xsports.api.service.sport.internal;
 
-import com.ktu.xsports.api.domain.sport.Sport;
+import com.ktu.xsports.api.domain.Sport;
 
 import java.util.Optional;
 

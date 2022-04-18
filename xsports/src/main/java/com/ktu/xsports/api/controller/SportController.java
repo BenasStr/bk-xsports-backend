@@ -1,6 +1,6 @@
 package com.ktu.xsports.api.controller;
 
-import com.ktu.xsports.api.domain.sport.Sport;
+import com.ktu.xsports.api.domain.Sport;
 import com.ktu.xsports.api.dto.request.SportRequest;
 import com.ktu.xsports.api.dto.response.SportResponse;
 import com.ktu.xsports.api.service.sport.internal.SportCreator;

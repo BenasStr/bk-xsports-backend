@@ -1,7 +1,7 @@
 package com.ktu.xsports.api.controller;
 
-import com.ktu.xsports.api.repository.role.internal.FindRole;
-import com.ktu.xsports.api.domain.role.Role;
+import com.ktu.xsports.api.repository.RoleRepository;
+import com.ktu.xsports.api.domain.Role;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -16,11 +16,11 @@ import java.util.Map;
 @RequiredArgsConstructor
 public class RoleController {
 
-    private final FindRole findRole;
+    private final RoleRepository roleRepository;
 
     @GetMapping()
     public ResponseEntity<?> findRoles() {
-        List<Role> roles = findRole.findAll();
+        List<Role> roles = roleRepository.findAll();
         return ResponseEntity.ok(Map.of("data", roles));
     }
 }

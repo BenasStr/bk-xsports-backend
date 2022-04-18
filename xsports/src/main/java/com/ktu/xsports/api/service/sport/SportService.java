@@ -1,7 +1,7 @@
 package com.ktu.xsports.api.service.sport;
 
-import com.ktu.xsports.api.domain.sport.Sport;
-import com.ktu.xsports.api.repository.sport.SportRepository;
+import com.ktu.xsports.api.domain.Sport;
+import com.ktu.xsports.api.repository.SportRepository;
 import com.ktu.xsports.api.service.sport.internal.SportCreator;
 import com.ktu.xsports.api.service.sport.internal.SportRemover;
 import com.ktu.xsports.api.service.sport.internal.SportRetriever;
