@@ -7,15 +7,15 @@
       http://www.liquibase.org/xml/ns/pro
       http://www.liquibase.org/xml/ns/pro/liquibase-pro-4.1.xsd">
 
-    <changeSet id="4" author="benas.strauka">
+    <changeSet id="5" author="benas.strauka">
         <preConditions onFail="CONTINUE">
             <not>
-                <tableExists tableName="categories" schemaName="xsports_db"/>
+                <tableExists tableName="lessons" schemaName="xsports_db"/>
             </not>
         </preConditions>
-        <comment>Create categories table.</comment>
+        <comment>Create lessons table.</comment>
 
-        <createTable tableName="categories">
+        <createTable tableName="lessons">
             <column name="id" type="int unsigned" autoIncrement="true">
                 <constraints primaryKey="true"/>
             </column>
@@ -24,12 +24,18 @@
                 <constraints nullable="false"/>
             </column>
 
-            <column name="photo" type="varchar(255)">
+            <column name="video" type="varchar(255)">
                 <constraints nullable="false"/>
             </column>
 
-            <column name="sport_id" type="int unsigned">
-                <constraints foreignKeyName="sports_categories_fk" references="sports(id)" nullable="false"/>
+            <column name="rating" type="int">
+                <constraints nullable="false"/>
+            </column>
+
+            <column name="description" type="varchar(255)"/>
+
+            <column name="photo" type="varchar(255)">
+                <constraints nullable="false"/>
             </column>
         </createTable>
     </changeSet>
