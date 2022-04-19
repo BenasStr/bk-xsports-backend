@@ -57,6 +57,7 @@ public class CategoryController {
     ) {
         Category category = categoryRequest.toCategory();
         Optional<Category> newCategory = categoryCreator.createCategory(category);
+
         return ResponseEntity.of(
                 newCategory.map(c -> Map.of("data", modelMapper.map(c, CategoryResponse.class))));
     }
@@ -68,6 +69,7 @@ public class CategoryController {
     ) {
         Category category = categoryRequest.toCategory();
         Optional<Category> newCategory = categoryUpdater.updateCategory(category, id);
+
         return ResponseEntity.of(
                 newCategory.map(c -> Map.of("data", modelMapper.map(c, CategoryResponse.class))));
     }
@@ -78,7 +80,7 @@ public class CategoryController {
     ) {
         Optional<Category> deletedSport = categoryRemover.removeCategory(id);
         return ResponseEntity.of(
-                deletedSport.map( s ->
+                deletedSport.map(s ->
                         Map.of("data", modelMapper.map(s, SportResponse.class))));
     }
 }
