@@ -7,6 +7,7 @@ import lombok.NoArgsConstructor;
 
 import javax.persistence.*;
 import javax.validation.constraints.NotNull;
+import java.util.List;
 
 @Data
 @Entity(name = "tricks")
@@ -14,7 +15,6 @@ import javax.validation.constraints.NotNull;
 @NoArgsConstructor
 @AllArgsConstructor
 public class Trick {
- //situs pakeisti
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private long id;
@@ -23,8 +23,16 @@ public class Trick {
     private String name;
 
     @NotNull
-    private String photo;
+    private String video;
 
-    @ManyToOne
-    private Sport sport;
+    @NotNull
+    private String description;
+
+    @OneToOne
+    private Lesson lesson;
+    @ManyToMany
+    private List<Trick> trickParents;
+
+    @ManyToMany(mappedBy = "trickParents")
+    private List<Trick> trickChildren;
 }
