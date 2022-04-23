@@ -34,6 +34,12 @@
             <column name="lesson_id" type="int unsigned">
                 <constraints foreignKeyName="lesson_trick_fk" references="lessons(id)"/>
             </column>
+
+            <column name="category_id" type="int unsigned">
+                <constraints foreignKeyName="category_trick_fk"
+                             references="categories(id)"
+                             nullable="false"/>
+            </column>
         </createTable>
     </changeSet>
 
@@ -47,11 +53,15 @@
         
         <createTable tableName="tricks_references">
             <column name="trick_parent_id" type="int unsigned">
-                <constraints foreignKeyName="trick_parent_fk" references="tricks(id)" nullable="false"/>
+                <constraints foreignKeyName="trick_parent_fk"
+                             references="tricks(id)"
+                             nullable="false"/>
             </column>
 
             <column name="trick_child_id" type="int unsigned">
-                <constraints foreignKeyName="trick_child_fk" references="tricks(id)" nullable="false"/>
+                <constraints foreignKeyName="trick_child_fk"
+                             references="tricks(id)"
+                             nullable="false"/>
             </column>
         </createTable>
     </changeSet>
