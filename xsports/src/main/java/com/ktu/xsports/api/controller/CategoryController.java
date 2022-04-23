@@ -11,6 +11,7 @@ import com.ktu.xsports.api.service.category.internal.CategoryUpdater;
 import lombok.RequiredArgsConstructor;
 import org.modelmapper.ModelMapper;
 import org.springframework.http.ResponseEntity;
+import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
@@ -19,6 +20,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 
+@Validated
 @RestController
 @RequiredArgsConstructor
 @RequestMapping("categories")
