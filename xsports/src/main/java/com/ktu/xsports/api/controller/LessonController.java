@@ -14,12 +14,14 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.http.ResponseEntity;
+import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
 import java.util.Map;
 import java.util.Optional;
 
+@Validated
 @RestController
 @RequiredArgsConstructor
 @RequestMapping("lessons")
@@ -49,10 +51,10 @@ public class LessonController {
 
     @GetMapping("/{id}")
     public ResponseEntity<?> findLesson(@PathVariable long id) {
-        Optional<Lesson> category = lessonRetriever.findLessonById(id);
+        Optional<Lesson> lesson = lessonRetriever.findLessonById(id);
 
         return ResponseEntity.of(
-                category.map(l -> Map.of("data", modelMapper.map(l, LessonResponse.class))));
+                lesson.map(l -> Map.of("data", modelMapper.map(l, LessonResponse.class))));
     }
 
     @PostMapping()
@@ -60,10 +62,10 @@ public class LessonController {
             @RequestBody @Valid LessonRequest lessonRequest
     ) {
         Lesson lesson = lessonRequest.toLesson();
-        Optional<Lesson> newCategory = lessonCreator.createLesson(lesson);
+        Optional<Lesson> newLesson = lessonCreator.createLesson(lesson);
 
         return ResponseEntity.of(
-                newCategory.map(l -> Map.of("data", modelMapper.map(l, LessonResponse.class))));
+                newLesson.map(l -> Map.of("data", modelMapper.map(l, LessonResponse.class))));
     }
 
     @PutMapping("/{id}")
@@ -72,10 +74,10 @@ public class LessonController {
             @RequestBody @Valid LessonRequest lessonRequest
     ) {
         Lesson lesson = lessonRequest.toLesson();
-        Optional<Lesson> newCategory = lessonUpdater.updateLesson(lesson, id);
+        Optional<Lesson> newLesson = lessonUpdater.updateLesson(lesson, id);
 
         return ResponseEntity.of(
-                newCategory.map(l -> Map.of("data", modelMapper.map(l, LessonResponse.class))));
+                newLesson.map(l -> Map.of("data", modelMapper.map(l, LessonResponse.class))));
     }
 
     @DeleteMapping("/{id}")
