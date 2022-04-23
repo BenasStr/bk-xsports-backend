@@ -15,6 +15,7 @@ import java.util.List;
 @NoArgsConstructor
 @AllArgsConstructor
 public class Trick {
+
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private long id;
@@ -28,9 +29,20 @@ public class Trick {
     @NotNull
     private String description;
 
+    @ManyToOne
+    private Category category;
+
     @OneToOne
     private Lesson lesson;
+
     @ManyToMany
+    @JoinTable(
+            name = "tricks_references",
+            joinColumns = @JoinColumn(name = "trick_child_id",
+                    referencedColumnName = "id"),
+            inverseJoinColumns = @JoinColumn(name = "trick_parent_id",
+                    referencedColumnName = "id")
+    )
     private List<Trick> trickParents;
 
     @ManyToMany(mappedBy = "trickParents")

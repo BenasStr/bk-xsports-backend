@@ -15,6 +15,6 @@ public class TrickResponse {
     String video;
     String description;
     Lesson lessonId;
-    List<Trick> trickParentsIds;
-    List<Trick> trickChildrenIds;
+    List<Long> trickParentsIds;
+    List<Long> trickChildrenIds;
 }

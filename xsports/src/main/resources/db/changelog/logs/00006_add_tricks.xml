@@ -50,7 +50,7 @@
             </not>
         </preConditions>
         <comment>Create trick reference table.</comment>
-        
+
         <createTable tableName="tricks_references">
             <column name="trick_parent_id" type="int unsigned">
                 <constraints foreignKeyName="trick_parent_fk"
