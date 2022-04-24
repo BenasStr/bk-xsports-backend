@@ -1,5 +1,6 @@
 package com.ktu.xsports.api.dto.response;
 
+import com.ktu.xsports.api.domain.Category;
 import com.ktu.xsports.api.domain.Lesson;
 import com.ktu.xsports.api.domain.Trick;
 import lombok.Data;
@@ -14,7 +15,8 @@ public class TrickResponse {
     String name;
     String video;
     String description;
-    Lesson lessonId;
+    long categoryId;
+    long lessonId;
     List<Long> trickParentsIds;
     List<Long> trickChildrenIds;
 }

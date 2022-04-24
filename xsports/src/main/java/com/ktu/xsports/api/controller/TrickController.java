@@ -80,16 +80,14 @@ public class TrickController {
         Optional<Trick> newTrick = trickUpdater.updateTrick(trick, id);
 
         return ResponseEntity.of(
-                newTrick.map(t -> Map.of("data", modelMapper.map(t, LessonResponse.class))));
+                newTrick.map(t -> Map.of("data", modelMapper.map(t, TrickResponse.class))));
     }
 
     @DeleteMapping("/{id}")
     public ResponseEntity<?> deleteLesson(@PathVariable long id) {
         Optional<Trick> deletedLesson = trickRemover.removeTrick(id);
 
-        return ResponseEntity.of(
-                deletedLesson.map(
-                        t -> Map.of("data", modelMapper.map(t, TrickResponse.class))));
+        return ResponseEntity.ok(Map.of("id", id));
     }
 
 }

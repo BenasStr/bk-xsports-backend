@@ -18,6 +18,12 @@ public class ModelMapping {
     public ModelMapper modelMapper() {
         ModelMapper modelMapper = new ModelMapper();
 
+        TrickToTrickResponseMapping(modelMapper);
+
+        return modelMapper;
+    }
+
+    private void TrickToTrickResponseMapping(ModelMapper modelMapper) {
         modelMapper
                 .typeMap(Trick.class, TrickResponse.class)
                 .addMappings(
@@ -26,7 +32,5 @@ public class ModelMapping {
                 .addMappings(
                         mapper -> mapper.using(tricksToIdsConverter)
                                 .map(Trick::getTrickChildren, TrickResponse::setTrickChildrenIds));
-
-        return modelMapper;
     }
 }

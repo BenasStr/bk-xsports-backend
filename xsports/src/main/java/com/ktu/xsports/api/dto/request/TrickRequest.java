@@ -53,6 +53,8 @@ public class TrickRequest {
                 .description(description)
                 .lesson(lesson)
                 .category(category)
+                .trickParents(trickParent)
+                .trickChildren(trickChild)
                 .build();
     }
 }
