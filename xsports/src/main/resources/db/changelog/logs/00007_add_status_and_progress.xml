@@ -1,0 +1,65 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<databaseChangeLog
+        xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog
+      http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-4.1.xsd
+      http://www.liquibase.org/xml/ns/pro
+      http://www.liquibase.org/xml/ns/pro/liquibase-pro-4.1.xsd">
+    <changeSet id="8" author="benas.strauka">
+        <preConditions onFail="CONTINUE">
+            <not>
+                <tableExists tableName="status" schemaName="xsports_db"/>
+                <tableExists tableName="progress" schemaName="xsports_db"/>
+            </not>
+        </preConditions>
+        <comment>Create status and progress tables.</comment>
+
+        <createTable tableName="status">
+            <column name="id" type="int unsigned" autoIncrement="true">
+                <constraints primaryKey="true"/>
+            </column>
+
+            <column name="name" type="varchar(255)">
+                <constraints nullable="false"/>
+            </column>
+        </createTable>
+
+        <insert tableName="status">
+            <column name="name" value="Planning"/>
+        </insert>
+
+        <insert tableName="status">
+            <column name="name" value="Started"/>
+        </insert>
+
+        <insert tableName="status">
+            <column name="name" value="Done"/>
+        </insert>
+
+        <createTable tableName="progress">
+            <column name="id" type="int unsigned" autoIncrement="true">
+                <constraints primaryKey="true"/>
+            </column>
+
+            <column name="status_id" type="int unsigned">
+                <constraints foreignKeyName="status_progress_fk"
+                             references="status(id)"
+                             nullable="false"/>
+            </column>
+
+            <column name="trick_id" type="int unsigned">
+                <constraints foreignKeyName="trick_progress_fk"
+                             references="tricks(id)"
+                             nullable="false"/>
+            </column>
+
+            <column name="user_id" type="int unsigned">
+                <constraints foreignKeyName="user_progress_fk"
+                             references="users(id)"
+                             nullable="false"/>
+            </column>
+        </createTable>
+
+    </changeSet>
+</databaseChangeLog>
