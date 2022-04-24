@@ -1,0 +1,55 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<databaseChangeLog
+        xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog
+      http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-4.1.xsd
+      http://www.liquibase.org/xml/ns/pro
+      http://www.liquibase.org/xml/ns/pro/liquibase-pro-4.1.xsd">
+    <changeSet id="8" author="benas.strauka">
+        <preConditions onFail="CONTINUE">
+            <not>
+                <tableExists tableName="events" schemaName="xsports_db"/>
+            </not>
+        </preConditions>
+        <comment>Create event table.</comment>
+
+        <createTable tableName="events">
+            <column name="id" type="int unsigned" autoIncrement="true">
+                <constraints primaryKey="true"/>
+            </column>
+
+            <column name="name" type="varchar(255)">
+                <constraints nullable="false"/>
+            </column>
+
+            <column name="photo" type="varchar(255)">
+                <constraints nullable="false"/>
+            </column>
+
+            <column name="location" type="varchar(255)">
+
+            </column>
+
+            <column name="date" type="date">
+                <constraints nullable="false"/>
+            </column>
+
+            <column name="validated" type="tinyint">
+                <constraints nullable="false"/>
+            </column>
+
+            <column name="user_id" type="int unsigned">
+                <constraints foreignKeyName="user_event_fk"
+                             references="users(id)"
+                             nullable="false"/>
+            </column>
+
+            <column name="sport_id" type="int unsigned">
+                <constraints foreignKeyName="sport_event_fk"
+                             references="sports(id)"
+                             nullable="false"/>
+            </column>
+        </createTable>
+    </changeSet>
+</databaseChangeLog>
