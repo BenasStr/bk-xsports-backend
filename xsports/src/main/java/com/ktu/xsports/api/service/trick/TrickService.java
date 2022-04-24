@@ -33,7 +33,6 @@ public class TrickService implements TrickRetriever, TrickCreator, TrickUpdater,
     @Override
     @Transactional
     public Optional<Trick> createTrick(Trick trick) {
-
         return Optional.of(trickRepository.save(trick));
     }
 
@@ -48,10 +47,10 @@ public class TrickService implements TrickRetriever, TrickCreator, TrickUpdater,
 
     @Override
     public Optional<Trick> removeTrick(long id) {
-        Optional<Trick> deletedLesson = trickRepository.findById(id);
-        if(deletedLesson.isPresent()) {
-            trickRepository.delete(deletedLesson.get());
-            return deletedLesson;
+        Optional<Trick> deletedTrick = trickRepository.findById(id);
+        if(deletedTrick.isPresent()) {
+            trickRepository.delete(deletedTrick.get());
+            return deletedTrick;
         }
         return Optional.empty();
     }
