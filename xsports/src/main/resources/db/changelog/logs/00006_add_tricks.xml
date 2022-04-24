@@ -1,0 +1,68 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<databaseChangeLog
+        xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog
+      http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-4.1.xsd
+      http://www.liquibase.org/xml/ns/pro
+      http://www.liquibase.org/xml/ns/pro/liquibase-pro-4.1.xsd">
+    <changeSet id="6" author="benas.strauka">
+        <preConditions onFail="CONTINUE">
+            <not>
+                <tableExists tableName="tricks" schemaName="xsports_db"/>
+            </not>
+        </preConditions>
+        <comment>Create tricks table.</comment>
+
+        <createTable tableName="tricks">
+            <column name="id" type="int unsigned" autoIncrement="true">
+                <constraints primaryKey="true"/>
+            </column>
+
+            <column name="name" type="varchar(255)">
+                <constraints nullable="false"/>
+            </column>
+
+            <column name="video" type="varchar(255)">
+                <constraints nullable="false"/>
+            </column>
+
+            <column name="description" type="varchar(255)">
+                <constraints nullable="false"/>
+            </column>
+
+            <column name="lesson_id" type="int unsigned">
+                <constraints foreignKeyName="lesson_trick_fk" references="lessons(id)"/>
+            </column>
+
+            <column name="category_id" type="int unsigned">
+                <constraints foreignKeyName="category_trick_fk"
+                             references="categories(id)"
+                             nullable="false"/>
+            </column>
+        </createTable>
+    </changeSet>
+
+    <changeSet id="7" author="benas.strauka">
+        <preConditions>
+            <not>
+                <tableExists tableName="tricks_references"/>
+            </not>
+        </preConditions>
+        <comment>Create trick reference table.</comment>
+
+        <createTable tableName="tricks_references">
+            <column name="trick_parent_id" type="int unsigned">
+                <constraints foreignKeyName="trick_parent_fk"
+                             references="tricks(id)"
+                             nullable="false"/>
+            </column>
+
+            <column name="trick_child_id" type="int unsigned">
+                <constraints foreignKeyName="trick_child_fk"
+                             references="tricks(id)"
+                             nullable="false"/>
+            </column>
+        </createTable>
+    </changeSet>
+</databaseChangeLog>

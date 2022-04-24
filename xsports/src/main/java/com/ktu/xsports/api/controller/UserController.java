@@ -11,6 +11,7 @@ import org.modelmapper.ModelMapper;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.http.ResponseEntity;
+import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.data.domain.Pageable;
 
@@ -18,6 +19,7 @@ import javax.validation.Valid;
 import java.util.Map;
 import java.util.Optional;
 
+@Validated
 @RestController
 @RequiredArgsConstructor
 @RequestMapping("users")
@@ -31,7 +33,7 @@ public class UserController {
             @RequestParam(defaultValue = "1") int page,
             @RequestParam(defaultValue = "20", name = "per_page") int size
     ) {
-        Pageable pageable = PageRequest.of(page - 1, size);
+        /*Pageable pageable = PageRequest.of(page - 1, size);
         Page<User> usersPage = userService.findUser(pageable);
         Page<UserResponse> userResponsePage = usersPage.map(
                 user -> modelMapper.map(user, UserResponse.class)
@@ -39,7 +41,8 @@ public class UserController {
 
         return ResponseEntity.ok(
                 PageableConverter.convert(page, size, userResponsePage)
-        );
+        );*/
+        return null;
     }
 
     @GetMapping("/{id}")
