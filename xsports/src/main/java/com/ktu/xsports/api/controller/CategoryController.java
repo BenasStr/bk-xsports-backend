@@ -4,10 +4,7 @@ import com.ktu.xsports.api.domain.Category;
 import com.ktu.xsports.api.dto.request.CategoryRequest;
 import com.ktu.xsports.api.dto.response.CategoryResponse;
 import com.ktu.xsports.api.dto.response.SportResponse;
-import com.ktu.xsports.api.service.category.internal.CategoryCreator;
-import com.ktu.xsports.api.service.category.internal.CategoryRemover;
-import com.ktu.xsports.api.service.category.internal.CategoryRetriever;
-import com.ktu.xsports.api.service.category.internal.CategoryUpdater;
+import com.ktu.xsports.api.service.category.CategoryService;
 import lombok.RequiredArgsConstructor;
 import org.modelmapper.ModelMapper;
 import org.springframework.http.ResponseEntity;
@@ -15,7 +12,6 @@ import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
-import javax.validation.constraints.NotNull;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
@@ -23,31 +19,28 @@ import java.util.Optional;
 @Validated
 @RestController
 @RequiredArgsConstructor
-@RequestMapping("categories")
+@RequestMapping("sports/{sportId}/categories")
 public class CategoryController {
 
-    private final CategoryRetriever categoryRetriever;
-    private final CategoryCreator categoryCreator;
-    private final CategoryUpdater categoryUpdater;
-    private final CategoryRemover categoryRemover;
+    private final CategoryService categoryService;
     private final ModelMapper modelMapper;
 
     @GetMapping()
     public ResponseEntity<?> findSportsCategories(
-            @RequestParam @NotNull long sportId
-    ) {
-        List<Category> categories = categoryRetriever.findCategories(sportId);
+            @PathVariable long sportId) {
+        List<Category> categories = categoryService.findCategories(sportId);
         List<CategoryResponse> categoriesResponse = categories.stream().map(
                 c -> modelMapper.map(c, CategoryResponse.class)
         ).toList();
         return ResponseEntity.ok(Map.of("data", categoriesResponse));
     }
 
-    @GetMapping("/{id}")
+    @GetMapping("/{categoryId}")
     public ResponseEntity<?> findSportCategory(
-            @PathVariable long id
+            @PathVariable long categoryId,
+            @PathVariable long sportId
     ) {
-        Optional<Category> category = categoryRetriever.findCategoryById(id);
+        Optional<Category> category = categoryService.findCategory(sportId, categoryId);
 
         return ResponseEntity.of(
                 category.map(c -> Map.of("data", modelMapper.map(c, CategoryResponse.class))));
@@ -55,32 +48,35 @@ public class CategoryController {
 
     @PostMapping()
     public ResponseEntity<?> createSportCategory(
-            @RequestBody @Valid CategoryRequest categoryRequest
+            @RequestBody @Valid CategoryRequest categoryRequest,
+            @PathVariable long sportId
     ) {
         Category category = categoryRequest.toCategory();
-        Optional<Category> newCategory = categoryCreator.createCategory(category);
+        Optional<Category> newCategory = categoryService.createCategory(sportId, category);
 
         return ResponseEntity.of(
                 newCategory.map(c -> Map.of("data", modelMapper.map(c, CategoryResponse.class))));
     }
 
-    @PutMapping("/{id}")
+    @PutMapping("/{categoryId}")
     public ResponseEntity<?> updateSportCategory(
-            @PathVariable long id,
-            @RequestBody @Valid CategoryRequest categoryRequest
+            @PathVariable long categoryId,
+            @RequestBody @Valid CategoryRequest categoryRequest,
+            @PathVariable long sportId
     ) {
         Category category = categoryRequest.toCategory();
-        Optional<Category> newCategory = categoryUpdater.updateCategory(category, id);
+        Optional<Category> newCategory = categoryService.updateCategory(sportId, category, categoryId);
 
         return ResponseEntity.of(
                 newCategory.map(c -> Map.of("data", modelMapper.map(c, CategoryResponse.class))));
     }
 
-    @DeleteMapping("/{id}")
+    @DeleteMapping("/{categoryId}")
     public ResponseEntity<?> deleteSportCategory(
-            @PathVariable long id
+            @PathVariable long categoryId,
+            @PathVariable long sportId
     ) {
-        Optional<Category> deletedSport = categoryRemover.removeCategory(id);
+        Optional<Category> deletedSport = categoryService.removeCategory(sportId, categoryId);
         return ResponseEntity.of(
                 deletedSport.map(s ->
                         Map.of("data", modelMapper.map(s, SportResponse.class))));
