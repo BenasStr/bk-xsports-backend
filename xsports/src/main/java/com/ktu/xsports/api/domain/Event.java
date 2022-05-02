@@ -1,20 +1,21 @@
 package com.ktu.xsports.api.domain;
 
-import com.sun.istack.NotNull;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
 import javax.persistence.*;
+import javax.validation.constraints.NotNull;
+import java.time.LocalDate;
 import java.util.List;
 
 @Data
-@Entity(name = "users")
+@Entity(name = "events")
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
-public class User {
+public class Event {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -24,18 +25,21 @@ public class User {
     private String name;
 
     @NotNull
-    private String surname;
-
-    private String userName;
+    private String photo;
 
     @NotNull
-    private String email;
+    private String location;
 
     @NotNull
-    private String password;
+    private LocalDate date;
 
-    private String photoPath;
+    @NotNull
+    private boolean validated;
 
-    @ManyToOne
-    private Role role;
+    @OneToMany
+    private List<User> users;
+
+    @OneToMany
+    private List<Sport> sports;
+
 }

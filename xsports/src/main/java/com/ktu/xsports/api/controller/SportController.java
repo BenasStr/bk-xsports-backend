@@ -3,6 +3,7 @@ package com.ktu.xsports.api.controller;
 import com.ktu.xsports.api.domain.Sport;
 import com.ktu.xsports.api.dto.request.SportRequest;
 import com.ktu.xsports.api.dto.response.SportResponse;
+import com.ktu.xsports.api.service.sport.SportService;
 import com.ktu.xsports.api.service.sport.internal.SportCreator;
 import com.ktu.xsports.api.service.sport.internal.SportRemover;
 import com.ktu.xsports.api.service.sport.internal.SportRetriever;
@@ -24,15 +25,12 @@ import java.util.Optional;
 @RequestMapping("sports")
 public class SportController {
 
-    private final SportRetriever sportRetriever;
-    private final SportUpdater sportUpdater;
-    private final SportCreator sportCreator;
-    private final SportRemover sportRemover;
+    private final SportService sportService;
     private final ModelMapper modelMapper;
 
     @GetMapping()
     public ResponseEntity<?> findSports() {
-        List<Sport> sports = sportRetriever.findSports();
+        List<Sport> sports = sportService.findSports();
         List<SportResponse> sportsResponse = sports.stream().map(
                 s -> modelMapper.map(s, SportResponse.class)
         ).toList();
@@ -42,7 +40,7 @@ public class SportController {
     @GetMapping("/{id}")
     public ResponseEntity<?> findSport(@PathVariable long id)
     {
-        Optional<Sport> sport = sportRetriever.findSportById(id);
+        Optional<Sport> sport = sportService.findSportById(id);
 
         return ResponseEntity.of(
                 sport.map(s -> Map.of("data", modelMapper.map(s, SportResponse.class))));
@@ -53,7 +51,7 @@ public class SportController {
             @RequestBody @Valid SportRequest sportRequest
     ) {
         Sport sport = sportRequest.toSport();
-        Optional<Sport> newSport = sportCreator.createSport(sport);
+        Optional<Sport> newSport = sportService.createSport(sport);
         return ResponseEntity.of(
                 newSport.map(s -> Map.of("data", modelMapper.map(s, SportResponse.class))));
     }
@@ -64,14 +62,14 @@ public class SportController {
             @PathVariable long id
     ) {
         Sport sport = sportRequest.toSport();
-        Optional<Sport> updatedSport = sportUpdater.updateSport(sport, id);
+        Optional<Sport> updatedSport = sportService.updateSport(sport, id);
         return ResponseEntity.of(
                 updatedSport.map(s -> Map.of("data", modelMapper.map(s, SportResponse.class))));
     }
 
     @DeleteMapping("/{id}")
     public ResponseEntity<?> deleteProject(@PathVariable long id) {
-        Optional<Sport> deletedSport = sportRemover.removeSport(id);
+        Optional<Sport> deletedSport = sportService.removeSport(id);
         return ResponseEntity.of(
                 deletedSport.map( s ->
                         Map.of("data", modelMapper.map(s, SportResponse.class))));

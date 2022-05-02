@@ -2,10 +2,10 @@ package com.ktu.xsports.api.dto.request;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
-import com.ktu.xsports.api.converter.IdToCategoryConverter;
+import com.ktu.xsports.api.converter.IdToDifficultyConverter;
 import com.ktu.xsports.api.converter.IdToLessonConverter;
 import com.ktu.xsports.api.converter.IdsToTricksConverter;
-import com.ktu.xsports.api.domain.Category;
+import com.ktu.xsports.api.domain.Difficulty;
 import com.ktu.xsports.api.domain.Lesson;
 import com.ktu.xsports.api.domain.Trick;
 import lombok.AllArgsConstructor;
@@ -33,11 +33,6 @@ public class TrickRequest {
     @JsonDeserialize(converter = IdToLessonConverter.class)
     private Lesson lesson;
 
-    @NotNull
-    @JsonProperty("category_id")
-    @JsonDeserialize(converter = IdToCategoryConverter.class)
-    private Category category;
-
     @JsonProperty("trick_parents_ids")
     @JsonDeserialize(converter = IdsToTricksConverter.class)
     private List<Trick> trickParent;
@@ -46,15 +41,19 @@ public class TrickRequest {
     @JsonDeserialize(converter = IdsToTricksConverter.class)
     private List<Trick> trickChild;
 
+    @JsonProperty("difficulty_id")
+    @JsonDeserialize(converter = IdToDifficultyConverter.class)
+    private Difficulty difficulty;
+
     public Trick toTrick() {
         return Trick.builder()
                 .name(name)
                 .video(video)
                 .description(description)
                 .lesson(lesson)
-                .category(category)
                 .trickParents(trickParent)
                 .trickChildren(trickChild)
+                .difficulty(difficulty)
                 .build();
     }
 }
