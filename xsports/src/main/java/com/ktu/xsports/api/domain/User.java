@@ -1,6 +1,5 @@
 package com.ktu.xsports.api.domain;
 
-import com.ktu.xsports.api.domain.Role;
 import com.sun.istack.NotNull;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -8,6 +7,7 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 
 import javax.persistence.*;
+import java.util.List;
 
 @Data
 @Entity(name = "users")

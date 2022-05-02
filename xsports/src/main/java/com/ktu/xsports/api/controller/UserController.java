@@ -4,16 +4,15 @@ import com.ktu.xsports.api.converter.PageableConverter;
 import com.ktu.xsports.api.domain.User;
 import com.ktu.xsports.api.dto.request.UserRequest;
 import com.ktu.xsports.api.dto.response.UserResponse;
-import com.ktu.xsports.api.exceptions.RoleException;
 import com.ktu.xsports.api.service.user.UserService;
 import lombok.RequiredArgsConstructor;
 import org.modelmapper.ModelMapper;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
-import org.springframework.data.domain.Pageable;
 
 import javax.validation.Valid;
 import java.util.Map;
@@ -22,7 +21,7 @@ import java.util.Optional;
 @Validated
 @RestController
 @RequiredArgsConstructor
-@RequestMapping("users")
+@RequestMapping("api/users")
 public class UserController {
 
     private final UserService userService;
@@ -33,7 +32,7 @@ public class UserController {
             @RequestParam(defaultValue = "1") int page,
             @RequestParam(defaultValue = "20", name = "per_page") int size
     ) {
-        /*Pageable pageable = PageRequest.of(page - 1, size);
+        Pageable pageable = PageRequest.of(page - 1, size);
         Page<User> usersPage = userService.findUser(pageable);
         Page<UserResponse> userResponsePage = usersPage.map(
                 user -> modelMapper.map(user, UserResponse.class)
@@ -41,8 +40,7 @@ public class UserController {
 
         return ResponseEntity.ok(
                 PageableConverter.convert(page, size, userResponsePage)
-        );*/
-        return null;
+        );
     }
 
     @GetMapping("/{id}")
@@ -57,13 +55,13 @@ public class UserController {
     @PostMapping()
     public ResponseEntity<?> createUser(
             @RequestBody @Valid UserRequest userRequest)
-            throws RoleException {
+    {
         User user = userRequest.toUser();
-        Optional<User> newUser = userService.createUser(user);
+        User newUser = userService.saveUser(user);
 
-        return ResponseEntity.of(
-                newUser.map(u ->
-                        Map.of("data", modelMapper.map(u, UserResponse.class))));
+        return ResponseEntity.ok(
+                        Map.of("data", modelMapper.map(newUser, UserResponse.class))
+        );
     }
 
     @PutMapping("/{id}")

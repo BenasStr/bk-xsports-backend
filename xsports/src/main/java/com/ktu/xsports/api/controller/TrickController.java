@@ -1,93 +1,90 @@
 package com.ktu.xsports.api.controller;
 
 
-import com.ktu.xsports.api.converter.PageableConverter;
 import com.ktu.xsports.api.domain.Trick;
 import com.ktu.xsports.api.dto.request.TrickRequest;
-import com.ktu.xsports.api.dto.response.LessonResponse;
 import com.ktu.xsports.api.dto.response.TrickResponse;
-import com.ktu.xsports.api.service.trick.internal.TrickCreator;
-import com.ktu.xsports.api.service.trick.internal.TrickRemover;
-import com.ktu.xsports.api.service.trick.internal.TrickRetriever;
-import com.ktu.xsports.api.service.trick.internal.TrickUpdater;
+import com.ktu.xsports.api.service.TrickService;
 import lombok.RequiredArgsConstructor;
 import org.modelmapper.ModelMapper;
-import org.springframework.data.domain.Page;
-import org.springframework.data.domain.PageRequest;
-import org.springframework.data.domain.Pageable;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
+import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 
 @Validated
 @RestController
 @RequiredArgsConstructor
-@RequestMapping("tricks")
+@RequestMapping("sports/{sportId}/categories/{categoryId}/tricks")
 public class TrickController {
 
-    private final TrickRetriever trickRetriever;
-    private final TrickCreator trickCreator;
-    private final TrickUpdater trickUpdater;
-    private final TrickRemover trickRemover;
+    private final TrickService trickService;
     private final ModelMapper modelMapper;
 
     @GetMapping()
     public ResponseEntity<?> findTricks(
-            @RequestParam(defaultValue = "1") int page,
-            @RequestParam(defaultValue = "20", name = "per_page") int size,
-            @RequestParam long categoryId
-            ) {
-        Pageable pageable = PageRequest.of(page - 1, size);
-        Page<Trick> tricksPage = trickRetriever.findTricks(pageable, categoryId);
-        Page<TrickResponse> tricksResponsesPage = tricksPage.map(
+            @PathVariable long categoryId,
+            @PathVariable long sportId,
+            @RequestParam(defaultValue = "all") String difficulty) {
+        List<Trick> tricks = trickService.findTricks(sportId, categoryId, difficulty);
+        List<TrickResponse> tricksResponses = tricks.stream().map(
                 trick -> modelMapper.map(trick, TrickResponse.class)
-        );
+        ).toList();
 
-        return ResponseEntity.ok(
-                PageableConverter.convert(page, size, tricksResponsesPage)
-        );
+        return ResponseEntity.ok(Map.of("data", tricksResponses));
     }
 
-    @GetMapping("/{id}")
-    public ResponseEntity<?> findLesson(@PathVariable long id) {
-        Optional<Trick> trick = trickRetriever.findTrickById(id);
+    @GetMapping("/{trickId}")
+    public ResponseEntity<?> findTrick(
+            @PathVariable long trickId,
+            @PathVariable long categoryId,
+            @PathVariable long sportId) {
+        Optional<Trick> trick = trickService.findTrickById(sportId, categoryId, trickId);
 
         return ResponseEntity.of(
                 trick.map(t -> Map.of("data", modelMapper.map(t, TrickResponse.class))));
     }
 
     @PostMapping()
-    public ResponseEntity<?> createLesson(
-            @RequestBody @Valid TrickRequest trickRequest
+    public ResponseEntity<?> createTrick(
+            @RequestBody @Valid TrickRequest trickRequest,
+            @PathVariable long categoryId,
+            @PathVariable long sportId
     ) {
         Trick trick = trickRequest.toTrick();
-        Optional<Trick> newTrick = trickCreator.createTrick(trick);
+        Optional<Trick> newTrick = trickService.createTrick(sportId, categoryId, trick);
 
         return ResponseEntity.of(
                 newTrick.map(t -> Map.of("data", modelMapper.map(t, TrickResponse.class))));
     }
 
-    @PutMapping("/{id}")
-    public ResponseEntity<?> updateLesson(
-            @PathVariable long id,
-            @RequestBody @Valid TrickRequest trickRequest
+    @PutMapping("/{trickId}")
+    public ResponseEntity<?> updateTrick(
+            @PathVariable long trickId,
+            @RequestBody @Valid TrickRequest trickRequest,
+            @PathVariable long categoryId,
+            @PathVariable long sportId
     ) {
         Trick trick = trickRequest.toTrick();
-        Optional<Trick> newTrick = trickUpdater.updateTrick(trick, id);
+        Optional<Trick> newTrick = trickService.updateTrick(sportId, categoryId, trick, trickId);
 
         return ResponseEntity.of(
                 newTrick.map(t -> Map.of("data", modelMapper.map(t, TrickResponse.class))));
     }
 
-    @DeleteMapping("/{id}")
-    public ResponseEntity<?> deleteLesson(@PathVariable long id) {
-        Optional<Trick> deletedLesson = trickRemover.removeTrick(id);
+    @DeleteMapping("/{trickId}")
+    public ResponseEntity<?> deleteTrick(
+            @PathVariable long trickId,
+            @PathVariable long categoryId,
+            @PathVariable long sportId
+    ) {
+        Optional<Trick> deletedLesson = trickService.removeTrick(sportId, categoryId, trickId);
 
-        return ResponseEntity.ok(Map.of("id", id));
+        return ResponseEntity.ok(Map.of("id", modelMapper.map(deletedLesson, TrickResponse.class)));
     }
 
 }

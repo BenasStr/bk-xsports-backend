@@ -1,0 +1,49 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<databaseChangeLog
+        xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog
+      http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-4.1.xsd
+      http://www.liquibase.org/xml/ns/pro
+      http://www.liquibase.org/xml/ns/pro/liquibase-pro-4.1.xsd">
+    <changeSet id="9" author="benas.strauka">
+        <preConditions onFail="CONTINUE">
+            <not>
+                <tableExists tableName="difficulties" schemaName="xsports_db"/>
+            </not>
+        </preConditions>
+        <comment>Create difficulty table.</comment>
+
+        <createTable tableName="difficulties">
+            <column name="id" type="int unsigned" autoIncrement="true">
+                <constraints primaryKey="true"/>
+            </column>
+
+            <column name="name" type="varchar(255)">
+                <constraints nullable="false"/>
+            </column>
+        </createTable>
+
+        <insert tableName="difficulties">
+            <column name="name" value="Beginner"/>
+        </insert>
+
+        <insert tableName="difficulties">
+            <column name="name" value="Intermediate"/>
+        </insert>
+
+        <insert tableName="difficulties">
+            <column name="name" value="Advanced"/>
+        </insert>
+
+        <insert tableName="difficulties">
+            <column name="name" value="Pro"/>
+        </insert>
+
+        <addColumn tableName="tricks">
+            <column name="difficulty_id" type="int unsigned" defaultValue="1">
+                <constraints foreignKeyName="tricks_difficulties_fk" references="difficulties(id)" nullable="false"/>
+            </column>
+        </addColumn>
+    </changeSet>
+</databaseChangeLog>

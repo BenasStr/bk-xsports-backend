@@ -2,6 +2,7 @@ package com.ktu.xsports.api.service.category;
 
 import com.ktu.xsports.api.domain.Category;
 import com.ktu.xsports.api.domain.Sport;
+import com.ktu.xsports.api.exceptions.ServiceException;
 import com.ktu.xsports.api.repository.CategoryRepository;
 import com.ktu.xsports.api.repository.SportRepository;
 import lombok.RequiredArgsConstructor;
