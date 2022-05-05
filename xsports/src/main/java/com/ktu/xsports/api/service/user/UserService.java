@@ -13,7 +13,7 @@ public interface UserService {
     Page<User> findUser(Pageable pageable);
 
     Optional<User> findById(long id);
-    Optional<User> findByName(String name);
+    Optional<User> findByEmail(String email);
     Optional<User> updateUser(User user, long id);
     User saveUser(User user);
 }

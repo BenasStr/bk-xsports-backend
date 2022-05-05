@@ -11,6 +11,7 @@
         <preConditions onFail="CONTINUE">
             <not>
                 <tableExists tableName="users" schemaName="xsports_db"/>
+                <tableExists tableName="users_roles" catalogName="xsports_db"/>
             </not>
         </preConditions>
         <comment>Create users table</comment>
@@ -31,7 +32,7 @@
             <column name="user_name" type="varchar(255)"/>
 
             <column name="email" type="varchar(255)">
-                <constraints nullable="false"/>
+                <constraints nullable="false" unique="true"/>
             </column>
 
             <column name="password" type="varchar(255)">
@@ -39,9 +40,14 @@
             </column>
 
             <column name="photo_path" type="varchar(255)"/>
+        </createTable>
 
+        <createTable tableName="users_roles">
+            <column name="user_id" type="int unsigned">
+                <constraints foreignKeyName="users_roles_user_fk" references="users(id)"/>
+            </column>
             <column name="role_id" type="int unsigned">
-                <constraints foreignKeyName="users_roles_fk" references="roles(id)" nullable="false"/>
+                <constraints foreignKeyName="users_roles_role_fk" references="roles(id)"/>
             </column>
         </createTable>
     </changeSet>

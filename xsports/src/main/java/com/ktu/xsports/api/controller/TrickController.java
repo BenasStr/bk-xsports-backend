@@ -19,7 +19,7 @@ import java.util.Optional;
 @Validated
 @RestController
 @RequiredArgsConstructor
-@RequestMapping("sports/{sportId}/categories/{categoryId}/tricks")
+@RequestMapping("/api/sports/{sportId}/categories/{categoryId}/tricks")
 public class TrickController {
 
     private final TrickService trickService;
