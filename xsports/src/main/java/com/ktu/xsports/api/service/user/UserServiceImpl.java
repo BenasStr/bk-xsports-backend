@@ -16,10 +16,7 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import javax.transaction.Transactional;
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.Collections;
-import java.util.Optional;
+import java.util.*;
 
 @Service
 @RequiredArgsConstructor
@@ -44,16 +41,16 @@ public class UserServiceImpl implements UserService, UserDetailsService {
     }
 
     @Override
-    public Optional<User> findByName(String name) {
-        log.info("Fetching user by name {}", name);
-        return userRepository.findByUserName(name);
+    public Optional<User> findByEmail(String email) {
+        log.info("Fetching user by email {}", email);
+        return userRepository.findByEmail(email);
     }
 
     @Override
     public User saveUser(User user) {
         log.info("Saving user to database");
         Role role = roleRepository.findByName("user").get();
-        user.setRole(role);
+        user.setRoles(List.of(role));
         user.setPassword(passwordEncoder.encode(user.getPassword()));
         return userRepository.save(user);
     }
@@ -63,6 +60,7 @@ public class UserServiceImpl implements UserService, UserDetailsService {
         log.info("Updating user by id");
         user.setId(id);
         if (userRepository.findById(id).isPresent()) {
+            user.setPassword(passwordEncoder.encode(user.getPassword()));
             return Optional.of(userRepository.save(user));
         }
         return Optional.empty();
@@ -81,23 +79,23 @@ public class UserServiceImpl implements UserService, UserDetailsService {
 
     @Override
     public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
-        Optional<User> user = userRepository.findByUserName(username);
+        Optional<User> user = userRepository.findByEmail(username);
 
         if(user.isPresent()) {
-            log.info("User found in the database: {}", user.get().getUserName());
+            log.info("User found in the database: {}", user.get().getEmail());
             Collection<SimpleGrantedAuthority> authorities = new ArrayList<>();
-            authorities.add(
-                    new SimpleGrantedAuthority(user.get().getRole().getName())
-            );
+            user.get().getRoles().forEach( role -> {
+                authorities.add(new SimpleGrantedAuthority(role.getName()));
+            });
 
             return new org.springframework.security.core.userdetails.User(
-                    user.get().getUserName(),
+                    user.get().getEmail(),
                     user.get().getPassword(),
                     authorities
             );
         }
 
-        log.error("User not found in te database");
-        throw new UsernameNotFoundException("User not found in te database");
+        log.error("User not found in the database");
+        throw new UsernameNotFoundException("User not found in the database");
     }
 }

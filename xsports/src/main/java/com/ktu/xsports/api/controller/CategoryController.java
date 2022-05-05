@@ -19,7 +19,7 @@ import java.util.Optional;
 @Validated
 @RestController
 @RequiredArgsConstructor
-@RequestMapping("sports/{sportId}/categories")
+@RequestMapping("api/sports/{sportId}/categories")
 public class CategoryController {
 
     private final CategoryService categoryService;
