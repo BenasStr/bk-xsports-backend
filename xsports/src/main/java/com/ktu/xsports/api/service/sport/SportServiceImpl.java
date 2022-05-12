@@ -1,12 +1,8 @@
 package com.ktu.xsports.api.service.sport;
 
-import com.amazonaws.services.mq.model.NotFoundException;
-import com.ktu.xsports.api.bucket.BucketName;
 import com.ktu.xsports.api.domain.Sport;
-import com.ktu.xsports.api.fileStrore.FileStore;
 import com.ktu.xsports.api.repository.SportRepository;
 import lombok.RequiredArgsConstructor;
-import org.apache.http.entity.ContentType;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
@@ -21,7 +17,6 @@ import static org.apache.http.entity.ContentType.IMAGE_PNG;
 public class SportServiceImpl implements SportsService {
 
     private final SportRepository sportRepository;
-    private final FileStore fileStore;
 
     @Override
     public List<Sport> findSports() {
@@ -31,8 +26,7 @@ public class SportServiceImpl implements SportsService {
     @Override
     public byte[] downloadSportImage(long sportId) {
         Sport sport = sportRepository.findById(sportId).get();
-        String path = String.format("%s/%s", BucketName.IMAGE.getBucketName(), "sports");
-        return fileStore.download(path, sport.getPhoto());
+        return null; //fileStore.download(path, sport.getPhoto());
     }
 
     @Override
@@ -57,14 +51,14 @@ public class SportServiceImpl implements SportsService {
         metadata.put("Content-Type", file.getContentType());
         metadata.put("Content-Length", String.valueOf(file.getSize()));
 
-        String path = String.format("%s/%s", BucketName.IMAGE.getBucketName(), "sports");
+        //String path = String.format("%s/%s", BucketName.IMAGE.getBucketName(), "sports");
         String fileName = String.format("%s-%s", file.getOriginalFilename(), UUID.randomUUID());
 
-        try {
-            fileStore.save(path, fileName, Optional.of(metadata), file.getInputStream());
-        } catch (IOException e) {
-            throw new IllegalStateException(e);
-        }
+//        try {
+//            //fileStore.save(path, fileName, Optional.of(metadata), file.getInputStream());
+//        } catch (IOException e) {
+//            throw new IllegalStateException(e);
+//        }
 
         return fileName;
     }

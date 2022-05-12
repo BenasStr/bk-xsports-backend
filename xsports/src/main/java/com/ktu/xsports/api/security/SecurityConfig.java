@@ -59,10 +59,14 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
     }
 
     private void sportsControllerPermissions(HttpSecurity http) throws Exception {
-        http.authorizeRequests().antMatchers(GET, "/api/sports/**").permitAll();
-        http.authorizeRequests().antMatchers(POST, "/api/sports").hasAnyAuthority("admin");
-        http.authorizeRequests().antMatchers(PUT, "/api/sports/{id}").hasAnyAuthority("admin");
-        http.authorizeRequests().antMatchers(DELETE, "/api/sports/{id}").hasAnyAuthority("admin");
+        http.authorizeRequests().antMatchers(GET,
+                "/api/sports/**").permitAll();
+        http.authorizeRequests().antMatchers(POST,
+                "/api/sports").hasAnyAuthority("admin");
+        http.authorizeRequests().antMatchers(PUT,
+                "/api/sports/{id}").hasAnyAuthority("admin");
+        http.authorizeRequests().antMatchers(DELETE,
+                "/api/sports/{id}").hasAnyAuthority("admin");
     }
 
     private void categoriesControllerPermissions(HttpSecurity http) throws Exception {
