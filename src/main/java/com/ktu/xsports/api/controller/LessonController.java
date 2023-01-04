@@ -8,6 +8,7 @@ import com.ktu.xsports.api.service.lesson.internal.LessonCreator;
 import com.ktu.xsports.api.service.lesson.internal.LessonRemover;
 import com.ktu.xsports.api.service.lesson.internal.LessonRetriever;
 import com.ktu.xsports.api.service.lesson.internal.LessonUpdater;
+import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.modelmapper.ModelMapper;
 import org.springframework.data.domain.Page;
@@ -17,7 +18,6 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
-import javax.validation.Valid;
 import java.util.Map;
 import java.util.Optional;
 

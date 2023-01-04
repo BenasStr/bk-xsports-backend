@@ -9,7 +9,7 @@ import java.util.Optional;
 public interface SportsService {
     Optional<Sport> createSport(Sport sport);
     Optional<Sport> removeSport(long id);
-    String uploadImage(MultipartFile file);
+//    String uploadImage(MultipartFile file);
     List<Sport> findSports();
 
     byte[] downloadSportImage(long sportId);

@@ -1,11 +1,10 @@
 package com.ktu.xsports.api.dto.request;
 
 import com.ktu.xsports.api.domain.Lesson;
+import jakarta.validation.constraints.NotNull;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
-
-import javax.validation.constraints.NotNull;
 
 @Data
 @NoArgsConstructor

@@ -4,13 +4,8 @@ import com.ktu.xsports.api.domain.Sport;
 import com.ktu.xsports.api.repository.SportRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
-import org.springframework.web.multipart.MultipartFile;
 
-import java.io.IOException;
 import java.util.*;
-
-import static org.apache.http.entity.ContentType.IMAGE_JPEG;
-import static org.apache.http.entity.ContentType.IMAGE_PNG;
 
 @Service
 @RequiredArgsConstructor
@@ -39,29 +34,29 @@ public class SportServiceImpl implements SportsService {
         return Optional.of(sportRepository.save(sport));
     }
 
-    @Override
-    public String uploadImage(MultipartFile file) {
-        if (file.isEmpty()) {
-            throw new IllegalStateException("Cannot upload empty file");
-        }
-        if (!Arrays.asList(IMAGE_JPEG.getMimeType(), IMAGE_PNG.getMimeType() ).contains(file.getContentType())) {
-            throw new IllegalStateException("File must be an image");
-        }
-        Map<String, String> metadata = new HashMap<>();
-        metadata.put("Content-Type", file.getContentType());
-        metadata.put("Content-Length", String.valueOf(file.getSize()));
-
-        //String path = String.format("%s/%s", BucketName.IMAGE.getBucketName(), "sports");
-        String fileName = String.format("%s-%s", file.getOriginalFilename(), UUID.randomUUID());
-
-//        try {
-//            //fileStore.save(path, fileName, Optional.of(metadata), file.getInputStream());
-//        } catch (IOException e) {
-//            throw new IllegalStateException(e);
-//        }
-
-        return fileName;
-    }
+//    @Override
+//    public String uploadImage(MultipartFile file) {
+////        if (file.isEmpty()) {
+////            throw new IllegalStateException("Cannot upload empty file");
+////        }
+////        if (!Arrays.asList(IMAGE_JPEG.getMimeType(), IMAGE_PNG.getMimeType() ).contains(file.getContentType())) {
+////            throw new IllegalStateException("File must be an image");
+////        }
+////        Map<String, String> metadata = new HashMap<>();
+////        metadata.put("Content-Type", file.getContentType());
+////        metadata.put("Content-Length", String.valueOf(file.getSize()));
+////
+////        //String path = String.format("%s/%s", BucketName.IMAGE.getBucketName(), "sports");
+////        String fileName = String.format("%s-%s", file.getOriginalFilename(), UUID.randomUUID());
+//
+////        try {
+////            //fileStore.save(path, fileName, Optional.of(metadata), file.getInputStream());
+////        } catch (IOException e) {
+////            throw new IllegalStateException(e);
+////        }
+//
+////        return fileName;
+//    }
 
     @Override
     public Optional<Sport> updateSport(Sport sport, long id) {

@@ -9,11 +9,10 @@ import com.ktu.xsports.api.domain.Progress;
 import com.ktu.xsports.api.domain.Status;
 import com.ktu.xsports.api.domain.Trick;
 import com.ktu.xsports.api.domain.User;
+import jakarta.validation.constraints.NotNull;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
-
-import javax.validation.constraints.NotNull;
 
 @Data
 @NoArgsConstructor

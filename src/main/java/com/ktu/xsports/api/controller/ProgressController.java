@@ -8,6 +8,8 @@ import com.ktu.xsports.api.service.progress.internal.ProgressCreator;
 import com.ktu.xsports.api.service.progress.internal.ProgressRemover;
 import com.ktu.xsports.api.service.progress.internal.ProgressRetriever;
 import com.ktu.xsports.api.service.progress.internal.ProgressUpdater;
+import jakarta.validation.Valid;
+import jakarta.validation.constraints.NotNull;
 import lombok.RequiredArgsConstructor;
 import org.modelmapper.ModelMapper;
 import org.springframework.data.domain.Page;
@@ -17,8 +19,6 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
-import javax.validation.Valid;
-import javax.validation.constraints.NotNull;
 import java.util.Map;
 import java.util.Optional;
 

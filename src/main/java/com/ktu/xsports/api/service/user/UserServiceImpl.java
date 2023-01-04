@@ -14,8 +14,8 @@ import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
-import javax.transaction.Transactional;
 import java.util.*;
 
 @Service
@@ -26,7 +26,7 @@ public class UserServiceImpl implements UserService, UserDetailsService {
     private final UserRepository userRepository;
     private final RoleRepository roleRepository;
 
-    private final PasswordEncoder passwordEncoder;
+//    private final PasswordEncoder passwordEncoder;
 
     @Override
     public Page<User> findUser(Pageable pageable) {
@@ -51,7 +51,7 @@ public class UserServiceImpl implements UserService, UserDetailsService {
         log.info("Saving user to database");
         Role role = roleRepository.findByName("user").get();
         user.setRoles(List.of(role));
-        user.setPassword(passwordEncoder.encode(user.getPassword()));
+//        user.setPassword(passwordEncoder.encode(user.getPassword()));
         return userRepository.save(user);
     }
 
@@ -60,7 +60,7 @@ public class UserServiceImpl implements UserService, UserDetailsService {
         log.info("Updating user by id");
         user.setId(id);
         if (userRepository.findById(id).isPresent()) {
-            user.setPassword(passwordEncoder.encode(user.getPassword()));
+//            user.setPassword(passwordEncoder.encode(user.getPassword()));
             return Optional.of(userRepository.save(user));
         }
         return Optional.empty();

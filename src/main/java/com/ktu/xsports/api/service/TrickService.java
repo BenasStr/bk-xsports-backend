@@ -4,10 +4,9 @@ import com.ktu.xsports.api.domain.Category;
 import com.ktu.xsports.api.domain.Trick;
 import com.ktu.xsports.api.repository.TrickRepository;
 import com.ktu.xsports.api.service.category.CategoryService;
+import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
-
-import javax.transaction.Transactional;
 import java.util.List;
 import java.util.Objects;
 import java.util.Optional;
