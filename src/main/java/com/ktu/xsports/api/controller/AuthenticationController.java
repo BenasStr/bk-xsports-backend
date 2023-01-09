@@ -29,9 +29,4 @@ public class AuthenticationController {
     public ResponseEntity<?> login(@RequestBody LoginRequest request) throws Exception {
         return ResponseEntity.ok(Map.of("data", authenticationService.authenticate(request)));
     }
-
-    @GetMapping("/demo")
-    public ResponseEntity<?> demo() {
-        return ResponseEntity.ok("This is demo");
-    }
 }
