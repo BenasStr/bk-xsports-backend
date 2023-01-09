@@ -1,14 +1,11 @@
 package com.ktu.xsports.api.service.user;
 
-import com.ktu.xsports.api.domain.Role;
 import com.ktu.xsports.api.domain.User;
-import com.ktu.xsports.api.repository.RoleRepository;
 import com.ktu.xsports.api.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
-import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
@@ -24,9 +21,8 @@ import java.util.*;
 @Slf4j
 public class UserServiceImpl implements UserService, UserDetailsService {
     private final UserRepository userRepository;
-    private final RoleRepository roleRepository;
 
-//    private final PasswordEncoder passwordEncoder;
+    private final PasswordEncoder passwordEncoder;
 
     @Override
     public Page<User> findUser(Pageable pageable) {
@@ -49,9 +45,7 @@ public class UserServiceImpl implements UserService, UserDetailsService {
     @Override
     public User saveUser(User user) {
         log.info("Saving user to database");
-        Role role = roleRepository.findByName("user").get();
-        user.setRoles(List.of(role));
-//        user.setPassword(passwordEncoder.encode(user.getPassword()));
+        user.setPassword(passwordEncoder.encode(user.getPassword()));
         return userRepository.save(user);
     }
 
@@ -60,7 +54,7 @@ public class UserServiceImpl implements UserService, UserDetailsService {
         log.info("Updating user by id");
         user.setId(id);
         if (userRepository.findById(id).isPresent()) {
-//            user.setPassword(passwordEncoder.encode(user.getPassword()));
+            user.setPassword(passwordEncoder.encode(user.getPassword()));
             return Optional.of(userRepository.save(user));
         }
         return Optional.empty();
@@ -81,19 +75,19 @@ public class UserServiceImpl implements UserService, UserDetailsService {
     public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
         Optional<User> user = userRepository.findByEmail(username);
 
-        if(user.isPresent()) {
-            log.info("User found in the database: {}", user.get().getEmail());
-            Collection<SimpleGrantedAuthority> authorities = new ArrayList<>();
-            user.get().getRoles().forEach( role -> {
-                authorities.add(new SimpleGrantedAuthority(role.getName()));
-            });
-
-            return new org.springframework.security.core.userdetails.User(
-                    user.get().getEmail(),
-                    user.get().getPassword(),
-                    authorities
-            );
-        }
+//        if(user.isPresent()) {
+//            log.info("User found in the database: {}", user.get().getEmail());
+//            Collection<SimpleGrantedAuthority> authorities = new ArrayList<>();
+//            user.get().getRoles().forEach( role -> {
+//                authorities.add(new SimpleGrantedAuthority(role.getName()));
+//            });
+//
+//            return new org.springframework.security.core.userdetails.User(
+//                    user.get().getEmail(),
+//                    user.get().getPassword(),
+//                    authorities
+//            );
+//        }
 
         log.error("User not found in the database");
         throw new UsernameNotFoundException("User not found in the database");

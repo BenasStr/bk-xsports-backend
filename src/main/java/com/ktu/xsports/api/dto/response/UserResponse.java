@@ -1,10 +1,8 @@
 package com.ktu.xsports.api.dto.response;
 
-import com.ktu.xsports.api.domain.Role;
+import com.ktu.xsports.api.domain.enums.Role;
 import lombok.Data;
 import lombok.NoArgsConstructor;
-
-import java.util.List;
 
 @Data
 @NoArgsConstructor
@@ -16,5 +14,5 @@ public class UserResponse {
     String email;
     String password;
     String photoPath;
-    List<Role> roles;
+    Role role;
 }
