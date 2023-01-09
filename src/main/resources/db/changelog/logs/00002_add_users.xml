@@ -3,12 +3,10 @@
         xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
         xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog
-      http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-4.1.xsd
-      http://www.liquibase.org/xml/ns/pro
-      http://www.liquibase.org/xml/ns/pro/liquibase-pro-4.1.xsd">
+      http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-4.1.xsd">
 
     <changeSet id="2" author="benas.strauka">
-        <preConditions onFail="CONTINUE">
+        <preConditions>
             <not>
                 <tableExists tableName="users" schemaName="xsports_db"/>
                 <tableExists tableName="users_roles" catalogName="xsports_db"/>
@@ -51,5 +49,4 @@
             </column>
         </createTable>
     </changeSet>
-
 </databaseChangeLog>
