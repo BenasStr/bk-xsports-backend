@@ -1,5 +1,6 @@
 package com.ktu.xsports.config;
 
+import com.ktu.xsports.api.domain.enums.Role;
 import com.ktu.xsports.config.filter.JwtAuthenticationFilter;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Bean;
@@ -11,6 +12,8 @@ import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 
+import static org.springframework.http.HttpMethod.*;
+
 @Configuration
 @EnableWebSecurity
 @RequiredArgsConstructor
@@ -21,21 +24,29 @@ public class SecurityConfiguration {
 
     @Bean
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
-        http.csrf().disable()
-                .authorizeHttpRequests()
-                .requestMatchers("/api/auth/demo").hasAnyRole("ADMIN")
-                .requestMatchers("/api/auth/**").permitAll()
-                .anyRequest().authenticated()
-                .and()
-                .sessionManagement().sessionCreationPolicy(SessionCreationPolicy.STATELESS)
-                .and()
-                .authenticationProvider(authenticationProvider)
+
+        http.csrf().disable();
+
+        authorizationEndpoints(http);
+        sportsEndpoints(http);
+
+        http.authorizeHttpRequests().anyRequest().authenticated();
+
+        http.sessionManagement().sessionCreationPolicy(SessionCreationPolicy.STATELESS);
+
+        http.authenticationProvider(authenticationProvider)
                 .addFilterBefore(jwtAuthFilter, UsernamePasswordAuthenticationFilter.class);
 
         return http.build();
     }
 
-    private HttpSecurity uga(HttpSecurity http) {
-        return http;
+    private void authorizationEndpoints(HttpSecurity http) throws Exception {
+        http.authorizeHttpRequests()
+                .requestMatchers("/api/auth/**").permitAll();
+    }
+
+    private void sportsEndpoints(HttpSecurity http) throws Exception {
+        http.authorizeHttpRequests()
+                .requestMatchers(GET,"/api/sports").hasAnyAuthority(Role.USER.name(), Role.ADMIN.name(), Role.MODERATOR.name());
     }
 }
