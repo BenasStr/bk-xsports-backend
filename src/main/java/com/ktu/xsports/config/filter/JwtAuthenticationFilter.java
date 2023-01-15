@@ -1,6 +1,6 @@
 package com.ktu.xsports.config.filter;
 
-import com.ktu.xsports.api.service.jwt.JwtService;
+import com.ktu.xsports.api.service.JwtService;
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;

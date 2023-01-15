@@ -4,7 +4,7 @@ import com.ktu.xsports.api.converter.PageableConverter;
 import com.ktu.xsports.api.domain.User;
 import com.ktu.xsports.api.dto.request.UserRequest;
 import com.ktu.xsports.api.dto.response.UserResponse;
-import com.ktu.xsports.api.service.user.UserService;
+import com.ktu.xsports.api.service.UserService;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;

@@ -3,7 +3,6 @@ package com.ktu.xsports.api.service;
 import com.ktu.xsports.api.domain.Category;
 import com.ktu.xsports.api.domain.Trick;
 import com.ktu.xsports.api.repository.TrickRepository;
-import com.ktu.xsports.api.service.category.CategoryService;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;

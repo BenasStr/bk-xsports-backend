@@ -1,4 +1,4 @@
-package com.ktu.xsports.api.service.category;
+package com.ktu.xsports.api.service;
 
 import com.ktu.xsports.api.domain.Category;
 import com.ktu.xsports.api.domain.Sport;

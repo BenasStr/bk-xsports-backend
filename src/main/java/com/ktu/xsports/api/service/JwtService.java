@@ -1,4 +1,4 @@
-package com.ktu.xsports.api.service.jwt;
+package com.ktu.xsports.api.service;
 
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.Jwts;

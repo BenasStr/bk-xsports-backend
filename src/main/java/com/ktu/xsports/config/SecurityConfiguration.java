@@ -34,4 +34,8 @@ public class SecurityConfiguration {
 
         return http.build();
     }
+
+    private HttpSecurity uga(HttpSecurity http) {
+        return http;
+    }
 }

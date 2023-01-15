@@ -1,4 +1,4 @@
-package com.ktu.xsports.api.service.user;
+package com.ktu.xsports.api.service;
 
 import com.ktu.xsports.api.domain.User;
 import com.ktu.xsports.api.repository.UserRepository;
@@ -19,37 +19,32 @@ import java.util.*;
 @RequiredArgsConstructor
 @Transactional
 @Slf4j
-public class UserServiceImpl implements UserService, UserDetailsService {
+public class UserService implements UserDetailsService {
     private final UserRepository userRepository;
 
     private final PasswordEncoder passwordEncoder;
 
-    @Override
     public Page<User> findUser(Pageable pageable) {
         log.info("Fetching all users");
         return userRepository.findAll(pageable);
     }
 
-    @Override
     public Optional<User> findById(long id) {
         log.info("Finding user by id {}", id);
         return userRepository.findById(id);
     }
 
-    @Override
     public Optional<User> findByEmail(String email) {
         log.info("Fetching user by email {}", email);
         return userRepository.findByEmail(email);
     }
 
-    @Override
     public User saveUser(User user) {
         log.info("Saving user to database");
         user.setPassword(passwordEncoder.encode(user.getPassword()));
         return userRepository.save(user);
     }
 
-    @Override
     public Optional<User> updateUser(User user, long id) {
         log.info("Updating user by id");
         user.setId(id);
@@ -60,7 +55,6 @@ public class UserServiceImpl implements UserService, UserDetailsService {
         return Optional.empty();
     }
 
-    @Override
     public Optional<User> removeUser(long id) {
         log.info("Removing user by id");
         Optional<User> deletedUser = userRepository.findById(id);

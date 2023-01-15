@@ -4,10 +4,7 @@ import com.ktu.xsports.api.converter.PageableConverter;
 import com.ktu.xsports.api.domain.Progress;
 import com.ktu.xsports.api.dto.request.ProgressRequest;
 import com.ktu.xsports.api.dto.response.ProgressResponse;
-import com.ktu.xsports.api.service.progress.internal.ProgressCreator;
-import com.ktu.xsports.api.service.progress.internal.ProgressRemover;
-import com.ktu.xsports.api.service.progress.internal.ProgressRetriever;
-import com.ktu.xsports.api.service.progress.internal.ProgressUpdater;
+import com.ktu.xsports.api.service.ProgressService;
 import jakarta.validation.Valid;
 import jakarta.validation.constraints.NotNull;
 import lombok.RequiredArgsConstructor;
@@ -28,10 +25,7 @@ import java.util.Optional;
 @RequestMapping("progress")
 public class ProgressController {
 
-    private final ProgressRetriever progressRetriever;
-    private final ProgressCreator progressCreator;
-    private final ProgressUpdater progressUpdater;
-    private final ProgressRemover progressRemover;
+    private final ProgressService progressService;
     private final ModelMapper modelMapper;
 
     @GetMapping()
@@ -41,7 +35,7 @@ public class ProgressController {
             @RequestParam @NotNull long userId
     ) {
         Pageable pageable = PageRequest.of(page - 1, size);
-        Page<Progress> progressPage = progressRetriever.findProgress(pageable, userId);
+        Page<Progress> progressPage = progressService.findProgress(pageable, userId);
         Page<ProgressResponse> progressResponsePage = progressPage.map(
                 lesson -> modelMapper.map(lesson, ProgressResponse.class)
         );
@@ -53,7 +47,7 @@ public class ProgressController {
 
     @GetMapping("/{id}")
     public ResponseEntity<?> findProgress(@PathVariable long id) {
-        Optional<Progress> progress = progressRetriever.findProgressById(id);
+        Optional<Progress> progress = progressService.findProgressById(id);
 
         return ResponseEntity.of(
                 progress.map(p ->
@@ -65,7 +59,7 @@ public class ProgressController {
             @RequestBody @Valid ProgressRequest progressRequest
     ) {
         Progress progress = progressRequest.toProgress();
-        Optional<Progress> newProgress = progressCreator.createProgress(progress);
+        Optional<Progress> newProgress = progressService.createProgress(progress);
 
         return ResponseEntity.of(
                 newProgress.map(p ->
@@ -78,7 +72,7 @@ public class ProgressController {
             @RequestBody @Valid ProgressRequest progressRequest
     ) {
         Progress progress = progressRequest.toProgress();
-        Optional<Progress> newLesson = progressUpdater.updateProgress(progress, id);
+        Optional<Progress> newLesson = progressService.updateProgress(progress, id);
 
         return ResponseEntity.of(
                 newLesson.map(p ->
@@ -87,7 +81,7 @@ public class ProgressController {
 
     @DeleteMapping("/{id}")
     public ResponseEntity<?> deleteProgress(@PathVariable long id) {
-        Optional<Progress> deletedProgress = progressRemover.removeProgress(id);
+        Optional<Progress> deletedProgress = progressService.removeProgress(id);
 
         return ResponseEntity.of(
                 deletedProgress.map(p ->

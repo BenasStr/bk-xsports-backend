@@ -3,7 +3,7 @@ package com.ktu.xsports.api.controller;
 import com.ktu.xsports.api.domain.Sport;
 import com.ktu.xsports.api.dto.request.SportRequest;
 import com.ktu.xsports.api.dto.response.SportResponse;
-import com.ktu.xsports.api.service.sport.SportServiceImpl;
+import com.ktu.xsports.api.service.SportService;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.modelmapper.ModelMapper;
@@ -28,7 +28,7 @@ import java.util.Optional;
 @RequestMapping("/api/sports")
 public class SportController {
 
-    private final SportServiceImpl sportService;
+    private final SportService sportService;
     private final ModelMapper modelMapper;
 
     @GetMapping()

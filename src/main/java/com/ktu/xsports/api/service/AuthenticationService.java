@@ -6,7 +6,6 @@ import com.ktu.xsports.api.dto.request.LoginRequest;
 import com.ktu.xsports.api.dto.request.RegisterRequest;
 import com.ktu.xsports.api.dto.response.AuthenticationResponse;
 import com.ktu.xsports.api.repository.UserRepository;
-import com.ktu.xsports.api.service.jwt.JwtService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
