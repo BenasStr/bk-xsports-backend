@@ -47,6 +47,8 @@ public class SecurityConfiguration {
 
     private void sportsEndpoints(HttpSecurity http) throws Exception {
         http.authorizeHttpRequests()
-                .requestMatchers(GET,"/api/sports").hasAnyAuthority(Role.USER.name(), Role.ADMIN.name(), Role.MODERATOR.name());
+                .requestMatchers(GET,"/api/sports").hasAnyAuthority(Role.USER.name(), Role.ADMIN.name(), Role.MODERATOR.name())
+                .requestMatchers(GET, "/api/sports/{id}").hasAnyAuthority(Role.USER.name(), Role.ADMIN.name(), Role.MODERATOR.name())
+                .requestMatchers(POST, "/api/sports").hasAnyAuthority(Role.ADMIN.name(), Role.MODERATOR.name());
     }
 }

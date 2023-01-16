@@ -50,9 +50,7 @@ public class SportController {
     }
 
     @PostMapping()
-    public ResponseEntity<?> createSport(
-            @RequestBody @Valid SportRequest sportRequest
-            ) {
+    public ResponseEntity<?> createSport(@RequestBody @Valid SportRequest sportRequest) {
         Sport sport = sportRequest.toSport();
         Optional<Sport> newSport = sportService.createSport(sport);
         return ResponseEntity.of(
