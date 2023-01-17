@@ -1,0 +1,35 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<databaseChangeLog
+        xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog
+      http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-4.1.xsd">
+    <changeSet id="10" author="benas.strauka">
+        <preConditions>
+            <tableExists tableName="users" schemaName="xsports_db"/>
+        </preConditions>
+        <comment>Add column to users table.</comment>
+
+        <addColumn tableName="users">
+            <column name="role" type="varchar(255)">
+                <constraints nullable="false"/>
+            </column>
+        </addColumn>
+    </changeSet>
+
+    <changeSet id="11" author="benas.strauka">
+        <preConditions>
+            <tableExists tableName="users_roles" schemaName="xsports_db"/>
+        </preConditions>
+        <comment>Remove users_roles table.</comment>
+        <dropTable tableName="users_roles"/>
+    </changeSet>
+
+    <changeSet id="12" author="benas.strauka">
+        <preConditions>
+            <tableExists tableName="roles" schemaName="xsports_db"/>
+        </preConditions>
+        <comment>Remove roles table.</comment>
+        <dropTable tableName="roles"/>
+    </changeSet>
+</databaseChangeLog>

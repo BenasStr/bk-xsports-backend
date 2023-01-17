@@ -8,11 +8,11 @@ import com.ktu.xsports.api.converter.IdsToTricksConverter;
 import com.ktu.xsports.api.domain.Difficulty;
 import com.ktu.xsports.api.domain.Lesson;
 import com.ktu.xsports.api.domain.Trick;
+import jakarta.validation.constraints.NotNull;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
-import javax.validation.constraints.NotNull;
 import java.util.List;
 
 @Data

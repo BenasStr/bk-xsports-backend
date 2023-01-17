@@ -1,4 +1,4 @@
-package com.ktu.xsports.api.config;
+package com.ktu.xsports.config;
 
 import com.ktu.xsports.api.converter.TricksToIdsConverter;
 import com.ktu.xsports.api.domain.Trick;
@@ -6,9 +6,9 @@ import com.ktu.xsports.api.dto.response.TrickResponse;
 import lombok.RequiredArgsConstructor;
 import org.modelmapper.ModelMapper;
 import org.springframework.context.annotation.Bean;
-import org.springframework.stereotype.Service;
+import org.springframework.context.annotation.Configuration;
 
-@Service
+@Configuration
 @RequiredArgsConstructor
 public class ModelMapping {
 

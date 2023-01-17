@@ -3,17 +3,21 @@ package com.ktu.xsports.api.controller;
 import com.ktu.xsports.api.domain.Sport;
 import com.ktu.xsports.api.dto.request.SportRequest;
 import com.ktu.xsports.api.dto.response.SportResponse;
-import com.ktu.xsports.api.service.sport.SportServiceImpl;
-import com.ktu.xsports.api.service.sport.SportsService;
+import com.ktu.xsports.api.service.SportService;
+import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.modelmapper.ModelMapper;
-import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.annotation.Validated;
-import org.springframework.web.bind.annotation.*;
-import org.springframework.web.multipart.MultipartFile;
+import org.springframework.web.bind.annotation.DeleteMapping;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.PutMapping;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RestController;
 
-import javax.validation.Valid;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
@@ -24,7 +28,7 @@ import java.util.Optional;
 @RequestMapping("/api/sports")
 public class SportController {
 
-    private final SportServiceImpl sportService;
+    private final SportService sportService;
     private final ModelMapper modelMapper;
 
     @GetMapping()
@@ -55,16 +59,16 @@ public class SportController {
                 newSport.map(s -> Map.of("data", modelMapper.map(s, SportResponse.class))));
     }
 
-    @PostMapping(
-            path = "/upload/image",
-            consumes = MediaType.MULTIPART_FORM_DATA_VALUE
-    )
-    public ResponseEntity<?> uploadSportImage(
-            @RequestParam("file") MultipartFile file
-    ) {
-        String path = sportService.uploadImage(file);
-        return ResponseEntity.ok(Map.of("data", path));
-    }
+//    @PostMapping(
+//            path = "/upload/image",
+//            consumes = MediaType.MULTIPART_FORM_DATA_VALUE
+//    )
+//    public ResponseEntity<?> uploadSportImage(
+//            @RequestParam("file") MultipartFile file
+//    ) {
+////        String path = sportService.uploadImage(file);
+////        return ResponseEntity.ok(Map.of("data", path));
+//    }
 
     @GetMapping("{sportId}/download/image")
     public byte[] downloadSportImage(@PathVariable long sportId) {

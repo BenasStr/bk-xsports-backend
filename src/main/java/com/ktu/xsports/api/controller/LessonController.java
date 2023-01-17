@@ -4,10 +4,8 @@ import com.ktu.xsports.api.converter.PageableConverter;
 import com.ktu.xsports.api.domain.Lesson;
 import com.ktu.xsports.api.dto.request.LessonRequest;
 import com.ktu.xsports.api.dto.response.LessonResponse;
-import com.ktu.xsports.api.service.lesson.internal.LessonCreator;
-import com.ktu.xsports.api.service.lesson.internal.LessonRemover;
-import com.ktu.xsports.api.service.lesson.internal.LessonRetriever;
-import com.ktu.xsports.api.service.lesson.internal.LessonUpdater;
+import com.ktu.xsports.api.service.LessonService;
+import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.modelmapper.ModelMapper;
 import org.springframework.data.domain.Page;
@@ -17,7 +15,6 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
-import javax.validation.Valid;
 import java.util.Map;
 import java.util.Optional;
 
@@ -27,10 +24,7 @@ import java.util.Optional;
 @RequestMapping("lessons")
 public class LessonController {
 
-    private final LessonRetriever lessonRetriever;
-    private final LessonCreator lessonCreator;
-    private final LessonUpdater lessonUpdater;
-    private final LessonRemover lessonRemover;
+    private final LessonService lessonService;
     private final ModelMapper modelMapper;
 
     @GetMapping()
@@ -39,7 +33,7 @@ public class LessonController {
             @RequestParam(defaultValue = "20", name = "per_page") int size
     ) {
         Pageable pageable = PageRequest.of(page - 1, size);
-        Page<Lesson> lessonsPage = lessonRetriever.findLessons(pageable);
+        Page<Lesson> lessonsPage = lessonService.findLessons(pageable);
         Page<LessonResponse> lessonResponsesPage = lessonsPage.map(
                 lesson -> modelMapper.map(lesson, LessonResponse.class)
         );
@@ -51,7 +45,7 @@ public class LessonController {
 
     @GetMapping("/{id}")
     public ResponseEntity<?> findLesson(@PathVariable long id) {
-        Optional<Lesson> lesson = lessonRetriever.findLessonById(id);
+        Optional<Lesson> lesson = lessonService.findLessonById(id);
 
         return ResponseEntity.of(
                 lesson.map(l -> Map.of("data", modelMapper.map(l, LessonResponse.class))));
@@ -62,7 +56,7 @@ public class LessonController {
             @RequestBody @Valid LessonRequest lessonRequest
     ) {
         Lesson lesson = lessonRequest.toLesson();
-        Optional<Lesson> newLesson = lessonCreator.createLesson(lesson);
+        Optional<Lesson> newLesson = lessonService.createLesson(lesson);
 
         return ResponseEntity.of(
                 newLesson.map(l -> Map.of("data", modelMapper.map(l, LessonResponse.class))));
@@ -74,7 +68,7 @@ public class LessonController {
             @RequestBody @Valid LessonRequest lessonRequest
     ) {
         Lesson lesson = lessonRequest.toLesson();
-        Optional<Lesson> newLesson = lessonUpdater.updateLesson(lesson, id);
+        Optional<Lesson> newLesson = lessonService.updateLesson(lesson, id);
 
         return ResponseEntity.of(
                 newLesson.map(l -> Map.of("data", modelMapper.map(l, LessonResponse.class))));
@@ -82,7 +76,7 @@ public class LessonController {
 
     @DeleteMapping("/{id}")
     public ResponseEntity<?> deleteLesson(@PathVariable long id) {
-        Optional<Lesson> deletedLesson = lessonRemover.removeLesson(id);
+        Optional<Lesson> deletedLesson = lessonService.removeLesson(id);
 
         return ResponseEntity.of(
                 deletedLesson.map(l ->
