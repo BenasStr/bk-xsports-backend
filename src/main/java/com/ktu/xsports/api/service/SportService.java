@@ -1,6 +1,7 @@
 package com.ktu.xsports.api.service;
 
 import com.ktu.xsports.api.domain.Sport;
+import com.ktu.xsports.api.exceptions.AlreadyExistsException;
 import com.ktu.xsports.api.repository.SportRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -27,10 +28,16 @@ public class SportService {
     }
 
     public Optional<Sport> createSport(Sport sport) {
+        sportRepository.findByName(sport.getName())
+                .orElseThrow(() -> new AlreadyExistsException(String.format("Sport with name %s", sport.getName())));
+
         return Optional.of(sportRepository.save(sport));
     }
 
     public Optional<Sport> updateSport(Sport sport, long id) {
+        sportRepository.findByName(sport.getName())
+                .orElseThrow(() -> new AlreadyExistsException(String.format("Sport with name %s", sport.getName())));
+
         sport.setId(id);
         if(sportRepository.findById(id).isPresent()) {
             return Optional.of(sportRepository.save(sport));

@@ -10,10 +10,10 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 @AllArgsConstructor
 public class SportRequest {
-    @NotNull
+    @NotNull(message = "Must have a name")
     private String name;
 
-    @NotNull
+    @NotNull(message = "Must have a photo")
     private String photo;
 
     public Sport toSport() {
