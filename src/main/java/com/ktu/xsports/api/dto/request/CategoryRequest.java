@@ -11,10 +11,10 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 public class CategoryRequest {
 
-    @NotNull
+    @NotNull(message = "Must have a name")
     private String name;
 
-    @NotNull
+    @NotNull(message = "Must have a photo")
     private String photo;
 
     public Category toCategory() {

@@ -13,4 +13,6 @@ public interface CategoryRepository extends JpaRepository<Category, Long> {
     List<Category> findAllBySportId(long sport);
 
     Optional<Category> findBySportIdAndId(long sportId, long id);
+
+    Optional<Category> findByName(String name);
 }
