@@ -2,6 +2,7 @@ package com.ktu.xsports.api.service;
 
 import com.ktu.xsports.api.domain.Category;
 import com.ktu.xsports.api.domain.Sport;
+import com.ktu.xsports.api.exceptions.AlreadyExistsException;
 import com.ktu.xsports.api.exceptions.ServiceException;
 import com.ktu.xsports.api.repository.CategoryRepository;
 import com.ktu.xsports.api.repository.SportRepository;
@@ -27,15 +28,32 @@ public class CategoryService {
 
     public Optional<Category> createCategory(long sportId, Category category) {
         Optional<Sport> sport = sportRepository.findById(sportId);
-        if (sport.isPresent()) {
-            category.setSport(sport.get());
-            return Optional.of(categoryRepository.save(category));
+        if (sport.isEmpty()) {
+            return Optional.empty();
         }
-        return Optional.empty();
+
+        Optional<Category> categoryExists = categoryRepository.findByName(category.getName());
+        if (categoryExists.isPresent()) {
+            throw new AlreadyExistsException(String.format("Category with name %s already exists.", category.getName()));
+        }
+
+        category.setSport(sport.get());
+        return Optional.of(categoryRepository.save(category));
     }
 
     public Optional<Category> updateCategory(long sportId, Category category, long id) {
+        Optional<Sport> sport = sportRepository.findById(sportId);
+        if (sport.isEmpty()) {
+            return Optional.empty();
+        }
+
+        Optional<Category> categoryExists = categoryRepository.findByName(category.getName());
+        if (categoryExists.isPresent()) {
+            throw new AlreadyExistsException(String.format("Category with name %s already exists.", category.getName()));
+        }
+
         category.setId(id);
+        category.setSport(sport.get());
         if(categoryRepository.findBySportIdAndId(sportId, id).isPresent()) {
             return Optional.of(categoryRepository.save(category));
         }

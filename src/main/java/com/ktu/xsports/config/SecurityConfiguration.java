@@ -29,6 +29,7 @@ public class SecurityConfiguration {
 
         authorizationEndpoints(http);
         sportsEndpoints(http);
+        categoriesEndpoints(http);
 
         http.authorizeHttpRequests().anyRequest().authenticated();
 
@@ -49,6 +50,17 @@ public class SecurityConfiguration {
         http.authorizeHttpRequests()
                 .requestMatchers(GET,"/api/sports").hasAnyAuthority(Role.USER.name(), Role.ADMIN.name(), Role.MODERATOR.name())
                 .requestMatchers(GET, "/api/sports/{id}").hasAnyAuthority(Role.USER.name(), Role.ADMIN.name(), Role.MODERATOR.name())
-                .requestMatchers(POST, "/api/sports").hasAnyAuthority(Role.ADMIN.name(), Role.MODERATOR.name());
+                .requestMatchers(POST, "/api/sports").hasAnyAuthority(Role.ADMIN.name(), Role.MODERATOR.name())
+                .requestMatchers(PUT, "/api/sports/{id}").hasAnyAuthority(Role.ADMIN.name(), Role.MODERATOR.name())
+                .requestMatchers(DELETE, "/api/sports/{id}").hasAnyAuthority(Role.ADMIN.name(), Role.MODERATOR.name());
+    }
+
+    private void categoriesEndpoints(HttpSecurity http) throws Exception {
+        http.authorizeHttpRequests()
+                .requestMatchers(GET, "/api/sports/{sportId}/categories").hasAnyAuthority(Role.USER.name(), Role.ADMIN.name(), Role.MODERATOR.name())
+                .requestMatchers(GET, "/api/sports/{sportId}/categories/{id}").hasAnyAuthority(Role.USER.name(), Role.ADMIN.name(), Role.MODERATOR.name())
+                .requestMatchers(POST, "/api/sports/{sportId}/categories").hasAnyAuthority(Role.ADMIN.name(), Role.MODERATOR.name())
+                .requestMatchers(PUT, "/api/sports/{sportId}/categories/{id}").hasAnyAuthority(Role.ADMIN.name(), Role.MODERATOR.name())
+                .requestMatchers(DELETE, "/api/sports/{sportId}/categories/{id}").hasAnyAuthority(Role.ADMIN.name(), Role.MODERATOR.name());
     }
 }

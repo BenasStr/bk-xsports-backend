@@ -58,6 +58,7 @@ public class CategoryController {
                 newCategory.map(c -> Map.of("data", modelMapper.map(c, CategoryResponse.class))));
     }
 
+    //TODO: this is broken
     @PutMapping("/{categoryId}")
     public ResponseEntity<?> updateSportCategory(
             @PathVariable long categoryId,

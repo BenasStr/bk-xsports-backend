@@ -28,15 +28,19 @@ public class SportService {
     }
 
     public Optional<Sport> createSport(Sport sport) {
-        sportRepository.findByName(sport.getName())
-                .orElseThrow(() -> new AlreadyExistsException(String.format("Sport with name %s", sport.getName())));
+        Optional<Sport> exists = sportRepository.findByName(sport.getName());
+        if(exists.isPresent()) {
+            throw new AlreadyExistsException(String.format("Sport with name %s", sport.getName()));
+        }
 
         return Optional.of(sportRepository.save(sport));
     }
 
     public Optional<Sport> updateSport(Sport sport, long id) {
-        sportRepository.findByName(sport.getName())
-                .orElseThrow(() -> new AlreadyExistsException(String.format("Sport with name %s", sport.getName())));
+        Optional<Sport> exists = sportRepository.findByName(sport.getName());
+        if(exists.isPresent()) {
+            throw new AlreadyExistsException(String.format("Sport with name %s", sport.getName()));
+        }
 
         sport.setId(id);
         if(sportRepository.findById(id).isPresent()) {
