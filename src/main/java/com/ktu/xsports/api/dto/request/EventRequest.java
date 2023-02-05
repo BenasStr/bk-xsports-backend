@@ -1,7 +1,7 @@
 package com.ktu.xsports.api.dto.request;
 
 import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
-import com.ktu.xsports.api.converter.IdsToSportsConverter;
+import com.ktu.xsports.api.converter.sport.IdsToSportsConverter;
 import com.ktu.xsports.api.domain.Event;
 import com.ktu.xsports.api.domain.Sport;
 import jakarta.validation.constraints.NotNull;

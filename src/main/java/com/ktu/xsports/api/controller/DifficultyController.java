@@ -13,7 +13,7 @@ import java.util.Map;
 
 @RestController
 @RequiredArgsConstructor
-@RequestMapping("difficulties")
+@RequestMapping("api/difficulties")
 public class DifficultyController {
 
     private final DifficultyService difficultyService;

@@ -21,7 +21,7 @@ import java.util.Optional;
 @Validated
 @RestController
 @RequiredArgsConstructor
-@RequestMapping("lessons")
+@RequestMapping("api/lessons")
 public class LessonController {
 
     private final LessonService lessonService;
