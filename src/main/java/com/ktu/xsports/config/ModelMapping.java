@@ -1,6 +1,6 @@
 package com.ktu.xsports.config;
 
-import com.ktu.xsports.api.converter.TricksToIdsConverter;
+import com.ktu.xsports.api.converter.trick.TricksToIdsConverter;
 import com.ktu.xsports.api.domain.Trick;
 import com.ktu.xsports.api.dto.response.TrickResponse;
 import lombok.RequiredArgsConstructor;

@@ -22,7 +22,7 @@ import java.util.Optional;
 @Validated
 @RestController
 @RequiredArgsConstructor
-@RequestMapping("progress")
+@RequestMapping("api/progress")
 public class ProgressController {
 
     private final ProgressService progressService;

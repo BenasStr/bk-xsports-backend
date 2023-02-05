@@ -2,9 +2,9 @@ package com.ktu.xsports.api.dto.request;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
-import com.ktu.xsports.api.converter.IdToStatusConverter;
-import com.ktu.xsports.api.converter.IdToTrickConverter;
-import com.ktu.xsports.api.converter.IdToUserConverter;
+import com.ktu.xsports.api.converter.status.IdToStatusConverter;
+import com.ktu.xsports.api.converter.trick.IdToTrickConverter;
+import com.ktu.xsports.api.converter.user.IdToUserConverter;
 import com.ktu.xsports.api.domain.Progress;
 import com.ktu.xsports.api.domain.Status;
 import com.ktu.xsports.api.domain.Trick;

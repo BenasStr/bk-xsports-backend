@@ -1,4 +1,4 @@
-package com.ktu.xsports.api.converter;
+package com.ktu.xsports.api.converter.category;
 
 import com.fasterxml.jackson.databind.util.StdConverter;
 import com.ktu.xsports.api.domain.Category;

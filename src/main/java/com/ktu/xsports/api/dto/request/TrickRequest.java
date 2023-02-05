@@ -2,9 +2,9 @@ package com.ktu.xsports.api.dto.request;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
-import com.ktu.xsports.api.converter.IdToDifficultyConverter;
-import com.ktu.xsports.api.converter.IdToLessonConverter;
-import com.ktu.xsports.api.converter.IdsToTricksConverter;
+import com.ktu.xsports.api.converter.difficulty.IdToDifficultyConverter;
+import com.ktu.xsports.api.converter.lesson.IdToLessonConverter;
+import com.ktu.xsports.api.converter.trick.IdsToTricksConverter;
 import com.ktu.xsports.api.domain.Difficulty;
 import com.ktu.xsports.api.domain.Lesson;
 import com.ktu.xsports.api.domain.Trick;

@@ -1,4 +1,4 @@
-package com.ktu.xsports.api.converter;
+package com.ktu.xsports.api.converter.trick;
 
 import com.ktu.xsports.api.domain.Trick;
 import lombok.RequiredArgsConstructor;

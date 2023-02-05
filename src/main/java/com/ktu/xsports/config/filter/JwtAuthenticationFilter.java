@@ -16,10 +16,11 @@ import org.springframework.web.filter.OncePerRequestFilter;
 
 import java.io.IOException;
 
+import static org.springframework.http.HttpHeaders.*;
+
 @Component
 @RequiredArgsConstructor
 public class JwtAuthenticationFilter extends OncePerRequestFilter {
-    private final static String AUTHORIZATION = "Authorization";
     private final static String HEADER_START = "Bearer ";
     private final static int HEADER_START_LENGTH = 7;
 
