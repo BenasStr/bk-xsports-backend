@@ -12,7 +12,7 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 
 @Data
-@Entity(name = "images/categories")
+@Entity(name = "categories")
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor

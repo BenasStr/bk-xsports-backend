@@ -30,6 +30,7 @@ public class SecurityConfiguration {
         userEndpoints(http);
         sportsEndpoints(http);
         categoriesEndpoints(http);
+        tricksEndpoints(http);
         imageEndpoint(http);
         demoEndpoint(http);
 
@@ -79,6 +80,15 @@ public class SecurityConfiguration {
                 .requestMatchers(POST, "/api/sports/{sportId}/categories").hasAnyAuthority(ADMIN.name(), MODERATOR.name())
                 .requestMatchers(PUT, "/api/sports/{sportId}/categories/{id}").hasAnyAuthority(ADMIN.name(), MODERATOR.name())
                 .requestMatchers(DELETE, "/api/sports/{sportId}/categories/{id}").hasAnyAuthority(ADMIN.name(), MODERATOR.name());
+    }
+
+    private void tricksEndpoints(HttpSecurity http) throws Exception {
+        http.authorizeHttpRequests()
+            .requestMatchers(GET, "/api/sports/{sportId}/categories/{categoryId}/tricks").hasAnyAuthority(USER.name(), ADMIN.name(), MODERATOR.name())
+            .requestMatchers(GET, "/api/sports/{sportId}/categories/{categoryId}/tricks/{trickId}").hasAnyAuthority(USER.name(), ADMIN.name(), MODERATOR.name())
+            .requestMatchers(POST, "/api/sports/{sportId}/categories/{categoryId}/tricks").hasAnyAuthority(ADMIN.name(), MODERATOR.name())
+            .requestMatchers(PUT, "/api/sports/{sportId}/categories/{categoryId}/tricks/{trickId}").hasAnyAuthority(ADMIN.name(), MODERATOR.name())
+            .requestMatchers(DELETE, "/api/sports/{sportId}/categories/{categoryId}/tricks/{trickId}").hasAnyAuthority(ADMIN.name(), MODERATOR.name());
     }
 
     private void imageEndpoint(HttpSecurity http) throws Exception {
