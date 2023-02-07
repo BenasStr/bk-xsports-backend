@@ -21,10 +21,6 @@ public class UserRequest {
     private String userName;
 
     @NotNull
-    @Email
-    private String email;
-
-    @NotNull
     private String password;
 
     private String photoPath;
@@ -34,7 +30,6 @@ public class UserRequest {
                 .name(name)
                 .surname(surname)
                 .userName(userName)
-                .email(email)
                 .password(password)
                 .photoPath(photoPath)
                 .build();

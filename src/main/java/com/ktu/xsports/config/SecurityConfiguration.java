@@ -24,7 +24,6 @@ public class SecurityConfiguration {
 
     @Bean
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
-
         http.csrf().disable();
 
         authorizationEndpoints(http);
@@ -48,9 +47,20 @@ public class SecurityConfiguration {
     }
 
     private void userEndpoints(HttpSecurity http) throws Exception {
+        //Basic user endpoints
         http.authorizeHttpRequests()
-            .requestMatchers(GET, "/api/users").hasAnyAuthority(ADMIN.name(), MODERATOR.name())
-            .requestMatchers(GET, "/api/users/{id}").hasAnyAuthority(ADMIN.name(), MODERATOR.name());
+            .requestMatchers(GET, "/api/users/basic").hasAnyAuthority(USER.name(), ADMIN.name(), MODERATOR.name())
+            .requestMatchers(GET, "/api/users/basic/{id}").hasAnyAuthority(USER.name(), ADMIN.name(), MODERATOR.name())
+            .requestMatchers(GET, "/api/users/me").hasAnyAuthority(USER.name(), ADMIN.name(), MODERATOR.name())
+            .requestMatchers(PUT, "/api/users/me").hasAnyAuthority(USER.name(), ADMIN.name(), MODERATOR.name());
+
+        //Administration endpoints
+        http.authorizeHttpRequests()
+            .requestMatchers(GET, "/api/users").hasAnyAuthority(ADMIN.name())
+            .requestMatchers(GET, "/api/users/{id}").hasAnyAuthority(ADMIN.name())
+            .requestMatchers(POST, "/api/users").hasAnyAuthority(ADMIN.name())
+            .requestMatchers(PUT, "/api/users").hasAnyAuthority(ADMIN.name())
+            .requestMatchers(DELETE, "/api/users").hasAnyAuthority(ADMIN.name());
     }
 
     private void sportsEndpoints(HttpSecurity http) throws Exception {
