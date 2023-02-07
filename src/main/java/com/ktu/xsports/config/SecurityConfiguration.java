@@ -31,6 +31,7 @@ public class SecurityConfiguration {
         sportsEndpoints(http);
         categoriesEndpoints(http);
         tricksEndpoints(http);
+        lessonsEndpoints(http);
         imageEndpoint(http);
         demoEndpoint(http);
 
@@ -89,6 +90,15 @@ public class SecurityConfiguration {
             .requestMatchers(POST, "/api/sports/{sportId}/categories/{categoryId}/tricks").hasAnyAuthority(ADMIN.name(), MODERATOR.name())
             .requestMatchers(PUT, "/api/sports/{sportId}/categories/{categoryId}/tricks/{trickId}").hasAnyAuthority(ADMIN.name(), MODERATOR.name())
             .requestMatchers(DELETE, "/api/sports/{sportId}/categories/{categoryId}/tricks/{trickId}").hasAnyAuthority(ADMIN.name(), MODERATOR.name());
+    }
+
+    private void lessonsEndpoints(HttpSecurity http) throws Exception {
+        http.authorizeHttpRequests()
+            .requestMatchers(GET, "/api/lessons").hasAnyAuthority(USER.name(), ADMIN.name(), MODERATOR.name())
+            .requestMatchers(GET, "/api/lessons/{id}").hasAnyAuthority(USER.name(), ADMIN.name(), MODERATOR.name())
+            .requestMatchers(POST, "/api/lessons").hasAnyAuthority(ADMIN.name(), MODERATOR.name())
+            .requestMatchers(PUT, "/api/lessons/{id}").hasAnyAuthority(ADMIN.name(), MODERATOR.name())
+            .requestMatchers(DELETE, "/api/lessons/{id}").hasAnyAuthority(ADMIN.name(), MODERATOR.name());
     }
 
     private void imageEndpoint(HttpSecurity http) throws Exception {
