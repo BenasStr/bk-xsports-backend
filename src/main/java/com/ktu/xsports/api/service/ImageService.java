@@ -13,17 +13,17 @@ import java.io.IOException;
 public class ImageService {
 
     public void uploadImage(MultipartFile image) {
-        try {
-            ImageIO.read(image.getInputStream());
-        } catch (IOException e) {
-            throw new NotAnImageException("uga buga"); //TODO create error.
-        }
-
-        try {
-            //TODO make this shorter
-            image.transferTo(new File("/Users/benas/Coding/Learning/University/Bakalauras/bk-xsports-backend/src/main/resources/images/" + image.getOriginalFilename()));
-        } catch (IOException e) {
-            throw new ImageUploadException("ugen bugen 2"); //TODO create error.
-        }
+//        try {
+//            ImageIO.read(image.getInputStream());
+//        } catch (IOException e) {
+//            throw new NotAnImageException("uga buga"); //TODO create error.
+//        }
+//
+//        try {
+//            //TODO make this shorter
+//            image.transferTo(new File("/Users/benas/Coding/Learning/University/Bakalauras/bk-xsports-backend/src/main/resources/images/" + image.getOriginalFilename()));
+//        } catch (IOException e) {
+//            throw new ImageUploadException("ugen bugen 2"); //TODO create error.
+//        }
     }
 }

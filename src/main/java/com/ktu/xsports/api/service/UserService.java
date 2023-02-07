@@ -15,6 +15,8 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.util.*;
 
+import static com.ktu.xsports.api.domain.enums.Role.*;
+
 @Service
 @RequiredArgsConstructor
 @Transactional
@@ -24,9 +26,12 @@ public class UserService implements UserDetailsService {
 
     private final PasswordEncoder passwordEncoder;
 
-    public Page<User> findUser(Pageable pageable) {
+    public Page<User> findUsers(Pageable pageable, String username) {
         log.info("Fetching all users");
-        return userRepository.findAll(pageable);
+        if (username.equals("")) {
+            return userRepository.findAll(pageable);
+        }
+        return userRepository.findAll(pageable); //TODO: add search by username
     }
 
     public Optional<User> findById(long id) {
@@ -42,14 +47,28 @@ public class UserService implements UserDetailsService {
     public User saveUser(User user) {
         log.info("Saving user to database");
         user.setPassword(passwordEncoder.encode(user.getPassword()));
+        user.setRole(MODERATOR);
         return userRepository.save(user);
     }
 
-    public Optional<User> updateUser(User user, long id) {
+    public Optional<User> updateUserById(User user, long id) {
         log.info("Updating user by id");
         user.setId(id);
         if (userRepository.findById(id).isPresent()) {
             user.setPassword(passwordEncoder.encode(user.getPassword()));
+            user.setRole(MODERATOR);
+            return Optional.of(userRepository.save(user));
+        }
+        return Optional.empty();
+    }
+
+    public Optional<User> updateUserByEmail(User user, String email) {
+        log.info("Updating user by email");
+        Optional<User> existingUser = userRepository.findByEmail(email);
+        if (existingUser.isPresent()) {
+            user.setId(existingUser.get().getId());
+            user.setPassword(passwordEncoder.encode(user.getPassword()));
+            user.setRole(MODERATOR);
             return Optional.of(userRepository.save(user));
         }
         return Optional.empty();

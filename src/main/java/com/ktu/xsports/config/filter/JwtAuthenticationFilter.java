@@ -24,7 +24,6 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
     private final static String HEADER_START = "Bearer ";
     private final static int HEADER_START_LENGTH = 7;
 
-
     private final JwtService jwtService;
     private final UserDetailsService userDetailsService;
 
