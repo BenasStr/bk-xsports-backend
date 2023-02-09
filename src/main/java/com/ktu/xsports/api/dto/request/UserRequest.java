@@ -18,7 +18,7 @@ public class UserRequest {
     @NotNull
     private String surname;
 
-    private String userName;
+    private String nickname;
 
     @NotNull
     private String password;
@@ -29,7 +29,7 @@ public class UserRequest {
         return User.builder()
                 .name(name)
                 .surname(surname)
-                .userName(userName)
+                .nickname(nickname)
                 .password(password)
                 .photoPath(photoPath)
                 .build();
