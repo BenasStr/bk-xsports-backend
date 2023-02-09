@@ -10,7 +10,7 @@ public class UserResponse {
     long id;
     String name;
     String surname;
-    String userName;
+    String nickname;
     String email;
     String photoPath;
     Role role;

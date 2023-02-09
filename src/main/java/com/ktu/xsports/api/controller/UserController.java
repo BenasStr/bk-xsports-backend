@@ -46,10 +46,10 @@ public class UserController {
     public ResponseEntity<?> findUsers (
         @RequestParam(defaultValue = "1") int page,
         @RequestParam(defaultValue = "20", name = "per_page") int size,
-        @RequestParam(defaultValue = "", name = "username") String username
+        @RequestParam(defaultValue = "", name = "nickname") String nickname
     ) {
         Pageable pageable = PageRequest.of(page - 1, size);
-        Page<User> usersPage = userService.findUsers(pageable, username);
+        Page<User> usersPage = userService.findUsers(pageable, nickname);
         Page<UserResponse> userResponsePage = usersPage.map(
                 user -> modelMapper.map(user, UserResponse.class)
         );
@@ -63,10 +63,10 @@ public class UserController {
     public ResponseEntity<?> findUsersBasic (
         @RequestParam(defaultValue = "1") int page,
         @RequestParam(defaultValue = "20", name = "per_page") int size,
-        @RequestParam(defaultValue = "", name = "username") String username
+        @RequestParam(defaultValue = "", name = "nickname") String nickname
     ) {
         Pageable pageable = PageRequest.of(page - 1, size);
-        Page<User> usersPage = userService.findUsers(pageable, username);
+        Page<User> usersPage = userService.findUsers(pageable, nickname);
         Page<UserBasicResponse> userResponsePage = usersPage.map(
             user -> modelMapper.map(user, UserBasicResponse.class)
         );

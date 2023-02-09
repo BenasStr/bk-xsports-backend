@@ -36,7 +36,7 @@ public class User implements UserDetails {
     @NotNull
     private String surname;
 
-    private String userName;
+    private String nickname;
 
     @NotNull
     private String email;
@@ -69,7 +69,7 @@ public class User implements UserDetails {
 
     @Override
     public boolean isAccountNonLocked() {
-        return isBlocked;
+        return !isBlocked;
     }
 
     @Override

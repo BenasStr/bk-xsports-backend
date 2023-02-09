@@ -26,12 +26,13 @@ public class UserService implements UserDetailsService {
 
     private final PasswordEncoder passwordEncoder;
 
-    public Page<User> findUsers(Pageable pageable, String username) {
-        log.info("Fetching all users");
-        if (username.equals("")) {
+    public Page<User> findUsers(Pageable pageable, String nickname) {
+        if (nickname.equals("")) {
+            log.info("Fetching all users");
             return userRepository.findAll(pageable);
         }
-        return userRepository.findAll(pageable); //TODO: add search by username
+        log.info("Fetching all users by username");
+        return userRepository.findByNicknameContaining(nickname, pageable);
     }
 
     public Optional<User> findById(long id) {

@@ -19,8 +19,6 @@ public class ImageController {
 
     @PostMapping("/upload")
     public ResponseEntity<?> uploadImage(@RequestParam("file") MultipartFile image) {
-        String something = "test";
-        //googleCloudService.uploadBasic();
         imageService.uploadImage(image);
         return ResponseEntity.ok("");
     }

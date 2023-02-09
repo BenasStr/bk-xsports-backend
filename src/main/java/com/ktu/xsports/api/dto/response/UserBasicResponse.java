@@ -9,7 +9,7 @@ public class UserBasicResponse {
     long id;
     String name;
     String surname;
-    String userName;
+    String nickname;
     String photoPath;
     boolean isBlocked;
 }
