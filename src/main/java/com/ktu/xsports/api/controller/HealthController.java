@@ -14,8 +14,9 @@ import java.util.Map;
 @RequestMapping("api/health")
 @Slf4j
 public class HealthController {
+    private static final String RUNNING_MESSAGE = "bk-xsports-backend is RUNNING";
     @GetMapping()
-    public ResponseEntity<?> demo() {
-        return ResponseEntity.ok("bk-xsports-backend is RUNNING");
+    public ResponseEntity<?> health() {
+        return ResponseEntity.ok(Map.of("health", RUNNING_MESSAGE));
     }
 }
