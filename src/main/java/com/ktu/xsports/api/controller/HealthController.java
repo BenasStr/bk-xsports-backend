@@ -11,11 +11,11 @@ import java.util.Map;
 
 @RestController
 @RequiredArgsConstructor
-@RequestMapping("api/demo")
+@RequestMapping("api/health")
 @Slf4j
-public class DemoController {
+public class HealthController {
     @GetMapping()
     public ResponseEntity<?> demo() {
-        return ResponseEntity.ok(Map.of("data", "This is demo"));
+        return ResponseEntity.ok("bk-xsports is RUNNING");
     }
 }

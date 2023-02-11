@@ -33,7 +33,7 @@ public class SecurityConfiguration {
         tricksEndpoints(http);
         lessonsEndpoints(http);
         imageEndpoint(http);
-        demoEndpoint(http);
+        healthEndpoint(http);
 
         http.sessionManagement().sessionCreationPolicy(SessionCreationPolicy.STATELESS);
 
@@ -106,8 +106,8 @@ public class SecurityConfiguration {
                 .requestMatchers(POST, "/api/images/upload").permitAll();
     }
 
-    private void demoEndpoint(HttpSecurity http) throws Exception {
+    private void healthEndpoint(HttpSecurity http) throws Exception {
         http.authorizeHttpRequests()
-            .requestMatchers(GET, "/api/demo").permitAll();
+            .requestMatchers(GET, "/api/health").permitAll();
     }
 }
