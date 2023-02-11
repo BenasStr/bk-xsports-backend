@@ -16,6 +16,6 @@ import java.util.Map;
 public class HealthController {
     @GetMapping()
     public ResponseEntity<?> demo() {
-        return ResponseEntity.ok("bk-xsports is RUNNING");
+        return ResponseEntity.ok("bk-xsports-backend is RUNNING");
     }
 }
