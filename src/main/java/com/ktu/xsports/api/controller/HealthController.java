@@ -17,6 +17,7 @@ public class HealthController {
     private static final String RUNNING_MESSAGE = "bk-xsports-backend is RUNNING";
     @GetMapping()
     public ResponseEntity<?> health() {
+        log.info("health check called.");
         return ResponseEntity.ok(Map.of("health", RUNNING_MESSAGE));
     }
 }
