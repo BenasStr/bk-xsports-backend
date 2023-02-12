@@ -7,6 +7,7 @@ import com.ktu.xsports.api.dto.response.SportResponse;
 import com.ktu.xsports.api.service.CategoryService;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.modelmapper.ModelMapper;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.annotation.Validated;
@@ -20,6 +21,7 @@ import java.util.Optional;
 @RestController
 @RequiredArgsConstructor
 @RequestMapping("api/sports/{sportId}/categories")
+@Slf4j
 public class CategoryController {
 
     private final CategoryService categoryService;
@@ -28,6 +30,7 @@ public class CategoryController {
     @GetMapping()
     public ResponseEntity<?> findSportsCategories(
             @PathVariable long sportId) {
+        log.info("Categories get called.");
         List<Category> categories = categoryService.findCategories(sportId);
         List<CategoryResponse> categoriesResponse = categories.stream().map(
                 c -> modelMapper.map(c, CategoryResponse.class)
@@ -40,6 +43,7 @@ public class CategoryController {
             @PathVariable long categoryId,
             @PathVariable long sportId
     ) {
+        log.info("Category get called.");
         Optional<Category> category = categoryService.findCategory(sportId, categoryId);
 
         return ResponseEntity.of(
@@ -51,6 +55,7 @@ public class CategoryController {
             @RequestBody @Valid CategoryRequest categoryRequest,
             @PathVariable long sportId
     ) {
+        log.info("Category create called.");
         Category category = categoryRequest.toCategory();
         Optional<Category> newCategory = categoryService.createCategory(sportId, category);
 
@@ -65,6 +70,7 @@ public class CategoryController {
             @RequestBody @Valid CategoryRequest categoryRequest,
             @PathVariable long sportId
     ) {
+        log.info("Category update called.");
         Category category = categoryRequest.toCategory();
         Optional<Category> newCategory = categoryService.updateCategory(sportId, category, categoryId);
 
@@ -77,6 +83,7 @@ public class CategoryController {
             @PathVariable long categoryId,
             @PathVariable long sportId
     ) {
+        log.info("Category delete called.");
         Optional<Category> deletedSport = categoryService.removeCategory(sportId, categoryId);
         return ResponseEntity.of(
                 deletedSport.map(s ->

@@ -35,6 +35,7 @@ public class UserController {
 
     @GetMapping("/me")
     public ResponseEntity<?> findUserMe(@RequestHeader("Authorization") String authorization) {
+        log.info("User is getting me info.");
         String email = jwtService.extractUsername(authorization.substring(HEADER_START_LENGTH));
         Optional<User> user = userService.findByEmail(email);
         return ResponseEntity.of(user.map(
@@ -48,6 +49,7 @@ public class UserController {
         @RequestParam(defaultValue = "20", name = "per_page") int size,
         @RequestParam(defaultValue = "", name = "nickname") String nickname
     ) {
+        log.info("Getting users data list.");
         Pageable pageable = PageRequest.of(page - 1, size);
         Page<User> usersPage = userService.findUsers(pageable, nickname);
         Page<UserResponse> userResponsePage = usersPage.map(
@@ -65,6 +67,7 @@ public class UserController {
         @RequestParam(defaultValue = "20", name = "per_page") int size,
         @RequestParam(defaultValue = "", name = "nickname") String nickname
     ) {
+        log.info("Getting basic users data list");
         Pageable pageable = PageRequest.of(page - 1, size);
         Page<User> usersPage = userService.findUsers(pageable, nickname);
         Page<UserBasicResponse> userResponsePage = usersPage.map(
@@ -78,6 +81,7 @@ public class UserController {
 
     @GetMapping("/{id}")
     public ResponseEntity<?> findUser(@PathVariable long id) {
+        log.info("Getting user data by id.");
         Optional<User> user = userService.findById(id);
 
         return ResponseEntity.of(user.map(
@@ -87,6 +91,7 @@ public class UserController {
 
     @GetMapping("basic/{id}")
     public ResponseEntity<?> findUserBasic(@PathVariable long id) {
+        log.info("Getting basic user data by id.");
         Optional<User> user = userService.findById(id);
 
         return ResponseEntity.of(user.map(
@@ -95,9 +100,8 @@ public class UserController {
     }
 
     @PostMapping()
-    public ResponseEntity<?> createUser(
-            @RequestBody @Valid UserRequest userRequest)
-    {
+    public ResponseEntity<?> createUser(@RequestBody @Valid UserRequest userRequest) {
+        log.info("Creating new user.");
         User user = userRequest.toUser();
         User newUser = userService.saveUser(user);
 
@@ -111,6 +115,7 @@ public class UserController {
             @RequestBody @Valid UserRequest userRequest,
             @PathVariable long id
     ) {
+        log.info("Updating user by id.");
         User user = userRequest.toUser();
         Optional<User> updatedUser = userService.updateUserById(user, id);
 
@@ -124,6 +129,7 @@ public class UserController {
         @RequestBody @Valid UserRequest userRequest,
         @RequestHeader("Authorization") String authorization
     ) {
+        log.info("User updating his data.");
         String email = jwtService.extractUsername(authorization.substring(HEADER_START_LENGTH));
         User user = userRequest.toUser();
         Optional<User> updatedUser = userService.updateUserByEmail(user, email);
@@ -135,6 +141,7 @@ public class UserController {
 
     @DeleteMapping("/{id}")
     public ResponseEntity<?> deleteUser(@PathVariable long id) {
+        log.info("Deleting user.");
         Optional<User> deletedUser = userService.removeUser(id);
 
         return ResponseEntity.of(
