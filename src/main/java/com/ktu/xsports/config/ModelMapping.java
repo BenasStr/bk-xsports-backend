@@ -1,12 +1,15 @@
 package com.ktu.xsports.config;
 
 import com.ktu.xsports.api.converter.trick.TricksToIdsConverter;
+import com.ktu.xsports.api.domain.Category;
 import com.ktu.xsports.api.domain.Trick;
+import com.ktu.xsports.api.dto.response.CategoryResponse;
 import com.ktu.xsports.api.dto.response.TrickResponse;
 import lombok.RequiredArgsConstructor;
 import org.modelmapper.ModelMapper;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.security.core.parameters.P;
 
 @Configuration
 @RequiredArgsConstructor
@@ -18,12 +21,12 @@ public class ModelMapping {
     public ModelMapper modelMapper() {
         ModelMapper modelMapper = new ModelMapper();
 
-        TrickToTrickResponseMapping(modelMapper);
+        trickToTrickResponseMapping(modelMapper);
 
         return modelMapper;
     }
 
-    private void TrickToTrickResponseMapping(ModelMapper modelMapper) {
+    private void trickToTrickResponseMapping(ModelMapper modelMapper) {
         modelMapper
                 .typeMap(Trick.class, TrickResponse.class)
                 .addMappings(

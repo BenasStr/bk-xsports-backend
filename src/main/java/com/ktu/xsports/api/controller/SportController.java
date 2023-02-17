@@ -25,8 +25,6 @@ import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 
-import static com.ktu.xsports.api.utils.Header.HEADER_START_LENGTH;
-
 @Validated
 @RestController
 @RequiredArgsConstructor
@@ -47,8 +45,8 @@ public class SportController {
     }
 
     @GetMapping("/my_list")
-    public ResponseEntity<?> findMySports(@RequestHeader("Authorization") String authorization) {
-        String email = jwtService.extractUsername(authorization.substring(HEADER_START_LENGTH));
+    public ResponseEntity<?> findMySports(@RequestHeader("Authorization") String token) {
+        String email = jwtService.extractUsername(token);
         List<Sport> sports = sportService.findMySports(email);
         List<SportResponse> sportResponse = sports.stream().map(
             sport -> modelMapper.map(sport, SportResponse.class)
@@ -77,7 +75,7 @@ public class SportController {
     public ResponseEntity<?> addMySport(
         @RequestHeader("Authorization") String token,
         @RequestParam("sportId") int sportId) {
-        String email = jwtService.extractUsername(token.substring(HEADER_START_LENGTH));
+        String email = jwtService.extractUsername(token);
         sportService.addSportToUserList(sportId, email);
 
         return ResponseEntity.ok("");
@@ -123,7 +121,7 @@ public class SportController {
             @RequestHeader("Authorization") String token,
             @RequestParam("sportId") int sportId
     ) {
-        String email = jwtService.extractUsername(token.substring(HEADER_START_LENGTH));
+        String email = jwtService.extractUsername(token);
         sportService.removeMyListSport(sportId, email);
         return ResponseEntity.ok("");
     }

@@ -18,9 +18,15 @@ import java.util.function.Function;
 @Service
 public class JwtService {
 
+    private final static int HEADER_START_LENGTH = 7;
+
     private final Key privateKey = Keys.secretKeyFor(SignatureAlgorithm.HS256);
 
     public String extractUsername(String token) {
+        if(token.contains("Bearer")) {
+            token = token.substring(HEADER_START_LENGTH);
+        }
+
         return extractClaim(token, Claims::getSubject);
     }
 

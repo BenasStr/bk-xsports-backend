@@ -34,9 +34,9 @@ public class UserController {
     private final JwtService jwtService;
 
     @GetMapping("/me")
-    public ResponseEntity<?> findUserMe(@RequestHeader("Authorization") String authorization) {
+    public ResponseEntity<?> findUserMe(@RequestHeader("Authorization") String token) {
         log.info("User is getting me info.");
-        String email = jwtService.extractUsername(authorization.substring(HEADER_START_LENGTH));
+        String email = jwtService.extractUsername(token);
         Optional<User> user = userService.findByEmail(email);
         return ResponseEntity.of(user.map(
             u -> Map.of("data", modelMapper.map(u, UserBasicResponse.class))
@@ -127,10 +127,10 @@ public class UserController {
     @PutMapping("/me")
     public ResponseEntity<?> updateUserMe(
         @RequestBody @Valid UserRequest userRequest,
-        @RequestHeader("Authorization") String authorization
+        @RequestHeader("Authorization") String token
     ) {
         log.info("User updating his data.");
-        String email = jwtService.extractUsername(authorization.substring(HEADER_START_LENGTH));
+        String email = jwtService.extractUsername(token);
         User user = userRequest.toUser();
         Optional<User> updatedUser = userService.updateUserByEmail(user, email);
 
