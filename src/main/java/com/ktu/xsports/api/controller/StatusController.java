@@ -2,6 +2,7 @@ package com.ktu.xsports.api.controller;
 
 import com.ktu.xsports.api.domain.Status;
 import com.ktu.xsports.api.repository.StatusRepository;
+import com.ktu.xsports.api.service.StatusService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -16,12 +17,11 @@ import java.util.Map;
 @RequestMapping("status")
 public class StatusController {
 
-    private final StatusRepository statusRepository;
+    private final StatusService statusService;
 
     @GetMapping
     private ResponseEntity<?> findStatuses() {
-        List<Status> statuses = statusRepository.findAll();
+        List<Status> statuses = statusService.getStatuses();
         return ResponseEntity.ok(Map.of("data", statuses));
     }
-
 }

@@ -7,7 +7,6 @@ import com.ktu.xsports.api.exceptions.ServiceException;
 import com.ktu.xsports.api.repository.SportRepository;
 import com.ktu.xsports.api.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
-import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
 
 import java.util.*;
@@ -31,7 +30,6 @@ public class SportService {
     }
 
     public void addSportToUserList(int sportId, String email) {
-        //TODO add exceptions
         Sport sport = findSportById(sportId).orElseThrow(() ->
                 new ServiceException(String.format("Sport with id %d does not exist", sportId))
             );

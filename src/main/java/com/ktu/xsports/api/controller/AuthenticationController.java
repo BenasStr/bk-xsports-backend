@@ -2,6 +2,7 @@ package com.ktu.xsports.api.controller;
 
 import com.ktu.xsports.api.dto.request.LoginRequest;
 import com.ktu.xsports.api.dto.request.RegisterRequest;
+import com.ktu.xsports.api.dto.response.AuthenticationResponse;
 import com.ktu.xsports.api.service.AuthenticationService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -24,13 +25,15 @@ public class AuthenticationController {
 
     @PostMapping("/register")
     public ResponseEntity<?> register(@RequestBody RegisterRequest request) {
-        log.info("registering new user");
-        return ResponseEntity.ok(Map.of("data", authenticationService.register(request)));
+        log.info("Registering new user");
+        AuthenticationResponse response = authenticationService.register(request);
+        return ResponseEntity.ok(Map.of("data", response));
     }
 
     @PostMapping("/login")
     public ResponseEntity<?> login(@RequestBody LoginRequest request) throws Exception {
-        log.info("user is trying to log in");
-        return ResponseEntity.ok(Map.of("data", authenticationService.authenticate(request)));
+        log.info("User is trying to log in");
+        AuthenticationResponse response = authenticationService.authenticate(request);
+        return ResponseEntity.ok(Map.of("data", response));
     }
 }
