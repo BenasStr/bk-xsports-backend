@@ -7,6 +7,9 @@ import jakarta.persistence.Enumerated;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
+import jakarta.persistence.JoinColumn;
+import jakarta.persistence.JoinTable;
+import jakarta.persistence.ManyToMany;
 import jakarta.validation.constraints.NotNull;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -51,6 +54,16 @@ public class User implements UserDetails {
 
     @NotNull
     private boolean isBlocked;
+
+    @ManyToMany
+    @JoinTable(
+        name = "users_sports",
+        joinColumns = @JoinColumn(name = "user_id",
+            referencedColumnName = "id"),
+        inverseJoinColumns = @JoinColumn(name = "sport_id",
+            referencedColumnName = "id")
+    )
+    private List<Sport> sports;
 
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {

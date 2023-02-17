@@ -1,9 +1,13 @@
 package com.ktu.xsports.api.service;
 
 import com.ktu.xsports.api.domain.Sport;
+import com.ktu.xsports.api.domain.User;
 import com.ktu.xsports.api.exceptions.AlreadyExistsException;
+import com.ktu.xsports.api.exceptions.ServiceException;
 import com.ktu.xsports.api.repository.SportRepository;
+import com.ktu.xsports.api.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
+import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
 
 import java.util.*;
@@ -12,10 +16,36 @@ import java.util.*;
 @RequiredArgsConstructor
 public class SportService {
 
+    private final UserRepository userRepository;
     private final SportRepository sportRepository;
 
     public List<Sport> findSports() {
         return sportRepository.findAll();
+    }
+
+    public List<Sport> findMySports(String email) {
+        User user = userRepository.findByEmail(email).orElseThrow(() ->
+                new ServiceException("This user does not exist")
+            );
+        return user.getSports();
+    }
+
+    public void addSportToUserList(int sportId, String email) {
+        //TODO add exceptions
+        Sport sport = findSportById(sportId).orElseThrow(() ->
+                new ServiceException(String.format("Sport with id %d does not exist", sportId))
+            );
+
+        User user = userRepository.findByEmail(email).orElseThrow(() ->
+                new ServiceException("This user does not exist")
+            );
+
+        if(user.getSports().contains(sport)) {
+            return;
+        }
+
+        user.getSports().add(sport);
+        userRepository.save(user);
     }
 
     public byte[] downloadSportImage(long sportId) {
@@ -56,5 +86,18 @@ public class SportService {
             return deletedSport;
         }
         return Optional.empty();
+    }
+
+    public void removeMyListSport(long sportId, String email) {
+        User user = userRepository.findByEmail(email).orElseThrow(() ->
+                new ServiceException("This user doesn't exist")
+            );
+
+        Sport sport = sportRepository.findById(sportId).orElseThrow(() ->
+                new ServiceException(String.format("Sport with id %d does not exist", sportId))
+            );
+
+        user.getSports().remove(sport);
+        userRepository.save(user);
     }
 }

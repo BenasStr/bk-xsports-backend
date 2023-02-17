@@ -4,6 +4,7 @@ package com.ktu.xsports.api.controller;
 import com.ktu.xsports.api.domain.Trick;
 import com.ktu.xsports.api.dto.request.TrickRequest;
 import com.ktu.xsports.api.dto.response.TrickResponse;
+import com.ktu.xsports.api.service.JwtService;
 import com.ktu.xsports.api.service.TrickService;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
@@ -16,6 +17,8 @@ import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 
+import static com.ktu.xsports.api.utils.Header.HEADER_START_LENGTH;
+
 @Validated
 @RestController
 @RequiredArgsConstructor
@@ -24,12 +27,15 @@ public class TrickController {
 
     private final TrickService trickService;
     private final ModelMapper modelMapper;
+    private final JwtService jwtService;
 
     @GetMapping()
     public ResponseEntity<?> findTricks(
             @PathVariable long categoryId,
             @PathVariable long sportId,
+            @RequestHeader("Authorization") String authorization,
             @RequestParam(defaultValue = "all") String difficulty) {
+        String email = jwtService.extractUsername(authorization.substring(HEADER_START_LENGTH));
         List<Trick> tricks = trickService.findTricks(sportId, categoryId, difficulty);
         List<TrickResponse> tricksResponses = tricks.stream().map(
                 trick -> modelMapper.map(trick, TrickResponse.class)

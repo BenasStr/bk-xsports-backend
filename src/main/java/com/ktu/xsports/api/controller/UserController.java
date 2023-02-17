@@ -103,7 +103,7 @@ public class UserController {
     public ResponseEntity<?> createUser(@RequestBody @Valid UserRequest userRequest) {
         log.info("Creating new user.");
         User user = userRequest.toUser();
-        User newUser = userService.saveUser(user);
+        User newUser = userService.saveModeratorUser(user);
 
         return ResponseEntity.ok(
                         Map.of("data", modelMapper.map(newUser, UserResponse.class))
