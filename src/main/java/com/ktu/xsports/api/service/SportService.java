@@ -31,7 +31,6 @@ public class SportService {
     }
 
     public void addSportToUserList(int sportId, String email) {
-        //TODO add exceptions
         Sport sport = findSportById(sportId).orElseThrow(() ->
                 new ServiceException(String.format("Sport with id %d does not exist", sportId))
             );
