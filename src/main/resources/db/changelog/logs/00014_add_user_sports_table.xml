@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<databaseChangeLog xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog
+                   https://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-latest.xsd">
+
+    <changeSet id="16" author="Benas Strauka">
+        <preConditions>
+            <not>
+                <tableExists tableName="users_sports" schemaName="xsports_db"/>
+            </not>
+        </preConditions>
+        <comment>Create table for users sports.</comment>
+
+        <createTable tableName="users_sports">
+            <column name="user_id" type="int unsigned">
+                <constraints foreignKeyName="users_sports_user_fk" references="users(id)" nullable="false"/>
+            </column>
+
+            <column name="sport_id" type="int unsigned">
+                <constraints foreignKeyName="users_sports_sport_fk" references="sports(id)" nullable="false"/>
+            </column>
+        </createTable>
+    </changeSet>
+</databaseChangeLog>

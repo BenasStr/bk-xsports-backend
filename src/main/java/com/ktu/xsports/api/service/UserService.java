@@ -45,10 +45,14 @@ public class UserService implements UserDetailsService {
         return userRepository.findByEmail(email);
     }
 
-    public User saveUser(User user) {
-        log.info("Saving user to database");
+    public User saveModeratorUser(User user) {
+        log.info("Saving moderator user to database");
         user.setPassword(passwordEncoder.encode(user.getPassword()));
         user.setRole(MODERATOR);
+        return userRepository.save(user);
+    }
+
+    public User saveUser(User user) {
         return userRepository.save(user);
     }
 
