@@ -15,6 +15,7 @@ public class TrickResponse {
     long categoryId;
     long lessonId;
     long difficultyId;
+    String status;
     List<Long> trickParentsIds;
     List<Long> trickChildrenIds;
 }

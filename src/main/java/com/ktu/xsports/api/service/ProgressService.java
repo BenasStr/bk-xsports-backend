@@ -1,12 +1,15 @@
 package com.ktu.xsports.api.service;
 
 import com.ktu.xsports.api.domain.Progress;
+import com.ktu.xsports.api.domain.User;
+import com.ktu.xsports.api.exceptions.ServiceException;
 import com.ktu.xsports.api.repository.ProgressRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
+import java.util.List;
 import java.util.Optional;
 
 @Service
@@ -14,9 +17,16 @@ import java.util.Optional;
 public class ProgressService {
 
     private final ProgressRepository progressRepository;
+    private final UserService userService;
 
     public Page<Progress> findProgress(Pageable pageable, long userId) {
         return progressRepository.findAllByUserId(pageable, userId);
+    }
+
+    public List<Progress> findProgress(String email) {
+        User user = userService.findByEmail(email)
+            .orElseThrow(() -> new ServiceException("User not found"));
+        return progressRepository.findAllByUserId(user.getId());
     }
 
     public Optional<Progress> findProgressById(long id) {

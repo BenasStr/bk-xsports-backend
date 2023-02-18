@@ -1,10 +1,10 @@
 package com.ktu.xsports.api.controller;
 
-
 import com.ktu.xsports.api.domain.Trick;
 import com.ktu.xsports.api.dto.request.TrickRequest;
 import com.ktu.xsports.api.dto.response.TrickResponse;
 import com.ktu.xsports.api.service.JwtService;
+import com.ktu.xsports.api.service.ProgressService;
 import com.ktu.xsports.api.service.TrickService;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
@@ -24,6 +24,7 @@ import java.util.Optional;
 public class TrickController {
 
     private final TrickService trickService;
+    private final ProgressService progressService;
     private final ModelMapper modelMapper;
     private final JwtService jwtService;
 
@@ -34,7 +35,8 @@ public class TrickController {
             @RequestHeader("Authorization") String token,
             @RequestParam(defaultValue = "all") String difficulty) {
         String email = jwtService.extractUsername(token);
-        List<Trick> tricks = trickService.findTricks(sportId, categoryId, difficulty);
+        List<Trick> tricks = trickService.findTricks(sportId, categoryId, difficulty, email);
+
         List<TrickResponse> tricksResponses = tricks.stream().map(
                 trick -> modelMapper.map(trick, TrickResponse.class)
         ).toList();
@@ -46,8 +48,11 @@ public class TrickController {
     public ResponseEntity<?> findTrick(
             @PathVariable long trickId,
             @PathVariable long categoryId,
-            @PathVariable long sportId) {
-        Optional<Trick> trick = trickService.findTrickById(sportId, categoryId, trickId);
+            @PathVariable long sportId,
+            @RequestHeader("Authorization") String token
+        ) {
+        String email = jwtService.extractUsername(token);
+        Optional<Trick> trick = trickService.findTrickById(sportId, categoryId, trickId, email);
 
         return ResponseEntity.of(
                 trick.map(t -> Map.of("data", modelMapper.map(t, TrickResponse.class))));

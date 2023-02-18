@@ -2,6 +2,8 @@ package com.ktu.xsports.api.service;
 
 import com.ktu.xsports.api.domain.Category;
 import com.ktu.xsports.api.domain.Trick;
+import com.ktu.xsports.api.domain.User;
+import com.ktu.xsports.api.exceptions.ServiceException;
 import com.ktu.xsports.api.repository.TrickRepository;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
@@ -9,6 +11,7 @@ import org.springframework.stereotype.Service;
 import java.util.List;
 import java.util.Objects;
 import java.util.Optional;
+import javax.swing.text.html.Option;
 
 @Service
 @RequiredArgsConstructor
@@ -16,25 +19,28 @@ public class TrickService {
 
     private final TrickRepository trickRepository;
     private final CategoryService categoryService;
+    private final UserService userService;
 
-    public List<Trick> findTricks(Long sportId, Long categoryId, String difficulty) {
-        Optional<Category> category = categoryService.findCategory(sportId, categoryId);
+    public List<Trick> findTricks(Long sportId, Long categoryId, String difficulty, String email) {
+        User user = userService.findByEmail(email)
+            .orElseThrow(() -> new ServiceException("User doesn't exist"));
 
-        if(category.isPresent()) {
-            return Objects.equals(difficulty, "all") ?
-                    trickRepository.findAll(categoryId) :
-                    trickRepository.findAll(categoryId, difficulty);
-        }
+        Category category = categoryService.findCategory(sportId, categoryId)
+            .orElseThrow(() -> new ServiceException("Category not found"));
 
-        return List.of();
+        return difficulty.equals("all") ?
+            trickRepository.findAll(user.getId(), categoryId) :
+            trickRepository.findAll(user.getId(), categoryId, difficulty);
     }
 
-    public Optional<Trick> findTrickById(Long sportId, Long categoryId, Long trickId) {
-        Optional<Category> category = categoryService.findCategory(sportId, categoryId);
-        if(category.isPresent()) {
-            return trickRepository.findById(categoryId, trickId);
-        }
-        return Optional.empty();
+    public Optional<Trick> findTrickById(Long sportId, Long categoryId, Long trickId, String email) {
+        User user = userService.findByEmail(email)
+            .orElseThrow(() -> new ServiceException("User doesn't exist!"));
+
+        Category category = categoryService.findCategory(sportId, categoryId)
+            .orElseThrow(() -> new ServiceException("Category not found."));
+
+        return trickRepository.findById(categoryId, trickId, user.getId());
     }
 
     @Transactional
