@@ -1,5 +1,6 @@
 package com.ktu.xsports.config;
 
+import com.ktu.xsports.api.converter.trick.ProgressToStatusConverter;
 import com.ktu.xsports.api.converter.trick.TricksToIdsConverter;
 import com.ktu.xsports.api.domain.Category;
 import com.ktu.xsports.api.domain.Trick;
@@ -16,6 +17,7 @@ import org.springframework.security.core.parameters.P;
 public class ModelMapping {
 
     private final TricksToIdsConverter tricksToIdsConverter;
+    private final ProgressToStatusConverter progressToStatusConverter;
 
     @Bean
     public ModelMapper modelMapper() {
@@ -34,6 +36,10 @@ public class ModelMapping {
                                 .map(Trick::getTrickParents, TrickResponse::setTrickParentsIds))
                 .addMappings(
                         mapper -> mapper.using(tricksToIdsConverter)
-                                .map(Trick::getTrickChildren, TrickResponse::setTrickChildrenIds));
+                                .map(Trick::getTrickChildren, TrickResponse::setTrickChildrenIds))
+                .addMappings(
+                        mapper -> mapper.using(progressToStatusConverter)
+                                .map(Trick::getProgress, TrickResponse::setStatus)
+                );
     }
 }

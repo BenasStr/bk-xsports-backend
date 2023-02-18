@@ -29,16 +29,10 @@ public class ProgressRequest {
     @JsonDeserialize(converter = IdToTrickConverter.class)
     private Trick trick;
 
-    @NotNull
-    @JsonProperty("userId")
-    @JsonDeserialize(converter = IdToUserConverter.class)
-    private User user;
-
     public Progress toProgress() {
         return Progress.builder()
                 .status(status)
                 .trick(trick)
-                .user(user)
                 .build();
     }
 }
