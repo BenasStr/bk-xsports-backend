@@ -33,7 +33,6 @@ public class SecurityConfiguration {
         categoriesEndpoints(http);
         tricksEndpoints(http);
         lessonsEndpoints(http);
-        imageEndpoint(http);
         healthEndpoint(http);
 
         http.sessionManagement().sessionCreationPolicy(SessionCreationPolicy.STATELESS);
@@ -103,11 +102,6 @@ public class SecurityConfiguration {
             .requestMatchers(POST, "/api/lessons").hasAnyAuthority(ADMIN.name(), MODERATOR.name())
             .requestMatchers(PUT, "/api/lessons/{id}").hasAnyAuthority(ADMIN.name(), MODERATOR.name())
             .requestMatchers(DELETE, "/api/lessons/{id}").hasAnyAuthority(ADMIN.name(), MODERATOR.name());
-    }
-
-    private void imageEndpoint(HttpSecurity http) throws Exception {
-        http.authorizeHttpRequests()
-                .requestMatchers(POST, "/api/images/upload").permitAll();
     }
 
     private void healthEndpoint(HttpSecurity http) throws Exception {
