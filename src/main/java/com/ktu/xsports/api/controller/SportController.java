@@ -7,6 +7,7 @@ import com.ktu.xsports.api.service.JwtService;
 import com.ktu.xsports.api.service.SportService;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.modelmapper.ModelMapper;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.annotation.Validated;
@@ -29,6 +30,7 @@ import java.util.Optional;
 @RestController
 @RequiredArgsConstructor
 @RequestMapping("/api/sports")
+@Slf4j
 public class SportController {
 
     private final SportService sportService;
@@ -37,6 +39,7 @@ public class SportController {
 
     @GetMapping()
     public ResponseEntity<?> findSports() {
+        log.info("finding sports");
         List<Sport> sports = sportService.findSports();
         List<SportResponse> sportsResponse = sports.stream().map(
                 s -> modelMapper.map(s, SportResponse.class)
@@ -46,6 +49,7 @@ public class SportController {
 
     @GetMapping("/my_list")
     public ResponseEntity<?> findMySports(@RequestHeader("Authorization") String token) {
+        log.info("finding my sports");
         String email = jwtService.extractUsername(token);
         List<Sport> sports = sportService.findMySports(email);
         List<SportResponse> sportResponse = sports.stream().map(
@@ -57,6 +61,7 @@ public class SportController {
     @GetMapping("/{id}")
     public ResponseEntity<?> findSport(@PathVariable long id)
     {
+        log.info("finding sport by id");
         Optional<Sport> sport = sportService.findSportById(id);
 
         return ResponseEntity.of(
@@ -65,6 +70,7 @@ public class SportController {
 
     @PostMapping()
     public ResponseEntity<?> createSport(@RequestBody @Valid SportRequest sportRequest) {
+        log.info("posting sports");
         Sport sport = sportRequest.toSport();
         Optional<Sport> newSport = sportService.createSport(sport);
         return ResponseEntity.of(
@@ -75,6 +81,7 @@ public class SportController {
     public ResponseEntity<?> addMySport(
         @RequestHeader("Authorization") String token,
         @RequestParam("sportId") int sportId) {
+        log.info("adding to my list");
         String email = jwtService.extractUsername(token);
         sportService.addSportToUserList(sportId, email);
 
@@ -102,6 +109,7 @@ public class SportController {
             @RequestBody @Valid SportRequest sportRequest,
             @PathVariable long id
     ) {
+        log.info("updating sport");
         Sport sport = sportRequest.toSport();
         Optional<Sport> updatedSport = sportService.updateSport(sport, id);
         return ResponseEntity.of(
@@ -110,6 +118,7 @@ public class SportController {
 
     @DeleteMapping("/{id}")
     public ResponseEntity<?> deleteSport(@PathVariable long id) {
+        log.info("deleting sport");
         Optional<Sport> deletedSport = sportService.removeSport(id);
         return ResponseEntity.of(
                 deletedSport.map( s ->
@@ -121,6 +130,7 @@ public class SportController {
             @RequestHeader("Authorization") String token,
             @RequestParam("sportId") int sportId
     ) {
+        log.info("removing sport from my list");
         String email = jwtService.extractUsername(token);
         sportService.removeMyListSport(sportId, email);
         return ResponseEntity.ok("");
