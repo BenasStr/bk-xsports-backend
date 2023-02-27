@@ -1,0 +1,32 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<databaseChangeLog
+    xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog
+      http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-4.1.xsd">
+    <changeSet id="20" author="benas.strauka">
+        <preConditions>
+            <tableExists tableName="tricks"/>
+            <and>
+                <not>
+                    <tableExists tableName="tricks_by_variants_references"/>
+                </not>
+            </and>
+        </preConditions>
+        <comment>Create tricks references by variant.</comment>
+
+        <createTable tableName="tricks_by_variants_references">
+            <column name="trick_variant_parent_id" type="int unsigned">
+                <constraints foreignKeyName="trick_variant_parent_fk"
+                    references="tricks(id)"
+                    nullable="false"/>
+            </column>
+
+            <column name="trick_variant_child_id" type="int unsigned">
+                <constraints foreignKeyName="trick_variant_child_fk"
+                    references="tricks(id)"
+                    nullable="false"/>
+            </column>
+        </createTable>
+    </changeSet>
+</databaseChangeLog>
