@@ -50,19 +50,32 @@ public class Trick {
     @OneToMany(mappedBy = "trick")
     private List<Progress> progress;
 
-    @ManyToOne
-    private Variant variant;
+//    @ManyToOne
+//    private Variant variant;
 
     @ManyToMany
     @JoinTable(
-            name = "tricks_references",
-            joinColumns = @JoinColumn(name = "trick_child_id",
-                    referencedColumnName = "id"),
-            inverseJoinColumns = @JoinColumn(name = "trick_parent_id",
-                    referencedColumnName = "id")
+        name = "tricks_references",
+        joinColumns = @JoinColumn(name = "trick_child_id",
+                referencedColumnName = "id"),
+        inverseJoinColumns = @JoinColumn(name = "trick_parent_id",
+                referencedColumnName = "id")
     )
     private List<Trick> trickParents;
 
     @ManyToMany(mappedBy = "trickParents")
     private List<Trick> trickChildren;
+
+    @ManyToMany
+    @JoinTable(
+        name = "tricks_by_variants_references",
+        joinColumns = @JoinColumn(name = "trick_variant_child_id",
+            referencedColumnName = "id"),
+        inverseJoinColumns = @JoinColumn(name = "trick_variant_parent_id",
+            referencedColumnName = "id")
+    )
+    private List<Trick> trickVariantParent;
+
+    @ManyToMany(mappedBy = "trickVariantParent")
+    private List<Trick> trickVariantChild;
 }

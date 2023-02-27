@@ -6,5 +6,5 @@ import org.springframework.data.jpa.repository.JpaRepository;
 import java.util.List;
 
 public interface VariantRepository extends JpaRepository<Variant, Long> {
-    List<Variant> findAllBySportsId(long sportId);
+//    List<Variant> findAllBySportsId(long sportId);
 }
