@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<databaseChangeLog
+    xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog
+      http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-4.1.xsd">
+    <changeSet id="18" author="benas.strauka">
+        <preConditions>
+            <tableExists tableName="variants" schemaName="xsports_db"/>
+            <and>
+                <tableExists tableName="tricks" schemaName="xsports_db"/>
+            </and>
+        </preConditions>
+        <comment>Add variants column to tricks.</comment>
+
+        <addColumn tableName="tricks">
+            <column name="variant_id" type="int unsigned">
+                <constraints foreignKeyName="trick_variant_fk"
+                    references="variants(id)"
+                    nullable="true"/>
+            </column>
+        </addColumn>
+    </changeSet>
+</databaseChangeLog>
