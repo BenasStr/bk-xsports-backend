@@ -1,6 +1,5 @@
 package com.ktu.xsports.api.domain;
 
-import com.ktu.xsports.api.service.ProgressService;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
@@ -11,8 +10,6 @@ import jakarta.persistence.ManyToMany;
 import jakarta.persistence.ManyToOne;
 import jakarta.persistence.OneToMany;
 import jakarta.persistence.OneToOne;
-import jakarta.persistence.PostLoad;
-import jakarta.persistence.Transient;
 import jakarta.validation.constraints.NotNull;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -53,16 +50,32 @@ public class Trick {
     @OneToMany(mappedBy = "trick")
     private List<Progress> progress;
 
+//    @ManyToOne
+//    private Variant variant;
+
     @ManyToMany
     @JoinTable(
-            name = "tricks_references",
-            joinColumns = @JoinColumn(name = "trick_child_id",
-                    referencedColumnName = "id"),
-            inverseJoinColumns = @JoinColumn(name = "trick_parent_id",
-                    referencedColumnName = "id")
+        name = "tricks_references",
+        joinColumns = @JoinColumn(name = "trick_child_id",
+                referencedColumnName = "id"),
+        inverseJoinColumns = @JoinColumn(name = "trick_parent_id",
+                referencedColumnName = "id")
     )
     private List<Trick> trickParents;
 
     @ManyToMany(mappedBy = "trickParents")
     private List<Trick> trickChildren;
+
+    @ManyToMany
+    @JoinTable(
+        name = "tricks_by_variants_references",
+        joinColumns = @JoinColumn(name = "trick_variant_child_id",
+            referencedColumnName = "id"),
+        inverseJoinColumns = @JoinColumn(name = "trick_variant_parent_id",
+            referencedColumnName = "id")
+    )
+    private List<Trick> trickVariantParent;
+
+    @ManyToMany(mappedBy = "trickVariantParent")
+    private List<Trick> trickVariantChild;
 }
