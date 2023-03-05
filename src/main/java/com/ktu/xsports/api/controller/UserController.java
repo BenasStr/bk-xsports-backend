@@ -118,7 +118,7 @@ public class UserController {
         @RequestParam("file") MultipartFile image,
         @AuthenticationPrincipal User user
     ) {
-        log.info("uploading user image");
+        log.info("Uploading user image.");
         String fileName = imageService.uploadImage(image, USER_FILE+user.getId());
         user.setPhotoPath(fileName);
         userService.updateUserById(user, user.getId());

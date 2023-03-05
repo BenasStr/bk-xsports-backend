@@ -1,7 +1,7 @@
 package com.ktu.xsports.api.service;
 
 import com.ktu.xsports.api.domain.User;
-import com.ktu.xsports.api.domain.enums.Role;
+import com.ktu.xsports.api.util.Role;
 import com.ktu.xsports.api.dto.request.LoginRequest;
 import com.ktu.xsports.api.dto.request.RegisterRequest;
 import com.ktu.xsports.api.dto.response.AuthenticationResponse;

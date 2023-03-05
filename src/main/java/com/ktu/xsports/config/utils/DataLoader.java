@@ -1,7 +1,7 @@
 package com.ktu.xsports.config.utils;
 
 import com.ktu.xsports.api.domain.User;
-import com.ktu.xsports.api.domain.enums.Role;
+import com.ktu.xsports.api.util.Role;
 import com.ktu.xsports.api.repository.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.ApplicationArguments;

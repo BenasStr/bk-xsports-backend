@@ -3,24 +3,17 @@ package com.ktu.xsports.api.service;
 import com.ktu.xsports.api.domain.User;
 import com.ktu.xsports.api.exceptions.ServiceException;
 import com.ktu.xsports.api.repository.UserRepository;
-import com.ktu.xsports.api.util.Prefix;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
-import org.springframework.security.core.authority.SimpleGrantedAuthority;
-import org.springframework.security.core.userdetails.UserDetails;
-import org.springframework.security.core.userdetails.UserDetailsService;
-import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-import org.springframework.web.multipart.MultipartFile;
 
 import java.util.*;
 
-import static com.ktu.xsports.api.domain.enums.Role.*;
-import static com.ktu.xsports.api.util.Prefix.*;
+import static com.ktu.xsports.api.util.Role.*;
 
 @Service
 @RequiredArgsConstructor

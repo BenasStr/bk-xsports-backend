@@ -70,7 +70,6 @@ public class SportController {
     {
         log.info("finding sport by id");
         Sport sport = sportService.findSportById(id);
-
         return ResponseEntity.ok(
             Map.of("data", modelMapper.map(sport, SportResponse.class))
         );
