@@ -4,7 +4,6 @@ import com.ktu.xsports.api.domain.Trick;
 import com.ktu.xsports.api.dto.request.TrickRequest;
 import com.ktu.xsports.api.dto.response.TrickResponse;
 import com.ktu.xsports.api.service.JwtService;
-import com.ktu.xsports.api.service.ProgressService;
 import com.ktu.xsports.api.service.TrickService;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
