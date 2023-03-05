@@ -11,27 +11,24 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 @AllArgsConstructor
 public class UserRequest {
-
     @NotNull
     private String name;
-
     @NotNull
     private String surname;
-
     private String nickname;
-
+    @NotNull
+    private String email;
     @NotNull
     private String password;
 
-    private String photoPath;
-
     public User toUser() {
         return User.builder()
-                .name(name)
-                .surname(surname)
-                .nickname(nickname)
-                .password(password)
-                .photoPath(photoPath)
-                .build();
+            .name(name)
+            .email(email)
+            .surname(surname)
+            .nickname(nickname)
+            .password(password)
+            .photoPath(null)
+            .build();
     }
 }

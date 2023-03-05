@@ -12,6 +12,7 @@ import org.modelmapper.ModelMapper;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
 
 import java.util.List;
 import java.util.Map;
@@ -24,7 +25,6 @@ import java.util.Optional;
 public class TrickController {
 
     private final TrickService trickService;
-    private final ProgressService progressService;
     private final ModelMapper modelMapper;
     private final JwtService jwtService;
 
@@ -65,10 +65,22 @@ public class TrickController {
             @PathVariable long sportId
     ) {
         Trick trick = trickRequest.toTrick();
-        Optional<Trick> newTrick = trickService.createTrick(sportId, categoryId, trick);
+        Trick newTrick = trickService.createTrick(sportId, categoryId, trick);
 
-        return ResponseEntity.of(
-                newTrick.map(t -> Map.of("data", modelMapper.map(t, TrickResponse.class))));
+        return ResponseEntity.ok(
+                Map.of("data", modelMapper.map(newTrick, TrickResponse.class))
+        );
+    }
+
+    @PostMapping("/{trickId}/video")
+    public ResponseEntity<?> uploadTrickVideo(
+        @PathVariable long categoryId,
+        @PathVariable long sportId,
+        @PathVariable long trickId,
+        @RequestParam MultipartFile video
+    ) {
+        Trick trick = trickService.findTrickById(trickId);
+        return ResponseEntity.ok("");
     }
 
     @PutMapping("/{trickId}")

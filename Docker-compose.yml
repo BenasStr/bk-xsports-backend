@@ -1,6 +1,19 @@
 version: "3.8"
 
 services:
+
+  minio:
+    image: minio/minio
+    volumes:
+      - minio_storage:/data
+    ports:
+      - "9000:9000"
+      - "9001:9001"
+    environment:
+      MINIO_ACCESS_KEY: someKey
+      MINIO_SECRET_KEY: V3ryS#fePass
+    command: server --console-address ":9001" /data
+
   mysqldb:
     image: mysql:8.0.31
     restart: unless-stopped
@@ -32,4 +45,5 @@ services:
     tty: true
 
 volumes:
+  minio_storage: {}
   db:

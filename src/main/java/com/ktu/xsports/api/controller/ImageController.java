@@ -1,9 +1,14 @@
 package com.ktu.xsports.api.controller;
 
+import com.ktu.xsports.api.domain.User;
 import com.ktu.xsports.api.service.ImageService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.http.HttpHeaders;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
@@ -14,12 +19,15 @@ import java.util.Map;
 @RequestMapping("api/images")
 @Slf4j
 public class ImageController {
-
     private final ImageService imageService;
 
-    @PostMapping("/upload")
-    public ResponseEntity<?> uploadImage(@RequestParam("file") MultipartFile image) {
-        imageService.uploadImage(image);
-        return ResponseEntity.ok("");
+    @GetMapping("/{fileName}")
+    public ResponseEntity<byte[]> getCurrentUserImage(@PathVariable("fileName") String fileName) {
+        log.info(String.format("Sending image: %s", fileName));
+        byte[] image = imageService.getImage(fileName);
+        HttpHeaders headers = new HttpHeaders();
+        headers.setContentType(MediaType.IMAGE_JPEG);
+        headers.setContentLength(image.length);
+        return new ResponseEntity<>(image, headers, HttpStatus.OK);
     }
 }
