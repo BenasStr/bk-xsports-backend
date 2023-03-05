@@ -159,7 +159,7 @@ public class UserController {
     ) {
         log.info("User is updating profile picture");
 
-        String fileName = user.getPhotoPath() == null?
+        String fileName = user.getPhotoPath() == null ?
             imageService.uploadImage(file, USER_FILE+user.getId()) :
             imageService.updateProfileImage(file, user.getPhotoPath());
 
