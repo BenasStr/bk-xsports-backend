@@ -65,10 +65,11 @@ public class TrickController {
             @PathVariable long sportId
     ) {
         Trick trick = trickRequest.toTrick();
-        Optional<Trick> newTrick = trickService.createTrick(sportId, categoryId, trick);
+        Trick newTrick = trickService.createTrick(sportId, categoryId, trick);
 
-        return ResponseEntity.of(
-                newTrick.map(t -> Map.of("data", modelMapper.map(t, TrickResponse.class))));
+        return ResponseEntity.ok(
+                Map.of("data", modelMapper.map(newTrick, TrickResponse.class))
+        );
     }
 
     @PutMapping("/{trickId}")

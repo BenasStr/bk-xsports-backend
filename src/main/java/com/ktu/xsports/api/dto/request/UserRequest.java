@@ -23,15 +23,13 @@ public class UserRequest {
     @NotNull
     private String password;
 
-    private String photoPath;
-
     public User toUser() {
         return User.builder()
                 .name(name)
                 .surname(surname)
                 .nickname(nickname)
                 .password(password)
-                .photoPath(photoPath)
+                .photoPath(null)
                 .build();
     }
 }

@@ -25,8 +25,7 @@ public class TrickService {
         User user = userService.findByEmail(email)
             .orElseThrow(() -> new ServiceException("User doesn't exist"));
 
-        Category category = categoryService.findCategory(sportId, categoryId)
-            .orElseThrow(() -> new ServiceException("Category not found"));
+        Category category = categoryService.findCategory(sportId, categoryId);
 
         return difficulty.equals("all") ?
             trickRepository.findAll(user.getId(), categoryId) :
@@ -37,38 +36,33 @@ public class TrickService {
         User user = userService.findByEmail(email)
             .orElseThrow(() -> new ServiceException("User doesn't exist!"));
 
-        Category category = categoryService.findCategory(sportId, categoryId)
-            .orElseThrow(() -> new ServiceException("Category not found."));
+        Category category = categoryService.findCategory(sportId, categoryId);
 
         return trickRepository.findById(categoryId, trickId, user.getId());
     }
 
     @Transactional
-    public Optional<Trick> createTrick(Long sportId, Long categoryId, Trick trick) {
-        Optional<Category> category = categoryService.findCategory(sportId, categoryId);
-
-        if (category.isPresent()) {
-            trick.setCategory(category.get());
-            return Optional.of(trickRepository.save(trick));
-        }
-        return Optional.empty();
+    public Trick createTrick(Long sportId, Long categoryId, Trick trick) {
+        Category category = categoryService.findCategory(sportId, categoryId);
+        trick.setCategory(category);
+        return trickRepository.save(trick);
     }
 
     public Optional<Trick> updateTrick(Long sportId, Long categoryId, Trick newTrick, Long trickId) {
-        Optional<Category> category = categoryService.findCategory(sportId, categoryId);
+        Category category = categoryService.findCategory(sportId, categoryId);
         Optional<Trick> existingTrick = trickRepository.findById(categoryId, trickId);
-        if(category.isPresent() && existingTrick.isPresent()) {
+        if(existingTrick.isPresent()) {
             newTrick.setId(trickId);
-            newTrick.setCategory(category.get());
+            newTrick.setCategory(category);
             return Optional.of(trickRepository.save(newTrick));
         }
         return Optional.empty();
     }
 
     public Optional<Trick> removeTrick(Long sportId, Long categoryId, Long trickId) {
-        Optional<Category> category = categoryService.findCategory(sportId, categoryId);
+        categoryService.findCategory(sportId, categoryId);
         Optional<Trick> deletedTrick = trickRepository.findById(categoryId, trickId);
-        if(deletedTrick.isPresent() && category.isPresent()) {
+        if(deletedTrick.isPresent()) {
             trickRepository.delete(deletedTrick.get());
             return deletedTrick;
         }

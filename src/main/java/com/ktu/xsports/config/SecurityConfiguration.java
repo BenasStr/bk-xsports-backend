@@ -37,6 +37,8 @@ public class SecurityConfiguration {
         imageEndpoints(http);
         videoEndpoints(http);
 
+        testEndpoint(http);
+
         http.sessionManagement().sessionCreationPolicy(SessionCreationPolicy.STATELESS);
 
         http.authenticationProvider(authenticationProvider)
@@ -128,5 +130,10 @@ public class SecurityConfiguration {
             .requestMatchers(POST, "/api/videos").hasAnyAuthority(ADMIN.name(), MODERATOR.name())
             .requestMatchers(PUT, "/api/videos").hasAnyAuthority(ADMIN.name(), MODERATOR.name())
             .requestMatchers(DELETE, "/api/videos").hasAnyAuthority(ADMIN.name(), MODERATOR.name());
+    }
+
+    private void testEndpoint(HttpSecurity http) throws Exception {
+        http.authorizeHttpRequests()
+            .requestMatchers(POST, "/api/users/test").permitAll();
     }
 }

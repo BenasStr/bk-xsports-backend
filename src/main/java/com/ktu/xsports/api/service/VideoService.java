@@ -19,13 +19,13 @@ public class VideoService {
     @Autowired
     private MinioClient minioClient;
 
-    public byte[] getVideo() {
+    public byte[] getVideo(String fileName) {
        try {
            return IOUtils.toByteArray(
                minioClient.getObject(
                    GetObjectArgs.builder()
                        .bucket(VIDEO_BUCKET)
-                       .object("")
+                       .object(fileName)
                        .build()
                )
            );

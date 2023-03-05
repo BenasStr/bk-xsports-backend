@@ -1,10 +1,12 @@
 package com.ktu.xsports.api.controller;
 
 import com.ktu.xsports.api.domain.Category;
+import com.ktu.xsports.api.domain.Sport;
 import com.ktu.xsports.api.dto.request.CategoryRequest;
 import com.ktu.xsports.api.dto.response.CategoryResponse;
 import com.ktu.xsports.api.dto.response.SportResponse;
 import com.ktu.xsports.api.service.CategoryService;
+import com.ktu.xsports.api.service.ImageService;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -12,10 +14,14 @@ import org.modelmapper.ModelMapper;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
 
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
+
+import static com.ktu.xsports.api.util.Prefix.CATEGORY_FILE;
+import static com.ktu.xsports.api.util.Prefix.SPORT_FILE;
 
 @Validated
 @RestController
@@ -25,6 +31,7 @@ import java.util.Optional;
 public class CategoryController {
 
     private final CategoryService categoryService;
+    private final ImageService imageService;
     private final ModelMapper modelMapper;
 
     @GetMapping()
@@ -44,10 +51,11 @@ public class CategoryController {
             @PathVariable long sportId
     ) {
         log.info("Category get called.");
-        Optional<Category> category = categoryService.findCategory(sportId, categoryId);
+        Category category = categoryService.findCategory(sportId, categoryId);
 
-        return ResponseEntity.of(
-                category.map(c -> Map.of("data", modelMapper.map(c, CategoryResponse.class))));
+        return ResponseEntity.ok(
+                Map.of("data", modelMapper.map(category, CategoryResponse.class))
+        );
     }
 
     @PostMapping()
@@ -61,6 +69,19 @@ public class CategoryController {
 
         return ResponseEntity.of(
                 newCategory.map(c -> Map.of("data", modelMapper.map(c, CategoryResponse.class))));
+    }
+
+    @PostMapping("/{categoryId}/image")
+    public ResponseEntity<?> uploadCategoryImage(
+        @RequestParam("file") MultipartFile image,
+        @PathVariable int categoryId,
+        @PathVariable long sportId
+    ) {
+        Category category = categoryService.findCategory(sportId, categoryId);
+        String fileName = imageService.uploadImage(image, CATEGORY_FILE+category.getId());
+        category.setPhoto(fileName);
+        categoryService.updateCategory(sportId, category, category.getId());
+        return ResponseEntity.ok("");
     }
 
     //TODO: this is broken
@@ -78,15 +99,44 @@ public class CategoryController {
                 newCategory.map(c -> Map.of("data", modelMapper.map(c, CategoryResponse.class))));
     }
 
+    @PutMapping("/category/{categoryId}/image")
+    public ResponseEntity<?> updateUserProfileImage(
+        @RequestParam("file") MultipartFile file,
+        @PathVariable long sportId,
+        @PathVariable long categoryId
+    ) {
+        log.info("User is updating profile picture");
+        Category category = categoryService.findCategory(sportId, categoryId);
+        String fileName = category.getPhoto() == null ?
+            imageService.uploadImage(file, CATEGORY_FILE+category.getId()) :
+            imageService.updateProfileImage(file, category.getPhoto());
+
+        return ResponseEntity.ok(Map.of("data", fileName));
+    }
+
     @DeleteMapping("/{categoryId}")
     public ResponseEntity<?> deleteSportCategory(
             @PathVariable long categoryId,
             @PathVariable long sportId
     ) {
         log.info("Category delete called.");
-        Optional<Category> deletedSport = categoryService.removeCategory(sportId, categoryId);
+        Optional<Category> deletedCategory = categoryService.removeCategory(sportId, categoryId);
+        deletedCategory.ifPresent(category -> imageService.deleteImage(category.getPhoto()));
+
         return ResponseEntity.of(
-                deletedSport.map(s ->
+                deletedCategory.map(s ->
                         Map.of("data", modelMapper.map(s, SportResponse.class))));
+    }
+
+    @DeleteMapping("/{categoryId}/image")
+    public ResponseEntity<?> deleteCategoryImage(
+        @PathVariable long categoryId,
+        @PathVariable long sportId
+    ) {
+        log.info("Category image delete");
+        Category category = categoryService.findCategory(sportId, categoryId);
+        imageService.deleteImage(category.getPhoto());
+        category.setPhoto(null);
+        return ResponseEntity.ok("");
     }
 }

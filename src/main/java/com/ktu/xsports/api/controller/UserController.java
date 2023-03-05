@@ -5,8 +5,10 @@ import com.ktu.xsports.api.domain.User;
 import com.ktu.xsports.api.dto.request.UserRequest;
 import com.ktu.xsports.api.dto.response.UserBasicResponse;
 import com.ktu.xsports.api.dto.response.UserResponse;
+import com.ktu.xsports.api.service.ImageService;
 import com.ktu.xsports.api.service.JwtService;
 import com.ktu.xsports.api.service.UserService;
+import com.ktu.xsports.api.util.Prefix;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -15,10 +17,14 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
 
 import java.util.*;
+
+import static com.ktu.xsports.api.util.Prefix.USER_FILE;
 
 @Validated
 @RestController
@@ -26,10 +32,8 @@ import java.util.*;
 @RequestMapping("/api/users")
 @Slf4j
 public class UserController {
-
-    private final static int HEADER_START_LENGTH = 7;
-
     private final UserService userService;
+    private final ImageService imageService;
     private final ModelMapper modelMapper;
     private final JwtService jwtService;
 
@@ -100,14 +104,29 @@ public class UserController {
     }
 
     @PostMapping()
-    public ResponseEntity<?> createUser(@RequestBody @Valid UserRequest userRequest) {
-        log.info("Creating new user.");
+    public ResponseEntity<?> createUser(
+        @RequestBody @Valid UserRequest userRequest
+    ) {
+        log.info("Creating new moderator user.");
+
         User user = userRequest.toUser();
         User newUser = userService.saveModeratorUser(user);
 
         return ResponseEntity.ok(
-                        Map.of("data", modelMapper.map(newUser, UserResponse.class))
+            Map.of("data", modelMapper.map(newUser, UserResponse.class))
         );
+    }
+
+    @PostMapping("/me/image")
+    public ResponseEntity<?> uploadUserImage(
+        @RequestParam("file") MultipartFile image,
+        @AuthenticationPrincipal User user
+    ) {
+        log.info("uploading user image");
+        String fileName = imageService.uploadImage(image, USER_FILE+user.getId());
+        user.setPhotoPath(fileName);
+        userService.updateUserById(user, user.getId());
+        return ResponseEntity.ok(Map.of("data", fileName));
     }
 
     @PutMapping("/{id}")
@@ -139,11 +158,25 @@ public class UserController {
                 Map.of("data", modelMapper.map(u, UserResponse.class))));
     }
 
+    @PutMapping("/me/image")
+    public ResponseEntity<?> updateUserProfileImage(
+        @RequestParam("file") MultipartFile file,
+        @AuthenticationPrincipal User user
+    ) {
+        log.info("User is updating profile picture");
+
+        String fileName = user.getPhotoPath() == null?
+            imageService.uploadImage(file, USER_FILE+user.getId()) :
+            imageService.updateProfileImage(file, user.getPhotoPath());
+
+        return ResponseEntity.ok(Map.of("data", fileName));
+    }
+
     @DeleteMapping("/{id}")
     public ResponseEntity<?> deleteUser(@PathVariable long id) {
         log.info("Deleting user.");
         Optional<User> deletedUser = userService.removeUser(id);
-
+        deletedUser.ifPresent(user -> imageService.deleteImage(user.getName()));
         return ResponseEntity.of(
                 deletedUser.map(u ->
                         Map.of("data", modelMapper.map(u, UserResponse.class))));

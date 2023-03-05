@@ -22,8 +22,9 @@ public class CategoryService {
         return categoryRepository.findAllBySportId(sportId);
     }
 
-    public Optional<Category> findCategory(long sportId, long categoryId) {
-        return categoryRepository.findBySportIdAndId(sportId, categoryId);
+    public Category findCategory(long sportId, long categoryId) {
+        return categoryRepository.findBySportIdAndId(sportId, categoryId)
+            .orElseThrow(() -> new ServiceException("Category doesn't exist"));
 }
 
     public Optional<Category> createCategory(long sportId, Category category) {

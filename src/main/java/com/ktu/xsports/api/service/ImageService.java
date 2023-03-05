@@ -17,9 +17,6 @@ import java.util.Objects;
 @Slf4j
 public class ImageService {
     private static final String IMAGE_BUCKET = "images";
-    private static final String USER_PREFIX = "users-";
-    private static final String SPORT_PREFIX = "sports-";
-    private static final String CATEGORIES_PREFIX = "categories-";
 
     @Autowired
     private MinioClient minioClient;
@@ -38,9 +35,9 @@ public class ImageService {
         }
     }
 
-    public String uploadUserImage(MultipartFile image, String name) {
+    public String uploadImage(MultipartFile image, String name) {
         try {
-            String imageName = getCustomPictureName(image, name);
+            String imageName = addTypeExtension(image, name);
 
             minioClient.putObject(PutObjectArgs.builder()
                 .bucket(IMAGE_BUCKET)
@@ -57,11 +54,24 @@ public class ImageService {
     }
 
     public String updateProfileImage(MultipartFile image, String fileName) {
-        deleteUserProfileImage(fileName);
-        return uploadUserImage(image, fileName);
+        deleteImage(fileName);
+
+        try {
+            minioClient.putObject(PutObjectArgs.builder()
+                .bucket(IMAGE_BUCKET)
+                .object(fileName)
+                .stream(image.getInputStream(), image.getSize(), -1)
+                .contentType(image.getContentType())
+                .build());
+
+            log.info("Image successfully uploaded");
+            return fileName;
+        } catch (Exception e) {
+            throw new ImageUploadException("Couldn't upload image");
+        }
     }
 
-    public void deleteUserProfileImage(String fileName) {
+    public void deleteImage(String fileName) {
         try {
             minioClient.removeObject(
                 RemoveObjectArgs.builder()
@@ -73,16 +83,16 @@ public class ImageService {
         }
     }
 
-    private String getCustomPictureName(MultipartFile multipartFile, String name) {
+    private String addTypeExtension(MultipartFile multipartFile, String name) {
         switch (Objects.requireNonNull(multipartFile.getContentType())) {
             case "image/jpeg" -> {
-                return USER_PREFIX + name + ".jpeg";
+                return name + ".jpeg";
             }
             case "image/jpg" -> {
-                return USER_PREFIX + name + ".jpg";
+                return name + ".jpg";
             }
             case "image/png" -> {
-                return USER_PREFIX + name + ".png";
+                return name + ".png";
             }
             default -> {
                 throw new ImageUploadException("Incorrect image type: use (jpg, jpeg, png)");

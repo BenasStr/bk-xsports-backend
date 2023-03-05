@@ -30,9 +30,7 @@ public class SportService {
     }
 
     public void addSportToUserList(int sportId, String email) {
-        Sport sport = findSportById(sportId).orElseThrow(() ->
-                new ServiceException(String.format("Sport with id %d does not exist", sportId))
-            );
+        Sport sport = findSportById(sportId);
 
         User user = userRepository.findByEmail(email).orElseThrow(() ->
                 new ServiceException("This user does not exist")
@@ -51,8 +49,9 @@ public class SportService {
         return null; //fileStore.download(path, sport.getPhoto());
     }
 
-    public Optional<Sport> findSportById(long id) {
-        return sportRepository.findById(id);
+    public Sport findSportById(long id) {
+        return sportRepository.findById(id)
+            .orElseThrow(() -> new ServiceException("Sport not found!"));
     }
 
     public Optional<Sport> createSport(Sport sport) {
