@@ -13,13 +13,9 @@ public class SportRequest {
     @NotNull(message = "Must have a name")
     private String name;
 
-    @NotNull(message = "Must have a photo")
-    private String photo;
-
     public Sport toSport() {
         return Sport.builder()
                 .name(name)
-                .photo(photo)
                 .build();
     }
 }

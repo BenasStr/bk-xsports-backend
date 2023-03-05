@@ -56,10 +56,9 @@ public class SportController {
     }
 
     @GetMapping("/my_list")
-    public ResponseEntity<?> findMySports(@RequestHeader("Authorization") String token) {
+    public ResponseEntity<?> findMySports(@AuthenticationPrincipal User user) {
         log.info("finding my sports");
-        String email = jwtService.extractUsername(token);
-        List<Sport> sports = sportService.findMySports(email);
+        List<Sport> sports = sportService.findMySports(user.getEmail());
         List<SportResponse> sportResponse = sports.stream().map(
             sport -> modelMapper.map(sport, SportResponse.class)
         ).toList();
@@ -100,12 +99,10 @@ public class SportController {
 
     @PostMapping("/my_list")
     public ResponseEntity<?> addMySport(
-        @RequestHeader("Authorization") String token,
+        @AuthenticationPrincipal User user,
         @RequestParam("sportId") int sportId) {
         log.info("adding to my list");
-        String email = jwtService.extractUsername(token);
-        sportService.addSportToUserList(sportId, email);
-
+        sportService.addSportToUserList(sportId, user.getEmail());
         return ResponseEntity.ok("");
     }
 

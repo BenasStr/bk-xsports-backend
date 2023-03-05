@@ -14,7 +14,6 @@ import java.util.*;
 @Service
 @RequiredArgsConstructor
 public class SportService {
-
     private final UserRepository userRepository;
     private final SportRepository sportRepository;
 
@@ -55,22 +54,24 @@ public class SportService {
     }
 
     public Optional<Sport> createSport(Sport sport) {
-        Optional<Sport> exists = sportRepository.findByName(sport.getName());
-        if(exists.isPresent()) {
-            throw new AlreadyExistsException(String.format("Sport with name %s", sport.getName()));
-        }
+        sportRepository.findByName(sport.getName())
+            .orElseThrow(() -> new AlreadyExistsException(String.format("Sport with name %s", sport.getName())));
 
         return Optional.of(sportRepository.save(sport));
     }
 
     public Optional<Sport> updateSport(Sport sport, long id) {
-        Optional<Sport> exists = sportRepository.findByName(sport.getName());
-        if(exists.isPresent()) {
-            throw new AlreadyExistsException(String.format("Sport with name %s", sport.getName()));
+        sportRepository.findByName(sport.getName())
+            .orElseThrow(() -> new AlreadyExistsException(String.format("Sport with name %s", sport.getName())));
+
+        Sport existingSport = findSportById(id);
+        sport.setId(id);
+
+        if (existingSport.getPhoto() != null) {
+            sport.setPhoto(existingSport.getPhoto());
         }
 
-        sport.setId(id);
-        if(sportRepository.findById(id).isPresent()) {
+        if (sportRepository.findById(id).isPresent()) {
             return Optional.of(sportRepository.save(sport));
         }
         return Optional.empty();

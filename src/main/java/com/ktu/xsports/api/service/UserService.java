@@ -58,16 +58,12 @@ public class UserService {
         return userRepository.save(user);
     }
 
-    public User saveUser(User user) {
-        return userRepository.save(user);
-    }
-
     public Optional<User> updateUserById(User user, long id) {
         log.info("Updating user by id");
         User existingUser = findById(id);
         user.setId(id);
 
-        if (existingUser.getPhotoPath() != null) {
+        if (user.getPhotoPath() == null) {
             user.setPhotoPath(existingUser.getPhotoPath());
         }
 

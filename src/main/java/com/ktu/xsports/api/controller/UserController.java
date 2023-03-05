@@ -106,9 +106,7 @@ public class UserController {
         @RequestBody @Valid UserRequest userRequest
     ) {
         log.info("Creating new moderator user.");
-
-        User user = userRequest.toUser();
-        User newUser = userService.saveModeratorUser(user);
+        User newUser = userService.saveModeratorUser(userRequest.toUser());
 
         return ResponseEntity.ok(
             Map.of("data", modelMapper.map(newUser, UserResponse.class))
