@@ -22,9 +22,7 @@ public class TrickService {
     private final UserService userService;
 
     public List<Trick> findTricks(Long sportId, Long categoryId, String difficulty, String email) {
-        User user = userService.findByEmail(email)
-            .orElseThrow(() -> new ServiceException("User doesn't exist"));
-
+        User user = userService.findByEmail(email);
         Category category = categoryService.findCategory(sportId, categoryId);
 
         return difficulty.equals("all") ?
@@ -33,12 +31,15 @@ public class TrickService {
     }
 
     public Optional<Trick> findTrickById(Long sportId, Long categoryId, Long trickId, String email) {
-        User user = userService.findByEmail(email)
-            .orElseThrow(() -> new ServiceException("User doesn't exist!"));
-
+        User user = userService.findByEmail(email);
         Category category = categoryService.findCategory(sportId, categoryId);
 
         return trickRepository.findById(categoryId, trickId, user.getId());
+    }
+
+    public Trick findTrickById(Long trickId) {
+        return trickRepository.findById(trickId)
+            .orElseThrow(() -> new ServiceException("Trick doesn't exist"));
     }
 
     @Transactional

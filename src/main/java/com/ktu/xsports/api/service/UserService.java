@@ -1,12 +1,14 @@
 package com.ktu.xsports.api.service;
 
 import com.ktu.xsports.api.domain.User;
+import com.ktu.xsports.api.exceptions.ServiceException;
 import com.ktu.xsports.api.repository.UserRepository;
 import com.ktu.xsports.api.util.Prefix;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
+import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
@@ -24,7 +26,7 @@ import static com.ktu.xsports.api.util.Prefix.*;
 @RequiredArgsConstructor
 @Transactional
 @Slf4j
-public class UserService implements UserDetailsService {
+public class UserService {
     private final UserRepository userRepository;
     private final PasswordEncoder passwordEncoder;
 
@@ -37,14 +39,16 @@ public class UserService implements UserDetailsService {
         return userRepository.findByNicknameContaining(nickname, pageable);
     }
 
-    public Optional<User> findById(long id) {
+    public User findById(long id) {
         log.info("Finding user by id {}", id);
-        return userRepository.findById(id);
+        return userRepository.findById(id)
+            .orElseThrow(() -> new ServiceException(String.format("User by id: %d not found", id)));
     }
 
-    public Optional<User> findByEmail(String email) {
+    public User findByEmail(String email) {
         log.info("Fetching user by email {}", email);
-        return userRepository.findByEmail(email);
+        return userRepository.findByEmail(email)
+            .orElseThrow(() -> new ServiceException(String.format("User by email: %s not found.", email)));
     }
 
     public User saveModeratorUser(User user) {
@@ -60,56 +64,26 @@ public class UserService implements UserDetailsService {
 
     public Optional<User> updateUserById(User user, long id) {
         log.info("Updating user by id");
+        User existingUser = findById(id);
         user.setId(id);
-        if (userRepository.findById(id).isPresent()) {
-            user.setPassword(passwordEncoder.encode(user.getPassword()));
-            user.setRole(MODERATOR);
-            return Optional.of(userRepository.save(user));
+
+        if (existingUser.getPhotoPath() != null) {
+            user.setPhotoPath(existingUser.getPhotoPath());
         }
-        return Optional.empty();
+
+        if (user.getPassword() != null) {
+            user.setPassword(passwordEncoder.encode(user.getPassword()));
+        }
+
+        user.setRole(existingUser.getRole());
+        user.setSports(existingUser.getSports());
+        return Optional.of(userRepository.save(user));
     }
 
-    public Optional<User> updateUserByEmail(User user, String email) {
-        log.info("Updating user by email");
-        Optional<User> existingUser = userRepository.findByEmail(email);
-        if (existingUser.isPresent()) {
-            user.setId(existingUser.get().getId());
-            user.setPassword(passwordEncoder.encode(user.getPassword()));
-            user.setRole(MODERATOR);
-            return Optional.of(userRepository.save(user));
-        }
-        return Optional.empty();
-    }
-
-    public Optional<User> removeUser(long id) {
+    public User removeUser(long id) {
         log.info("Removing user by id");
-        Optional<User> deletedUser = userRepository.findById(id);
-        if(deletedUser.isPresent()) {
-            userRepository.delete(deletedUser.get());
-            return deletedUser;
-        }
-        return Optional.empty();
-    }
-
-    @Override
-    public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
-        Optional<User> user = userRepository.findByEmail(username);
-
-//        if(user.isPresent()) {
-//            log.info("User found in the database: {}", user.get().getEmail());
-//            Collection<SimpleGrantedAuthority> authorities = new ArrayList<>();
-//            user.get().getRoles().forEach( role -> {
-//                authorities.add(new SimpleGrantedAuthority(role.getName()));
-//            });
-//
-//            return new org.springframework.security.core.userdetails.User(
-//                    user.get().getEmail(),
-//                    user.get().getPassword(),
-//                    authorities
-//            );
-//        }
-
-        log.error("User not found in the database");
-        throw new UsernameNotFoundException("User not found in the database");
+        User deletedUser = findById(id);
+        userRepository.delete(deletedUser);
+        return deletedUser;
     }
 }

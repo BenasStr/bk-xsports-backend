@@ -35,18 +35,16 @@ public class UserController {
     private final UserService userService;
     private final ImageService imageService;
     private final ModelMapper modelMapper;
-    private final JwtService jwtService;
 
     @GetMapping("/me")
-    public ResponseEntity<?> findUserMe(@RequestHeader("Authorization") String token) {
+    public ResponseEntity<?> findUserMe(@AuthenticationPrincipal User user) {
         log.info("User is getting me info.");
-        String email = jwtService.extractUsername(token);
-        Optional<User> user = userService.findByEmail(email);
-        return ResponseEntity.of(user.map(
-            u -> Map.of("data", modelMapper.map(u, UserBasicResponse.class))
-        ));
+        return ResponseEntity.ok(
+            Map.of("data", modelMapper.map(user, UserBasicResponse.class))
+        );
     }
 
+    //TODO this is broken
     @GetMapping()
     public ResponseEntity<?> findUsers (
         @RequestParam(defaultValue = "1") int page,
@@ -86,21 +84,21 @@ public class UserController {
     @GetMapping("/{id}")
     public ResponseEntity<?> findUser(@PathVariable long id) {
         log.info("Getting user data by id.");
-        Optional<User> user = userService.findById(id);
+        User user = userService.findById(id);
 
-        return ResponseEntity.of(user.map(
-                u -> Map.of("data", modelMapper.map(u, UserResponse.class))
-        ));
+        return ResponseEntity.ok(
+            Map.of("data", modelMapper.map(user, UserResponse.class))
+        );
     }
 
     @GetMapping("basic/{id}")
     public ResponseEntity<?> findUserBasic(@PathVariable long id) {
         log.info("Getting basic user data by id.");
-        Optional<User> user = userService.findById(id);
+        User user = userService.findById(id);
 
-        return ResponseEntity.of(user.map(
-            u -> Map.of("data", modelMapper.map(u, UserBasicResponse.class))
-        ));
+        return ResponseEntity.ok(
+            Map.of("data", modelMapper.map(user, UserBasicResponse.class))
+        );
     }
 
     @PostMapping()
@@ -146,12 +144,10 @@ public class UserController {
     @PutMapping("/me")
     public ResponseEntity<?> updateUserMe(
         @RequestBody @Valid UserRequest userRequest,
-        @RequestHeader("Authorization") String token
+        @AuthenticationPrincipal User user
     ) {
         log.info("User updating his data.");
-        String email = jwtService.extractUsername(token);
-        User user = userRequest.toUser();
-        Optional<User> updatedUser = userService.updateUserByEmail(user, email);
+        Optional<User> updatedUser = userService.updateUserById(userRequest.toUser(), user.getId());
 
         return ResponseEntity.of(
             updatedUser.map(u ->
@@ -169,16 +165,19 @@ public class UserController {
             imageService.uploadImage(file, USER_FILE+user.getId()) :
             imageService.updateProfileImage(file, user.getPhotoPath());
 
+        user.setPhotoPath(fileName);
+        userService.updateUserById(user, user.getId());
+
         return ResponseEntity.ok(Map.of("data", fileName));
     }
 
     @DeleteMapping("/{id}")
     public ResponseEntity<?> deleteUser(@PathVariable long id) {
         log.info("Deleting user.");
-        Optional<User> deletedUser = userService.removeUser(id);
-        deletedUser.ifPresent(user -> imageService.deleteImage(user.getName()));
-        return ResponseEntity.of(
-                deletedUser.map(u ->
-                        Map.of("data", modelMapper.map(u, UserResponse.class))));
+        User deletedUser = userService.removeUser(id);
+        imageService.deleteImage(deletedUser.getName());
+        return ResponseEntity.ok(
+            Map.of("data", modelMapper.map(deletedUser, UserResponse.class))
+        );
     }
 }

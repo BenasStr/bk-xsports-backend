@@ -11,6 +11,7 @@ import org.springframework.stereotype.Repository;
 
 import java.util.List;
 import java.util.Optional;
+import javax.swing.text.html.Option;
 
 @Repository
 public interface TrickRepository extends JpaRepository<Trick, Long> {
@@ -25,4 +26,6 @@ public interface TrickRepository extends JpaRepository<Trick, Long> {
 
     @Query("SELECT t FROM tricks t LEFT JOIN progress p ON p.user.id = :userId WHERE t.category.id = :categoryId AND t.id = :trickId")
     Optional<Trick> findById(Long categoryId, Long trickId, Long userId);
+
+    Optional<Trick> findById(long id);
 }

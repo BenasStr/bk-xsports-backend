@@ -24,8 +24,7 @@ public class ProgressService {
     }
 
     public List<Progress> findProgress(String email) {
-        User user = userService.findByEmail(email)
-            .orElseThrow(() -> new ServiceException("User not found"));
+        User user = userService.findByEmail(email);
         return progressRepository.findAllByUserId(user.getId());
     }
 

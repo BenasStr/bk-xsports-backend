@@ -11,6 +11,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.io.InputStream;
+import java.util.Objects;
 
 @Service
 public class VideoService {
@@ -37,18 +38,19 @@ public class VideoService {
 
     public String uploadVideo(MultipartFile video, String fileName) {
         try {
+            String videoName = addTypeExtension(video, fileName);
             InputStream inputStream = video.getInputStream();
 
             minioClient.putObject(
                 PutObjectArgs.builder()
                     .bucket(VIDEO_BUCKET)
-                    .object("")
+                    .object(videoName)
                     .stream(inputStream, inputStream.available(), -1)
                     .contentType(video.getContentType())
                     .build()
             );
 
-            return "";
+            return videoName;
         } catch (Exception e) {
             //TODO add exception here
             throw new ImageUploadException("");
@@ -57,7 +59,23 @@ public class VideoService {
 
     public String updateVideo(MultipartFile video, String fileName) {
         deleteVideo(fileName);
-        return uploadVideo(video, fileName);
+        try {
+            InputStream inputStream = video.getInputStream();
+
+            minioClient.putObject(
+                PutObjectArgs.builder()
+                    .bucket(VIDEO_BUCKET)
+                    .object(fileName)
+                    .stream(inputStream, inputStream.available(), -1)
+                    .contentType(video.getContentType())
+                    .build()
+            );
+
+            return fileName;
+        } catch (Exception e) {
+            //TODO add exception here
+            throw new ImageUploadException("");
+        }
     }
 
     public void deleteVideo(String fileName) {
@@ -71,6 +89,17 @@ public class VideoService {
         } catch (Exception e) {
             //TODO create normal stuff
             throw new ImageUploadException("This failed");
+        }
+    }
+
+    private String addTypeExtension(MultipartFile file, String fileName) {
+        switch (Objects.requireNonNull(file.getContentType())) {
+            case "" -> {
+                return fileName + ".mp4";
+            }
+            default -> {
+                throw new ImageUploadException("Couldn't upload video");
+            }
         }
     }
 }

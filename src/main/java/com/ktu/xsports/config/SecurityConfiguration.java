@@ -58,7 +58,8 @@ public class SecurityConfiguration {
             .requestMatchers(GET, "/api/users/basic").hasAnyAuthority(USER.name(), ADMIN.name(), MODERATOR.name())
             .requestMatchers(GET, "/api/users/basic/{id}").hasAnyAuthority(USER.name(), ADMIN.name(), MODERATOR.name())
             .requestMatchers(GET, "/api/users/me").hasAnyAuthority(USER.name(), ADMIN.name(), MODERATOR.name())
-            .requestMatchers(PUT, "/api/users/me").hasAnyAuthority(USER.name(), ADMIN.name(), MODERATOR.name());
+            .requestMatchers(PUT, "/api/users/me").hasAnyAuthority(USER.name(), ADMIN.name(), MODERATOR.name())
+            .requestMatchers(POST, "/api/users/me/image").hasAnyAuthority(USER.name(), ADMIN.name(), MODERATOR.name());
 
         //Administration endpoints
         http.authorizeHttpRequests()
@@ -76,6 +77,7 @@ public class SecurityConfiguration {
             .requestMatchers(GET, "/api/sports/{id}").hasAnyAuthority(USER.name(), ADMIN.name(), MODERATOR.name())
             .requestMatchers(POST, "/api/sports").hasAnyAuthority(ADMIN.name(), MODERATOR.name())
             .requestMatchers(POST, "/api/sports/my_list").hasAnyAuthority(USER.name(), ADMIN.name(), MODERATOR.name())
+            .requestMatchers(POST, "/api/sports/{id}/image").hasAnyAuthority(ADMIN.name(), MODERATOR.name())
             .requestMatchers(PUT, "/api/sports/{id}").hasAnyAuthority(ADMIN.name(), MODERATOR.name())
             .requestMatchers(DELETE, "api/sports/my_list").hasAnyAuthority(USER.name(), ADMIN.name(), MODERATOR.name())
             .requestMatchers(DELETE, "/api/sports/{id}").hasAnyAuthority(ADMIN.name(), MODERATOR.name());
