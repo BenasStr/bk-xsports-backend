@@ -1,6 +1,7 @@
 package com.ktu.xsports.api.service;
 
 import com.ktu.xsports.api.exceptions.ImageUploadException;
+import com.ktu.xsports.config.HostConfiguration;
 import io.minio.GetObjectArgs;
 import io.minio.MinioClient;
 import io.minio.PutObjectArgs;
@@ -17,6 +18,9 @@ import java.util.Objects;
 @Slf4j
 public class ImageService {
     private static final String IMAGE_BUCKET = "images";
+
+    @Autowired
+    private HostConfiguration hostConfiguration;
 
     @Autowired
     private MinioClient minioClient;
@@ -47,7 +51,7 @@ public class ImageService {
                 .build());
 
             log.info("Image successfully uploaded");
-            return imageName;
+            return hostConfiguration.getUrl() + "/images/" + imageName;
         } catch (Exception e) {
             throw new ImageUploadException("Couldn't upload image");
         }
