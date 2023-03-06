@@ -44,7 +44,6 @@ public class SportController {
     private final SportService sportService;
     private final ImageService imageService;
     private final JwtService jwtService;
-    private final HostConfiguration hostConfiguration;
     private final ModelMapper modelMapper;
 
     @GetMapping()
@@ -60,7 +59,17 @@ public class SportController {
     @GetMapping("/my_list")
     public ResponseEntity<?> findMySports(@AuthenticationPrincipal User user) {
         log.info("finding my sports");
-        List<Sport> sports = sportService.findMySports(user.getEmail());
+        List<Sport> sports = sportService.findMySports(user);
+        List<SportResponse> sportResponse = sports.stream().map(
+            sport -> modelMapper.map(sport, SportResponse.class)
+        ).toList();
+        return ResponseEntity.ok(Map.of("data", sportResponse));
+    }
+
+    @GetMapping("/my_list/explore")
+    public ResponseEntity<?> findAllExploreTricks(@AuthenticationPrincipal User user) {
+        log.info("Finding explorable sports.");
+        List<Sport> sports = sportService.findExploreSports(user);
         List<SportResponse> sportResponse = sports.stream().map(
             sport -> modelMapper.map(sport, SportResponse.class)
         ).toList();

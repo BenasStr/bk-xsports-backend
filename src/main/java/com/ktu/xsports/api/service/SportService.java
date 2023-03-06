@@ -21,11 +21,12 @@ public class SportService {
         return sportRepository.findAll();
     }
 
-    public List<Sport> findMySports(String email) {
-        User user = userRepository.findByEmail(email).orElseThrow(() ->
-                new ServiceException("This user does not exist")
-            );
+    public List<Sport> findMySports(User user) {
         return user.getSports();
+    }
+
+    public List<Sport> findExploreSports(User user) {
+        return sportRepository.findExploreSports(user.getId());
     }
 
     public void addSportToUserList(int sportId, String email) {

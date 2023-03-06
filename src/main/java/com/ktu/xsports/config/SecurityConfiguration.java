@@ -75,6 +75,7 @@ public class SecurityConfiguration {
             .requestMatchers(GET,"/api/sports").hasAnyAuthority(USER, ADMIN, MODERATOR)
             .requestMatchers(GET, "/api/sports/my_list").hasAnyAuthority(USER, ADMIN, MODERATOR)
             .requestMatchers(GET, "/api/sports/{id}").hasAnyAuthority(USER, ADMIN, MODERATOR)
+            .requestMatchers(GET, "/api/sports/my_list/explore").hasAnyAuthority(USER, ADMIN, MODERATOR)
             .requestMatchers(POST, "/api/sports").hasAnyAuthority(ADMIN, MODERATOR)
             .requestMatchers(POST, "/api/sports/my_list").hasAnyAuthority(USER, ADMIN, MODERATOR)
             .requestMatchers(POST, "/api/sports/{id}/image").hasAnyAuthority(ADMIN, MODERATOR)
