@@ -7,6 +7,7 @@ import com.ktu.xsports.api.dto.response.SportResponse;
 import com.ktu.xsports.api.service.ImageService;
 import com.ktu.xsports.api.service.JwtService;
 import com.ktu.xsports.api.service.SportService;
+import com.ktu.xsports.config.HostConfiguration;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -43,6 +44,7 @@ public class SportController {
     private final SportService sportService;
     private final ImageService imageService;
     private final JwtService jwtService;
+    private final HostConfiguration hostConfiguration;
     private final ModelMapper modelMapper;
 
     @GetMapping()
@@ -70,7 +72,6 @@ public class SportController {
     {
         log.info("finding sport by id");
         Sport sport = sportService.findSportById(id);
-
         return ResponseEntity.ok(
             Map.of("data", modelMapper.map(sport, SportResponse.class))
         );

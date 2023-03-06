@@ -41,9 +41,6 @@ public class Trick {
     @JoinColumn(name = "category_id", nullable = false)
     private Category category;
 
-    @OneToOne
-    private Lesson lesson;
-
     @ManyToOne
     private Difficulty difficulty;
 

@@ -1,6 +1,6 @@
 package com.ktu.xsports.api.domain;
 
-import com.ktu.xsports.api.domain.enums.Role;
+import com.ktu.xsports.api.util.Role;
 import jakarta.persistence.Entity;
 import jakarta.persistence.EnumType;
 import jakarta.persistence.Enumerated;
@@ -49,8 +49,7 @@ public class User implements UserDetails {
 
     private String photoPath;
 
-    @Enumerated(EnumType.STRING)
-    private Role role;
+    private String role;
 
     @NotNull
     private boolean isBlocked;
@@ -67,7 +66,7 @@ public class User implements UserDetails {
 
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {
-        return List.of(new SimpleGrantedAuthority(role.name()));
+        return List.of(new SimpleGrantedAuthority(role));
     }
 
     @Override

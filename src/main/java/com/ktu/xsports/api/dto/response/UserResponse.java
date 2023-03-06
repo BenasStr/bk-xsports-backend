@@ -1,6 +1,6 @@
 package com.ktu.xsports.api.dto.response;
 
-import com.ktu.xsports.api.domain.enums.Role;
+import com.ktu.xsports.api.util.Role;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 

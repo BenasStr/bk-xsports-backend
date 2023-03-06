@@ -3,10 +3,8 @@ package com.ktu.xsports.api.dto.request;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 import com.ktu.xsports.api.converter.difficulty.IdToDifficultyConverter;
-import com.ktu.xsports.api.converter.lesson.IdToLessonConverter;
 import com.ktu.xsports.api.converter.trick.IdsToTricksConverter;
 import com.ktu.xsports.api.domain.Difficulty;
-import com.ktu.xsports.api.domain.Lesson;
 import com.ktu.xsports.api.domain.Trick;
 import jakarta.validation.constraints.NotNull;
 import lombok.AllArgsConstructor;
@@ -29,10 +27,6 @@ public class TrickRequest {
     @NotNull
     private String description;
 
-    @JsonProperty("lesson_id")
-    @JsonDeserialize(converter = IdToLessonConverter.class)
-    private Lesson lesson;
-
     @JsonProperty("trick_parents_ids")
     @JsonDeserialize(converter = IdsToTricksConverter.class)
     private List<Trick> trickParent;
@@ -50,7 +44,6 @@ public class TrickRequest {
                 .name(name)
                 .video(video)
                 .description(description)
-                .lesson(lesson)
                 .trickParents(trickParent)
                 .trickChildren(trickChild)
                 .difficulty(difficulty)
