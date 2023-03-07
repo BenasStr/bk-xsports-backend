@@ -1,15 +1,17 @@
 package com.ktu.xsports.api.controller;
 
 import com.ktu.xsports.api.domain.Trick;
+import com.ktu.xsports.api.domain.User;
 import com.ktu.xsports.api.dto.request.TrickRequest;
 import com.ktu.xsports.api.dto.response.TrickResponse;
 import com.ktu.xsports.api.service.JwtService;
+import com.ktu.xsports.api.service.ProgressService;
 import com.ktu.xsports.api.service.TrickService;
-import com.ktu.xsports.api.service.UserService;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.modelmapper.ModelMapper;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
@@ -25,6 +27,7 @@ import java.util.Optional;
 public class TrickController {
 
     private final TrickService trickService;
+    private final ProgressService progressService;
     private final ModelMapper modelMapper;
     private final JwtService jwtService;
 
@@ -32,10 +35,9 @@ public class TrickController {
     public ResponseEntity<?> findTricks(
             @PathVariable long categoryId,
             @PathVariable long sportId,
-            @RequestHeader("Authorization") String token,
+            @AuthenticationPrincipal User user,
             @RequestParam(defaultValue = "all") String difficulty) {
-        String email = jwtService.extractUsername(token);
-        List<Trick> tricks = trickService.findTricks(sportId, categoryId, difficulty, email);
+        List<Trick> tricks = trickService.findTricks(sportId, categoryId, difficulty, user.getEmail());
 
         List<TrickResponse> tricksResponses = tricks.stream().map(
                 trick -> modelMapper.map(trick, TrickResponse.class)
@@ -95,6 +97,18 @@ public class TrickController {
 
         return ResponseEntity.of(
                 newTrick.map(t -> Map.of("data", modelMapper.map(t, TrickResponse.class))));
+    }
+
+    @PutMapping("/{trickId}/progress")
+    public ResponseEntity<?> updateTrickProgress (
+        @PathVariable Long categoryId,
+        @PathVariable Long sportId,
+        @PathVariable Long trickId,
+        @AuthenticationPrincipal User user
+    ) {
+        trickService.findTrickById(sportId, categoryId, trickId);
+        Trick trick = progressService.updateProgress(user.getId(), trickId);
+        return ResponseEntity.ok(Map.of("data", modelMapper.map(trick, TrickResponse.class)));
     }
 
     @DeleteMapping("/{trickId}")

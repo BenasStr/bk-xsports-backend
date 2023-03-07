@@ -99,6 +99,7 @@ public class SecurityConfiguration {
             .requestMatchers(GET, "/api/sports/{sportId}/categories/{categoryId}/tricks/{trickId}").hasAnyAuthority(USER, ADMIN, MODERATOR)
             .requestMatchers(POST, "/api/sports/{sportId}/categories/{categoryId}/tricks").hasAnyAuthority(ADMIN, MODERATOR)
             .requestMatchers(PUT, "/api/sports/{sportId}/categories/{categoryId}/tricks/{trickId}").hasAnyAuthority(ADMIN, MODERATOR)
+            .requestMatchers(PUT, "/api/sports/{sportId}/categories/{categoryId}/tricks/{trickId}/progress").hasAnyAuthority(USER, ADMIN, MODERATOR)
             .requestMatchers(DELETE, "/api/sports/{sportId}/categories/{categoryId}/tricks/{trickId}").hasAnyAuthority(ADMIN, MODERATOR);
     }
 

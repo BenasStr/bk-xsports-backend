@@ -1,9 +1,11 @@
 package com.ktu.xsports.api.service;
 
 import com.ktu.xsports.api.domain.Category;
+import com.ktu.xsports.api.domain.Progress;
 import com.ktu.xsports.api.domain.Trick;
 import com.ktu.xsports.api.domain.User;
 import com.ktu.xsports.api.exceptions.ServiceException;
+import com.ktu.xsports.api.repository.ProgressRepository;
 import com.ktu.xsports.api.repository.TrickRepository;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
@@ -19,6 +21,7 @@ public class TrickService {
 
     private final TrickRepository trickRepository;
     private final CategoryService categoryService;
+    private final ProgressRepository progressRepository;
     private final UserService userService;
 
     public List<Trick> findTricks(Long sportId, Long categoryId, String difficulty, String email) {
@@ -28,6 +31,11 @@ public class TrickService {
         return difficulty.equals("all") ?
             trickRepository.findAll(user.getId(), categoryId) :
             trickRepository.findAll(user.getId(), categoryId, difficulty);
+    }
+
+    public Optional<Trick> findTrickById(Long sportId, Long categoryId, Long trickId) {
+        categoryService.findCategory(sportId, categoryId);
+        return trickRepository.findById(categoryId, trickId);
     }
 
     public Optional<Trick> findTrickById(Long sportId, Long categoryId, Long trickId, String email) {
