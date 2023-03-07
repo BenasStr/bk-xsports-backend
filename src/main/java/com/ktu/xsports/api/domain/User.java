@@ -1,9 +1,6 @@
 package com.ktu.xsports.api.domain;
 
-import com.ktu.xsports.api.util.Role;
 import jakarta.persistence.Entity;
-import jakarta.persistence.EnumType;
-import jakarta.persistence.Enumerated;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
@@ -49,6 +46,7 @@ public class User implements UserDetails {
 
     private String photoPath;
 
+    @NotNull
     private String role;
 
     @NotNull

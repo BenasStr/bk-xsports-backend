@@ -5,6 +5,7 @@ import com.ktu.xsports.api.dto.request.TrickRequest;
 import com.ktu.xsports.api.dto.response.TrickResponse;
 import com.ktu.xsports.api.service.JwtService;
 import com.ktu.xsports.api.service.TrickService;
+import com.ktu.xsports.api.service.UserService;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.modelmapper.ModelMapper;

@@ -21,12 +21,14 @@ public class SportService {
         return sportRepository.findAll();
     }
 
-    public List<Sport> findMySports(User user) {
-        return user.getSports();
+    public List<Sport> findMySports(long userId) {
+        return userRepository.findById(userId)
+            .orElseThrow(() -> new ServiceException("User does not exist."))
+            .getSports();
     }
 
-    public List<Sport> findExploreSports(User user) {
-        return sportRepository.findExploreSports(user.getId());
+    public List<Sport> findExploreSports(long userId) {
+        return sportRepository.findExploreSports(userId);
     }
 
     public void addSportToUserList(int sportId, String email) {
@@ -42,11 +44,6 @@ public class SportService {
 
         user.getSports().add(sport);
         userRepository.save(user);
-    }
-
-    public byte[] downloadSportImage(long sportId) {
-        Sport sport = sportRepository.findById(sportId).get();
-        return null; //fileStore.download(path, sport.getPhoto());
     }
 
     public Sport findSportById(long id) {

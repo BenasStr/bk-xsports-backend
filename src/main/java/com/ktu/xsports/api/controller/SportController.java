@@ -7,7 +7,6 @@ import com.ktu.xsports.api.dto.response.SportResponse;
 import com.ktu.xsports.api.service.ImageService;
 import com.ktu.xsports.api.service.JwtService;
 import com.ktu.xsports.api.service.SportService;
-import com.ktu.xsports.config.HostConfiguration;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -32,7 +31,6 @@ import java.util.Map;
 import java.util.Optional;
 
 import static com.ktu.xsports.api.util.Prefix.SPORT_FILE;
-import static com.ktu.xsports.api.util.Prefix.USER_FILE;
 
 @Validated
 @RestController
@@ -59,7 +57,7 @@ public class SportController {
     @GetMapping("/my_list")
     public ResponseEntity<?> findMySports(@AuthenticationPrincipal User user) {
         log.info("finding my sports");
-        List<Sport> sports = sportService.findMySports(user);
+        List<Sport> sports = sportService.findMySports(user.getId());
         List<SportResponse> sportResponse = sports.stream().map(
             sport -> modelMapper.map(sport, SportResponse.class)
         ).toList();
@@ -69,7 +67,7 @@ public class SportController {
     @GetMapping("/my_list/explore")
     public ResponseEntity<?> findAllExploreTricks(@AuthenticationPrincipal User user) {
         log.info("Finding explorable sports.");
-        List<Sport> sports = sportService.findExploreSports(user);
+        List<Sport> sports = sportService.findExploreSports(user.getId());
         List<SportResponse> sportResponse = sports.stream().map(
             sport -> modelMapper.map(sport, SportResponse.class)
         ).toList();
