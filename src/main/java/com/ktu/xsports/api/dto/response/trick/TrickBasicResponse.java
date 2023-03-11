@@ -1,4 +1,4 @@
-package com.ktu.xsports.api.dto.response;
+package com.ktu.xsports.api.dto.response.trick;
 
 import lombok.Data;
 import lombok.NoArgsConstructor;

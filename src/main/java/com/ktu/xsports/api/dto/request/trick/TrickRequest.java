@@ -6,9 +6,11 @@ import com.ktu.xsports.api.converter.difficulty.IdToDifficultyConverter;
 import com.ktu.xsports.api.converter.trick.IdsToTricksConverter;
 import com.ktu.xsports.api.domain.Difficulty;
 import com.ktu.xsports.api.domain.Trick;
+import com.ktu.xsports.api.domain.TrickVariant;
 import jakarta.validation.constraints.NotNull;
 import lombok.AllArgsConstructor;
 import lombok.Data;
+import lombok.EqualsAndHashCode;
 import lombok.NoArgsConstructor;
 
 import java.util.List;
@@ -25,25 +27,29 @@ public class TrickRequest {
     @JsonDeserialize(converter = IdsToTricksConverter.class)
     private List<Trick> trickParent;
 
-    @JsonProperty("trick_children_ids")
-    @JsonDeserialize(converter = IdsToTricksConverter.class)
-    private List<Trick> trickChild;
-
     @JsonProperty("difficulty_id")
     @JsonDeserialize(converter = IdToDifficultyConverter.class)
     private Difficulty difficulty;
 
-    @JsonProperty("trick_variants")
-    private List<TrickVariantRequest> trickVariants;
+    @NotNull
+    private String description;
+
+    @NotNull
+    @JsonProperty("short_description")
+    private String shortDescription;
 
     public Trick toTrick() {
         return Trick.builder()
             .name(name)
             .trickParents(trickParent)
             .difficulty(difficulty)
-            .trickVariants(trickVariants.stream()
-                .map(TrickVariantRequest::toTrickVariant)
-                .toList())
+            .trickVariants(
+                List.of(TrickVariant.builder()
+                        .description(description)
+                        .shortDescription(shortDescription)
+                    .build()
+                )
+            )
             .build();
     }
 }

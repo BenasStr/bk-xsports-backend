@@ -27,6 +27,8 @@ public class TrickService {
 
     private final TrickRepository trickRepository;
     private final TrickVariantRepository trickVariantRepository;
+
+    private final VariantService variantService;
     private final CategoryService categoryService;
     private final UserService userService;
 
@@ -58,7 +60,7 @@ public class TrickService {
             .orElseThrow(() -> new ServiceException("Trick doesn't exist"));
 
         setTrickVariantParents(trickVariant, userId);
-//        setTrickVariantChildren(trickVariant, userId);
+        setTrickVariantChildren(trickVariant, userId);
         setTrickVariantVariants(trickVariant, userId);
         setProgress(trickVariant, userId);
 
@@ -103,6 +105,16 @@ public class TrickService {
         );
     }
 
+    private void setTrickVariantVariants(TrickVariant trickVariant) {
+        trickVariant.getTrick().setTrickVariants(
+            trickVariant.getTrick().getTrickVariants()
+                .stream()
+                .filter(variant ->
+                    variant.getId() != trickVariant.getId())
+                .toList()
+        );
+    }
+
     private void setProgress(TrickVariant trickVariant, Long userId) {
         trickVariant.setProgress(
             trickVariant.getProgress()
@@ -117,7 +129,6 @@ public class TrickService {
             .orElseThrow(() -> new ServiceException("Trick doesn't exist"));
     }
 
-    @Transactional
     public TrickVariant createTrick(Long sportId, Long categoryId, Trick trick) {
         Category category = categoryService.findCategory(sportId, categoryId);
         trick.setCategory(category);
@@ -127,17 +138,28 @@ public class TrickService {
             throw new ServiceException("Trick already exists");
         }
 
-        Trick newTrick = trickRepository.save(trick);
-
+        Trick savedTrick = trickRepository.save(trick);
         trick.getTrickVariants()
             .forEach(variant -> {
-                variant.setTrick(newTrick);
-                variant.setVideoUrl("nonde");
+                variant.setTrick(savedTrick);
+                variant.setVariant(variantService.getMainVariant());
+                variant.setVideoUrl("none");
                 trickVariantRepository.save(variant);
             });
 
-        return trickVariantRepository.findMainVariant(newTrick.getId())
-            .orElseThrow(() -> new ServiceException("Something went wrong, while searching for variant."));
+        TrickVariant standardVariant = trickVariantRepository.findMainVariant(savedTrick.getId())
+            .orElseThrow(() -> new ServiceException("Something went wrong!"));
+        setTrickVariantVariants(standardVariant);
+
+        return standardVariant;
+    }
+
+    public TrickVariant createTrickVariant(Long sportId, Long categoryId, Long trickId, TrickVariant trickVariant) {
+        categoryService.findCategory(sportId, categoryId);
+        Trick trick = findTrickById(trickId);
+        trickVariant.setTrick(trick);
+        trickVariant.setVideoUrl("nope");
+        return trickVariantRepository.save(trickVariant);
     }
 
     @Transactional
@@ -149,31 +171,51 @@ public class TrickService {
             .orElseThrow(() -> new ServiceException("Trick not found"));
         trick.setId(trickId);
 
-        Optional<Trick> existing = trickRepository.findByNameAndIdIsNot(trick.getName(), trickId);
-        if(existing.isPresent()) {
+        Optional<Trick> existing = trickRepository.findByName(trick.getName());
+        if(existing.isPresent() && trickId != existing.get().getId()) {
             throw new ServiceException("Trick already exists");
         }
 
-        Trick newTrick = trickRepository.save(trick);
+        Trick updatedTrick = trickRepository.save(trick);
 
         trick.getTrickVariants()
             .forEach(variant -> {
-                variant.setTrick(newTrick);
+                //TODO check for trick variants;
+//                variant.setId(updatedTrick);
+                variant.setTrick(updatedTrick);
+                variant.setVariant(variantService.getMainVariant());
                 variant.setVideoUrl("nonde");
                 trickVariantRepository.save(variant);
             });
 
-        return trickVariantRepository.findMainVariant(newTrick.getId())
-            .orElseThrow(() -> new ServiceException("Something went wrong, while searching for variant."));
+        TrickVariant standardVariant = trickVariantRepository.findMainVariant(updatedTrick.getId())
+            .orElseThrow(() -> new ServiceException("Something went wrong!"));
+        setTrickVariantVariants(standardVariant);
+
+        return standardVariant;
     }
 
-    public Optional<Trick> removeTrick(Long sportId, Long categoryId, Long trickId) {
+    public TrickVariant updateVariant(Long sportId, Long categoryId, Long trickId, Long variantId, TrickVariant trickVariant) {
         categoryService.findCategory(sportId, categoryId);
-        Optional<Trick> deletedTrick = trickRepository.findById(categoryId, trickId);
-        if(deletedTrick.isPresent()) {
-            trickRepository.delete(deletedTrick.get());
-            return deletedTrick;
-        }
-        return Optional.empty();
+        Trick trick = findTrickById(trickId);
+        trickVariant.setTrick(trick);
+        TrickVariant existingVariant = trickVariantRepository.findById(variantId)
+            .orElseThrow(() -> new ServiceException("Variant doesn't exist!"));
+        trickVariant.setVideoUrl("nope");
+        return trickVariantRepository.save(trickVariant);
+    }
+
+    public void removeTrick(Long sportId, Long categoryId, Long trickId) {
+        categoryService.findCategory(sportId, categoryId);
+        Trick trick = findTrickById(trickId);
+        trick.getTrickVariants()
+            .forEach(variant -> trickVariantRepository.deleteById(variant.getId()));
+        trickRepository.deleteById(trickId);
+    }
+
+    public void removeTrickVariant(Long sportId, Long categoryId, Long trickId, Long variantId) {
+        categoryService.findCategory(sportId, categoryId);
+        findTrickById(trickId);
+        trickVariantRepository.deleteById(variantId);
     }
 }

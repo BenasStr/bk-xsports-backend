@@ -1,4 +1,4 @@
-package com.ktu.xsports.api.dto.response;
+package com.ktu.xsports.api.dto.response.trick;
 
 import lombok.Data;
 import lombok.EqualsAndHashCode;
@@ -9,7 +9,7 @@ import java.util.List;
 @EqualsAndHashCode(callSuper = true)
 @Data
 @NoArgsConstructor
-public class TrickResponse extends TrickBasicResponse {
+public class TrickExtendedResponse extends TrickBasicResponse {
     String video;
     String description;
     List<TrickBasicResponse> trickParents;

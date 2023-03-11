@@ -1,12 +1,12 @@
 package com.ktu.xsports.api.converter.trick;
 
 import com.ktu.xsports.api.domain.TrickVariant;
-import com.ktu.xsports.api.dto.response.TrickResponse;
+import com.ktu.xsports.api.dto.response.trick.TrickExtendedResponse;
 import org.modelmapper.PropertyMap;
 import org.springframework.stereotype.Component;
 
 @Component
-public class TrickVariantToTrickResponseConverter extends PropertyMap<TrickVariant, TrickResponse> implements TrickVariantToResponse {
+public class TrickVariantToTrickResponseConverter extends PropertyMap<TrickVariant, TrickExtendedResponse> implements TrickVariantToResponse {
 
     @Override
     protected void configure() {

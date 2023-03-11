@@ -12,7 +12,12 @@ public class IdToVariantConverter extends StdConverter<Long, Variant> {
 
     @Override
     public Variant convert(Long id) {
+        if (id == null) {
+            return variantRepository.findByName("Standard")
+                .orElseThrow(() -> new ServiceException("Standard variant not found!"));
+        }
+
         return variantRepository.findById(id)
-            .orElseThrow(() -> new ServiceException("With given id does not exist!"));
+                .orElseThrow(() -> new ServiceException("With given id does not exist!"));
     }
 }

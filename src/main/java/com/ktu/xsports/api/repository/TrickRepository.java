@@ -31,5 +31,4 @@ public interface TrickRepository extends JpaRepository<Trick, Long> {
     List<Trick> findByVariantIdAndTrickIds(Long variantId, List<Long> trickId);
 
     Optional<Trick> findByName(@NotNull String name);
-    Optional<Trick> findByNameAndIdIsNot(@NotNull String name, Long id);
 }

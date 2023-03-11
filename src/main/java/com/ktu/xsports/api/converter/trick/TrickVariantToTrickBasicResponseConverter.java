@@ -1,7 +1,7 @@
 package com.ktu.xsports.api.converter.trick;
 
 import com.ktu.xsports.api.domain.TrickVariant;
-import com.ktu.xsports.api.dto.response.TrickBasicResponse;
+import com.ktu.xsports.api.dto.response.trick.TrickBasicResponse;
 import org.modelmapper.PropertyMap;
 import org.springframework.stereotype.Component;
 
