@@ -28,7 +28,7 @@ public class Progress {
 
     @NotNull
     @ManyToOne
-    private Trick trick;
+    private TrickVariant trickVariant;
 
     @NotNull
     @ManyToOne

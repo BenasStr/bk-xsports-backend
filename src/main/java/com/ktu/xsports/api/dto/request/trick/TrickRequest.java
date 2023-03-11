@@ -1,4 +1,4 @@
-package com.ktu.xsports.api.dto.request;
+package com.ktu.xsports.api.dto.request.trick;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
@@ -21,12 +21,6 @@ public class TrickRequest {
     @NotNull
     private String name;
 
-    @NotNull
-    private String video;
-
-    @NotNull
-    private String description;
-
     @JsonProperty("trick_parents_ids")
     @JsonDeserialize(converter = IdsToTricksConverter.class)
     private List<Trick> trickParent;
@@ -39,14 +33,17 @@ public class TrickRequest {
     @JsonDeserialize(converter = IdToDifficultyConverter.class)
     private Difficulty difficulty;
 
+    @JsonProperty("trick_variants")
+    private List<TrickVariantRequest> trickVariants;
+
     public Trick toTrick() {
         return Trick.builder()
-                .name(name)
-                .video(video)
-                .description(description)
-                .trickParents(trickParent)
-                .trickChildren(trickChild)
-                .difficulty(difficulty)
-                .build();
+            .name(name)
+            .trickParents(trickParent)
+            .difficulty(difficulty)
+            .trickVariants(trickVariants.stream()
+                .map(TrickVariantRequest::toTrickVariant)
+                .toList())
+            .build();
     }
 }

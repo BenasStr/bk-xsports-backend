@@ -79,7 +79,7 @@ public class CategoryController {
     ) {
         Category category = categoryService.findCategory(sportId, categoryId);
         String fileName = imageService.uploadImage(image, CATEGORY_FILE+category.getId());
-        category.setPhoto(fileName);
+        category.setPhotoUrl(fileName);
         categoryService.updateCategory(sportId, category, category.getId());
         return ResponseEntity.ok("");
     }
@@ -107,9 +107,9 @@ public class CategoryController {
     ) {
         log.info("User is updating profile picture");
         Category category = categoryService.findCategory(sportId, categoryId);
-        String fileName = category.getPhoto() == null ?
+        String fileName = category.getPhotoUrl() == null ?
             imageService.uploadImage(file, CATEGORY_FILE+category.getId()) :
-            imageService.updateProfileImage(file, category.getPhoto());
+            imageService.updateProfileImage(file, category.getPhotoUrl());
 
         return ResponseEntity.ok(Map.of("data", fileName));
     }
@@ -121,7 +121,7 @@ public class CategoryController {
     ) {
         log.info("Category delete called.");
         Optional<Category> deletedCategory = categoryService.removeCategory(sportId, categoryId);
-        deletedCategory.ifPresent(category -> imageService.deleteImage(category.getPhoto()));
+        deletedCategory.ifPresent(category -> imageService.deleteImage(category.getPhotoUrl()));
 
         return ResponseEntity.of(
                 deletedCategory.map(s ->
@@ -135,8 +135,8 @@ public class CategoryController {
     ) {
         log.info("Category image delete");
         Category category = categoryService.findCategory(sportId, categoryId);
-        imageService.deleteImage(category.getPhoto());
-        category.setPhoto(null);
+        imageService.deleteImage(category.getPhotoUrl());
+        category.setPhotoUrl(null);
         return ResponseEntity.ok("");
     }
 }

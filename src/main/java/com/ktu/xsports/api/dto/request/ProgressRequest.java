@@ -8,6 +8,7 @@ import com.ktu.xsports.api.converter.user.IdToUserConverter;
 import com.ktu.xsports.api.domain.Progress;
 import com.ktu.xsports.api.domain.Status;
 import com.ktu.xsports.api.domain.Trick;
+import com.ktu.xsports.api.domain.TrickVariant;
 import com.ktu.xsports.api.domain.User;
 import jakarta.validation.constraints.NotNull;
 import lombok.AllArgsConstructor;
@@ -27,12 +28,12 @@ public class ProgressRequest {
     @NotNull
     @JsonProperty("trickId")
     @JsonDeserialize(converter = IdToTrickConverter.class)
-    private Trick trick;
+    private TrickVariant trickVariant;
 
     public Progress toProgress() {
         return Progress.builder()
                 .status(status)
-                .trick(trick)
+                .trickVariant(trickVariant)
                 .build();
     }
 }

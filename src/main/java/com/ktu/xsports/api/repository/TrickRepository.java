@@ -1,17 +1,13 @@
 package com.ktu.xsports.api.repository;
 
-import com.ktu.xsports.api.domain.Category;
-import com.ktu.xsports.api.domain.Progress;
 import com.ktu.xsports.api.domain.Trick;
-import org.springframework.data.domain.Page;
-import org.springframework.data.domain.Pageable;
+import jakarta.validation.constraints.NotNull;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.stereotype.Repository;
 
 import java.util.List;
 import java.util.Optional;
-import javax.swing.text.html.Option;
 
 @Repository
 public interface TrickRepository extends JpaRepository<Trick, Long> {
@@ -28,4 +24,12 @@ public interface TrickRepository extends JpaRepository<Trick, Long> {
     Optional<Trick> findById(Long categoryId, Long trickId, Long userId);
 
     Optional<Trick> findById(long id);
+
+    @Query("SELECT t FROM tricks t "
+        + "INNER JOIN FETCH tricks_variants tv "
+        + "WHERE tv.variant.id = :variantId AND tv.trick.id IN :trickId")
+    List<Trick> findByVariantIdAndTrickIds(Long variantId, List<Long> trickId);
+
+    Optional<Trick> findByName(@NotNull String name);
+    Optional<Trick> findByNameAndIdIsNot(@NotNull String name, Long id);
 }

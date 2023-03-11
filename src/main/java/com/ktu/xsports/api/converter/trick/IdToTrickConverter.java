@@ -2,6 +2,7 @@ package com.ktu.xsports.api.converter.trick;
 
 import com.fasterxml.jackson.databind.util.StdConverter;
 import com.ktu.xsports.api.domain.Trick;
+import com.ktu.xsports.api.exceptions.ServiceException;
 import com.ktu.xsports.api.repository.TrickRepository;
 import lombok.RequiredArgsConstructor;
 
@@ -12,6 +13,7 @@ public class IdToTrickConverter extends StdConverter<Long, Trick> {
 
     @Override
     public Trick convert(Long id) {
-        return trickRepository.findById(id).orElse(null);
+        return trickRepository.findById(id)
+            .orElseThrow(() -> new ServiceException(String.format("Trick with id: %d not found.")));
     }
 }

@@ -44,7 +44,7 @@ public class User implements UserDetails {
     @NotNull
     private String password;
 
-    private String photoPath;
+    private String photoUrl;
 
     @NotNull
     private String role;

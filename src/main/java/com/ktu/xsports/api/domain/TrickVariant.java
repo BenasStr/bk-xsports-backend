@@ -4,6 +4,7 @@ import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
+import jakarta.persistence.ManyToOne;
 import jakarta.persistence.OneToMany;
 import jakarta.validation.constraints.NotNull;
 import lombok.AllArgsConstructor;
@@ -14,22 +15,30 @@ import lombok.NoArgsConstructor;
 import java.util.List;
 
 @Data
-@Entity(name = "sports")
+@Entity(name = "tricks_variants")
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
-public class Sport {
-
+public class TrickVariant {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private long id;
 
-    @NotNull
-    private String name;
+    @ManyToOne
+    private Variant variant;
 
     @NotNull
-    private String photoUrl;
+    private String videoUrl;
 
-    @OneToMany(mappedBy = "sport")
-    private List<Category> categories;
+    @NotNull
+    private String description;
+
+    @NotNull
+    private String shortDescription;
+
+    @OneToMany(mappedBy = "trickVariant")
+    private List<Progress> progress;
+
+    @ManyToOne
+    private Trick trick;
 }

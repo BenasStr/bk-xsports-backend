@@ -30,21 +30,12 @@ public class Trick {
     @NotNull
     private String name;
 
-    @NotNull
-    private String video;
-
-    @NotNull
-    private String description;
-
     @ManyToOne
     @JoinColumn(name = "category_id", nullable = false)
     private Category category;
 
     @ManyToOne
     private Difficulty difficulty;
-
-    @OneToMany(mappedBy = "trick")
-    private List<Progress> progress;
 
     @ManyToMany
     @JoinTable(
@@ -59,16 +50,7 @@ public class Trick {
     @ManyToMany(mappedBy = "trickParents")
     private List<Trick> trickChildren;
 
-    @ManyToMany
-    @JoinTable(
-        name = "tricks_by_variants_references",
-        joinColumns = @JoinColumn(name = "trick_variant_child_id",
-            referencedColumnName = "id"),
-        inverseJoinColumns = @JoinColumn(name = "trick_variant_parent_id",
-            referencedColumnName = "id")
-    )
-    private List<Trick> trickVariantParent;
+    @OneToMany(mappedBy = "trick")
+    private List<TrickVariant> trickVariants;
 
-    @ManyToMany(mappedBy = "trickVariantParent")
-    private List<Trick> trickVariantChild;
 }

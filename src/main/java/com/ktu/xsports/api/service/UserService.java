@@ -56,8 +56,8 @@ public class UserService {
         User existingUser = findById(id);
         user.setId(id);
 
-        if (user.getPhotoPath() == null) {
-            user.setPhotoPath(existingUser.getPhotoPath());
+        if (user.getPhotoUrl() == null) {
+            user.setPhotoUrl(existingUser.getPhotoUrl());
         }
 
         if (user.getPassword() != null) {

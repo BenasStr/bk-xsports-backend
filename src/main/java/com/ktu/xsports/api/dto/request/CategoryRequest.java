@@ -20,7 +20,7 @@ public class CategoryRequest {
     public Category toCategory() {
         return Category.builder()
                 .name(name)
-                .photo(photo)
+                .photoUrl(photo)
                 .build();
     }
 }
