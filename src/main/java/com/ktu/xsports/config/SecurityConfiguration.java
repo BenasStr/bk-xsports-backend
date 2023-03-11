@@ -98,9 +98,12 @@ public class SecurityConfiguration {
             .requestMatchers(GET, "/api/sports/{sportId}/categories/{categoryId}/tricks").hasAnyAuthority(USER, ADMIN, MODERATOR)
             .requestMatchers(GET, "/api/sports/{sportId}/categories/{categoryId}/tricks/{trickId}").hasAnyAuthority(USER, ADMIN, MODERATOR)
             .requestMatchers(POST, "/api/sports/{sportId}/categories/{categoryId}/tricks").hasAnyAuthority(ADMIN, MODERATOR)
+            .requestMatchers(POST, "/api/sports/{sportId}/categories/{categoryId}/tricks/{trickId}/variant").hasAnyAuthority(ADMIN, MODERATOR)
             .requestMatchers(PUT, "/api/sports/{sportId}/categories/{categoryId}/tricks/{trickId}").hasAnyAuthority(ADMIN, MODERATOR)
+            .requestMatchers(PUT, "/api/sports/{sportId}/categories/{categoryId}/tricks/{trickId}/variant/{variantId}").hasAnyAuthority(ADMIN, MODERATOR)
             .requestMatchers(PUT, "/api/sports/{sportId}/categories/{categoryId}/tricks/{trickId}/progress").hasAnyAuthority(USER, ADMIN, MODERATOR)
-            .requestMatchers(DELETE, "/api/sports/{sportId}/categories/{categoryId}/tricks/{trickId}").hasAnyAuthority(ADMIN, MODERATOR);
+            .requestMatchers(DELETE, "/api/sports/{sportId}/categories/{categoryId}/tricks/{trickId}").hasAnyAuthority(ADMIN, MODERATOR)
+            .requestMatchers(DELETE, "/api/sports/{sportId}/categories/{categoryId}/tricks/{trickId}/variant/{variantId}").hasAnyAuthority(ADMIN, MODERATOR);
     }
 
     private void lessonsEndpoints(HttpSecurity http) throws Exception {

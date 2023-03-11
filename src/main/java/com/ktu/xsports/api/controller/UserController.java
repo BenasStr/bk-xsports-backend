@@ -120,7 +120,7 @@ public class UserController {
     ) {
         log.info("Uploading user image.");
         String fileName = imageService.uploadImage(image, USER_FILE+user.getId());
-        user.setPhotoPath(fileName);
+        user.setPhotoUrl(fileName);
         userService.updateUserById(user, user.getId());
         return ResponseEntity.ok(Map.of("data", fileName));
     }
@@ -159,11 +159,11 @@ public class UserController {
     ) {
         log.info("User is updating profile picture");
 
-        String fileName = user.getPhotoPath() == null ?
+        String fileName = user.getPhotoUrl() == null ?
             imageService.uploadImage(file, USER_FILE+user.getId()) :
-            imageService.updateProfileImage(file, user.getPhotoPath());
+            imageService.updateProfileImage(file, user.getPhotoUrl());
 
-        user.setPhotoPath(fileName);
+        user.setPhotoUrl(fileName);
         userService.updateUserById(user, user.getId());
 
         return ResponseEntity.ok(Map.of("data", fileName));

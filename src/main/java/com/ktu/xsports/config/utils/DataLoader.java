@@ -36,7 +36,7 @@ public class DataLoader implements ApplicationRunner {
                     .surname(ADMIN)
                     .email(ADMIN_EMAIL)
                     .password(passwordEncoder.encode(ADMIN_BASE_PASSWORD))
-                    .photoPath("none")
+                    .photoUrl("none")
                     .role(Role.ADMIN)
                     .isBlocked(false)
                 .build()

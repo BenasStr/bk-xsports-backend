@@ -100,7 +100,7 @@ public class SportController {
     ) {
         Sport sport = sportService.findSportById(id);
         String fileName = imageService.uploadImage(image, SPORT_FILE+sport.getId());
-        sport.setPhoto(fileName);
+        sport.setPhotoUrl(fileName);
         sportService.updateSport(sport, sport.getId());
         return ResponseEntity.ok("");
     }
@@ -133,9 +133,9 @@ public class SportController {
     ) {
         log.info("User is updating profile picture");
         Sport sport = sportService.findSportById(id);
-        String fileName = sport.getPhoto() == null ?
+        String fileName = sport.getPhotoUrl() == null ?
             imageService.uploadImage(file, SPORT_FILE+sport.getId()) :
-            imageService.updateProfileImage(file, sport.getPhoto());
+            imageService.updateProfileImage(file, sport.getPhotoUrl());
 
         return ResponseEntity.ok(Map.of("data", fileName));
     }
@@ -144,7 +144,7 @@ public class SportController {
     public ResponseEntity<?> deleteSport(@PathVariable long id) {
         log.info("deleting sport");
         Optional<Sport> deletedSport = sportService.removeSport(id);
-        deletedSport.ifPresent(sport -> imageService.deleteImage(sport.getPhoto()));
+        deletedSport.ifPresent(sport -> imageService.deleteImage(sport.getPhotoUrl()));
         return ResponseEntity.of(
                 deletedSport.map( s ->
                         Map.of("data", modelMapper.map(s, SportResponse.class))));

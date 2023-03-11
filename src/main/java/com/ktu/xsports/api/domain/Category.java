@@ -30,7 +30,7 @@ public class Category {
     private String name;
 
     @NotNull
-    private String photo;
+    private String photoUrl;
 
     @ManyToOne
     @JoinColumn(name = "sport_id", nullable = false)

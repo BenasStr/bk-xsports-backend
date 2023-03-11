@@ -65,8 +65,8 @@ public class SportService {
         Sport existingSport = findSportById(id);
         sport.setId(id);
 
-        if (existingSport.getPhoto() != null) {
-            sport.setPhoto(existingSport.getPhoto());
+        if (existingSport.getPhotoUrl() != null) {
+            sport.setPhotoUrl(existingSport.getPhotoUrl());
         }
 
         if (sportRepository.findById(id).isPresent()) {

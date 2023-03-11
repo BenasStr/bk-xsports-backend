@@ -28,7 +28,7 @@ public class UserRequest {
             .surname(surname)
             .nickname(nickname)
             .password(password)
-            .photoPath(null)
+            .photoUrl(null)
             .build();
     }
 }
