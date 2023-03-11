@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<databaseChangeLog xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog
+                   https://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-latest.xsd">
+
+    <changeSet id="26" author="benas.strauka">
+        <preConditions>
+            <not>
+                <tableExists tableName="sport_variant"/>
+            </not>
+        </preConditions>
+        <comment>Create many to many between variants and sports.</comment>
+
+        <createTable tableName="sports_variants">
+            <column name="sport_id" type="int unsigned">
+                <constraints foreignKeyName="sport_variant_sport_fk" references="sports(id)" nullable="false"/>
+            </column>
+            <column name="variant_id" type="int unsigned">
+                <constraints foreignKeyName="sport_variant_variant_fk" references="variants(id)" nullable="false"/>
+            </column>
+        </createTable>
+    </changeSet>
+</databaseChangeLog>

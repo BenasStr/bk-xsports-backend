@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<databaseChangeLog xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog
+                   https://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-latest.xsd">
+
+    <changeSet id="29" author="benas.strauka">
+        <preConditions>
+            <tableExists tableName="progress"/>
+        </preConditions>
+        <comment>Update progress table fields.</comment>
+
+        <dropForeignKeyConstraint baseTableName="progress" constraintName="trick_progress_fk"/>
+        <dropColumn tableName="progress" columnName="trick_id"/>
+
+        <addColumn tableName="progress">
+            <column name="trick_variant_id" type="int unsigned">
+                <constraints foreignKeyName="trick_variant_progress_fk" references="tricks_variants(id)" nullable="false"/>
+            </column>
+        </addColumn>
+    </changeSet>
+</databaseChangeLog>

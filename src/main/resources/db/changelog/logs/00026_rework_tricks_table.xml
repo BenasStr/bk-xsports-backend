@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<databaseChangeLog xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog
+                   https://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-latest.xsd">
+
+    <changeSet id="28" author="benas.strauka">
+        <preConditions>
+            <tableExists tableName="tricks"/>
+        </preConditions>
+        <comment>Remove unnecessary fields from tricks</comment>
+        
+        <dropColumn tableName="tricks" columnName="video"/>
+        <dropColumn tableName="tricks" columnName="description"/>
+        <dropColumn tableName="tricks" columnName="short_description"/>
+        <dropForeignKeyConstraint baseTableName="tricks" constraintName="trick_variant_fk"/>
+        <dropColumn tableName="tricks" columnName="variant_id"/>
+    </changeSet>
+</databaseChangeLog>

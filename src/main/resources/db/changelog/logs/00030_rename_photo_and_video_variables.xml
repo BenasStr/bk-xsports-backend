@@ -1,0 +1,33 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<databaseChangeLog xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog
+                   https://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-latest.xsd">
+
+    <changeSet id="30" author="benas.strauka">
+        <preConditions>
+            <tableExists tableName="sports"/>
+            <tableExists tableName="users"/>
+            <tableExists tableName="categories"/>
+            <tableExists tableName="tricks_variants"/>
+        </preConditions>
+        <comment>Rename photo and video fields.</comment>
+
+        <renameColumn tableName="sports"
+            oldColumnName="photo"
+            newColumnName="photo_url"
+            columnDataType="varchar(255)"/>
+        <renameColumn tableName="users"
+            oldColumnName="photo_path"
+            newColumnName="photo_url"
+            columnDataType="varchar(255)"/>
+        <renameColumn tableName="categories"
+            oldColumnName="photo"
+            newColumnName="photo_url"
+            columnDataType="varchar(255)"/>
+        <renameColumn tableName="tricks_variants"
+            oldColumnName="video"
+            newColumnName="video_url"
+            columnDataType="varchar(255)"/>
+    </changeSet>
+</databaseChangeLog>

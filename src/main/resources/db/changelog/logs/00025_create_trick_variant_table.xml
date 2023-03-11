@@ -1,0 +1,42 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<databaseChangeLog xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog
+                   https://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-latest.xsd">
+
+    <changeSet id="27" author="benas.strauka">
+        <preConditions>
+            <tableExists tableName="tricks"/>
+            <and>
+                <tableExists tableName="variants"/>
+            </and>
+        </preConditions>
+        <comment>Add trick variants table</comment>
+
+        <createTable tableName="tricks_variants">
+            <column name="id" type="int unsigned" autoIncrement="true">
+                <constraints primaryKey="true"/>
+            </column>
+
+            <column name="video" type="varchar(255)">
+                <constraints nullable="false"/>
+            </column>
+
+            <column name="description" type="varchar(255)">
+                <constraints nullable="false"/>
+            </column>
+
+            <column name="short_description" type="varchar(255)">
+                <constraints nullable="false"/>
+            </column>
+
+            <column name="variant_id" type="int unsigned">
+                <constraints foreignKeyName="trick_variant_variant_fk" references="variants(id)" nullable="false"/>
+            </column>
+
+            <column name="trick_id" type="int unsigned">
+                <constraints foreignKeyName="trick_variant_trick_fk" references="tricks(id)" nullable="false"/>
+            </column>
+        </createTable>
+    </changeSet>
+</databaseChangeLog>
