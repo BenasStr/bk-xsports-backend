@@ -84,7 +84,6 @@ public class CategoryController {
         return ResponseEntity.ok("");
     }
 
-    //TODO: this is broken
     @PutMapping("/{categoryId}")
     public ResponseEntity<?> updateSportCategory(
             @PathVariable long categoryId,
