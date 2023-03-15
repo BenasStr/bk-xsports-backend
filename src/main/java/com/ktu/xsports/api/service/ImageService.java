@@ -57,7 +57,7 @@ public class ImageService {
         }
     }
 
-    public String updateProfileImage(MultipartFile image, String fileName) {
+    public String updateImage(MultipartFile image, String fileName) {
         deleteImage(fileName);
 
         try {

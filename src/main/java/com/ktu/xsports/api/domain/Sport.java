@@ -4,6 +4,10 @@ import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
+import jakarta.persistence.JoinColumn;
+import jakarta.persistence.JoinTable;
+import jakarta.persistence.ManyToMany;
+import jakarta.persistence.ManyToOne;
 import jakarta.persistence.OneToMany;
 import jakarta.validation.constraints.NotNull;
 import lombok.AllArgsConstructor;
@@ -27,9 +31,15 @@ public class Sport {
     @NotNull
     private String name;
 
-    @NotNull
     private String photoUrl;
 
-    @OneToMany(mappedBy = "sport")
-    private List<Category> categories;
+    @ManyToMany
+    @JoinTable(
+        name = "sports_variants",
+        joinColumns = @JoinColumn(name = "sport_id",
+            referencedColumnName = "id"),
+        inverseJoinColumns = @JoinColumn(name = "variant_id",
+            referencedColumnName = "id")
+    )
+    private List<Variant> variants;
 }

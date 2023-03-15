@@ -51,16 +51,20 @@ public class SportService {
             .orElseThrow(() -> new ServiceException("Sport not found!"));
     }
 
-    public Optional<Sport> createSport(Sport sport) {
-        sportRepository.findByName(sport.getName())
-            .orElseThrow(() -> new AlreadyExistsException(String.format("Sport with name %s", sport.getName())));
+    public Sport createSport(Sport sport) {
+        Optional<Sport> existingSport = sportRepository.findByName(sport.getName());
+        if(existingSport.isPresent()) {
+            throw new AlreadyExistsException(String.format("Sport with name %s already exists", sport.getName()));
+        }
 
-        return Optional.of(sportRepository.save(sport));
+        return sportRepository.save(sport);
     }
 
-    public Optional<Sport> updateSport(Sport sport, long id) {
-        sportRepository.findByName(sport.getName())
-            .orElseThrow(() -> new AlreadyExistsException(String.format("Sport with name %s", sport.getName())));
+    public Sport updateSport(Sport sport, long id) {
+        Optional<Sport> existingName = sportRepository.findByName(sport.getName());
+        if (existingName.isPresent()) {
+            throw new AlreadyExistsException(String.format("Sport with name %s already exists", sport.getName()));
+        }
 
         Sport existingSport = findSportById(id);
         sport.setId(id);
@@ -69,19 +73,12 @@ public class SportService {
             sport.setPhotoUrl(existingSport.getPhotoUrl());
         }
 
-        if (sportRepository.findById(id).isPresent()) {
-            return Optional.of(sportRepository.save(sport));
-        }
-        return Optional.empty();
+        return sportRepository.save(sport);
     }
 
-    public Optional<Sport> removeSport(long id) {
-        Optional<Sport> deletedSport = sportRepository.findById(id);
-        if(deletedSport.isPresent()) {
-            sportRepository.delete(deletedSport.get());
-            return deletedSport;
-        }
-        return Optional.empty();
+    public void removeSport(Long id) {
+        sportRepository.findById(id)
+            .ifPresent(sport -> sportRepository.deleteById(id));
     }
 
     public void removeMyListSport(long sportId, String email) {

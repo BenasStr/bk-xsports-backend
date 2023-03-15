@@ -11,7 +11,9 @@ import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.modelmapper.ModelMapper;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.http.ResponseEntity.HeadersBuilder;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.DeleteMapping;
@@ -86,11 +88,11 @@ public class SportController {
 
     @PostMapping()
     public ResponseEntity<?> createSport(@RequestBody @Valid SportRequest sportRequest) {
-        log.info("posting sports");
-        Sport sport = sportRequest.toSport();
-        Optional<Sport> newSport = sportService.createSport(sport);
-        return ResponseEntity.of(
-                newSport.map(s -> Map.of("data", modelMapper.map(s, SportResponse.class))));
+        log.info("Creating sport");
+        Sport sport = sportService.createSport(sportRequest.toSport());
+        return ResponseEntity.ok(
+            Map.of("data", modelMapper.map(sport, SportResponse.class))
+        );
     }
 
     @PostMapping("/{id}/image")
@@ -120,10 +122,10 @@ public class SportController {
             @PathVariable long id
     ) {
         log.info("updating sport");
-        Sport sport = sportRequest.toSport();
-        Optional<Sport> updatedSport = sportService.updateSport(sport, id);
-        return ResponseEntity.of(
-                updatedSport.map(s -> Map.of("data", modelMapper.map(s, SportResponse.class))));
+        Sport sport = sportService.updateSport(sportRequest.toSport(), id);
+        return ResponseEntity.ok(
+                Map.of("data", modelMapper.map(sport, SportResponse.class))
+        );
     }
 
     @PutMapping("/sport/{id}/image")
@@ -135,19 +137,16 @@ public class SportController {
         Sport sport = sportService.findSportById(id);
         String fileName = sport.getPhotoUrl() == null ?
             imageService.uploadImage(file, SPORT_FILE+sport.getId()) :
-            imageService.updateProfileImage(file, sport.getPhotoUrl());
+            imageService.updateImage(file, sport.getPhotoUrl());
 
         return ResponseEntity.ok(Map.of("data", fileName));
     }
 
     @DeleteMapping("/{id}")
-    public ResponseEntity<?> deleteSport(@PathVariable long id) {
+    public ResponseEntity<?> deleteSport(@PathVariable Long id) {
         log.info("deleting sport");
-        Optional<Sport> deletedSport = sportService.removeSport(id);
-        deletedSport.ifPresent(sport -> imageService.deleteImage(sport.getPhotoUrl()));
-        return ResponseEntity.of(
-                deletedSport.map( s ->
-                        Map.of("data", modelMapper.map(s, SportResponse.class))));
+        sportService.removeSport(id);
+        return ResponseEntity.noContent().build();
     }
 
     @DeleteMapping("/my_list")
@@ -158,7 +157,7 @@ public class SportController {
         log.info("removing sport from my list");
         String email = jwtService.extractUsername(token);
         sportService.removeMyListSport(sportId, email);
-        return ResponseEntity.ok("");
+        return ResponseEntity.noContent().build();
     }
 
 }

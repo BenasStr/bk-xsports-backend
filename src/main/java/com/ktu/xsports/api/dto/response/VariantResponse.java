@@ -3,13 +3,9 @@ package com.ktu.xsports.api.dto.response;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
-import java.util.List;
-
 @Data
 @NoArgsConstructor
-public class SportResponse {
-    long id;
+public class VariantResponse {
+    Long id;
     String name;
-    String photo;
-    List<VariantResponse> variants;
 }

@@ -109,23 +109,23 @@ public class CategoryController {
         Category category = categoryService.findCategory(sportId, categoryId);
         String fileName = category.getPhotoUrl() == null ?
             imageService.uploadImage(file, CATEGORY_FILE+category.getId()) :
-            imageService.updateProfileImage(file, category.getPhotoUrl());
+            imageService.updateImage(file, category.getPhotoUrl());
 
         return ResponseEntity.ok(Map.of("data", fileName));
     }
 
     @DeleteMapping("/{categoryId}")
     public ResponseEntity<?> deleteSportCategory(
-            @PathVariable long categoryId,
-            @PathVariable long sportId
+        @PathVariable long categoryId,
+        @PathVariable long sportId
     ) {
         log.info("Category delete called.");
         Optional<Category> deletedCategory = categoryService.removeCategory(sportId, categoryId);
         deletedCategory.ifPresent(category -> imageService.deleteImage(category.getPhotoUrl()));
 
         return ResponseEntity.of(
-                deletedCategory.map(s ->
-                        Map.of("data", modelMapper.map(s, SportResponse.class))));
+            deletedCategory.map(s ->
+                Map.of("data", modelMapper.map(s, SportResponse.class))));
     }
 
     @DeleteMapping("/{categoryId}/image")

@@ -161,7 +161,7 @@ public class UserController {
 
         String fileName = user.getPhotoUrl() == null ?
             imageService.uploadImage(file, USER_FILE+user.getId()) :
-            imageService.updateProfileImage(file, user.getPhotoUrl());
+            imageService.updateImage(file, user.getPhotoUrl());
 
         user.setPhotoUrl(fileName);
         userService.updateUserById(user, user.getId());
@@ -173,9 +173,9 @@ public class UserController {
     public ResponseEntity<?> deleteUser(@PathVariable long id) {
         log.info("Deleting user.");
         User deletedUser = userService.removeUser(id);
-        imageService.deleteImage(deletedUser.getName());
-        return ResponseEntity.ok(
-            Map.of("data", modelMapper.map(deletedUser, UserResponse.class))
-        );
+        if (deletedUser.getPhotoUrl() != null) {
+            imageService.deleteImage(deletedUser.getName());
+        }
+        return ResponseEntity.noContent().build();
     }
 }
