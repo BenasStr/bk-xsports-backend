@@ -29,7 +29,6 @@ public class Category {
     @NotNull
     private String name;
 
-    @NotNull
     private String photoUrl;
 
     @ManyToOne

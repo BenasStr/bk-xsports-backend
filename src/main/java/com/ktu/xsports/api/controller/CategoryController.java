@@ -61,7 +61,7 @@ public class CategoryController {
     @PostMapping()
     public ResponseEntity<?> createSportCategory(
             @RequestBody @Valid CategoryRequest categoryRequest,
-            @PathVariable long sportId
+            @PathVariable Long sportId
     ) {
         log.info("Category create called.");
         Category category = categoryRequest.toCategory();
@@ -116,16 +116,12 @@ public class CategoryController {
 
     @DeleteMapping("/{categoryId}")
     public ResponseEntity<?> deleteSportCategory(
-        @PathVariable long categoryId,
-        @PathVariable long sportId
+        @PathVariable Long categoryId,
+        @PathVariable Long sportId
     ) {
         log.info("Category delete called.");
-        Optional<Category> deletedCategory = categoryService.removeCategory(sportId, categoryId);
-        deletedCategory.ifPresent(category -> imageService.deleteImage(category.getPhotoUrl()));
-
-        return ResponseEntity.of(
-            deletedCategory.map(s ->
-                Map.of("data", modelMapper.map(s, SportResponse.class))));
+        categoryService.removeCategory(sportId, categoryId);
+        return ResponseEntity.noContent().build();
     }
 
     @DeleteMapping("/{categoryId}/image")

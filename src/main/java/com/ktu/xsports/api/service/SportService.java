@@ -14,6 +14,7 @@ import java.util.*;
 @Service
 @RequiredArgsConstructor
 public class SportService {
+    private final ImageService imageService;
     private final UserRepository userRepository;
     private final SportRepository sportRepository;
 
@@ -78,7 +79,12 @@ public class SportService {
 
     public void removeSport(Long id) {
         sportRepository.findById(id)
-            .ifPresent(sport -> sportRepository.deleteById(id));
+            .ifPresent(sport -> {
+                if (sport.getPhotoUrl() != null) {
+                    imageService.deleteImage(sport.getPhotoUrl());
+                }
+            });
+        sportRepository.deleteById(id);
     }
 
     public void removeMyListSport(long sportId, String email) {

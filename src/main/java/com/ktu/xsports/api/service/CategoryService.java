@@ -15,6 +15,7 @@ import java.util.Optional;
 @Service
 @RequiredArgsConstructor
 public class CategoryService {
+    private final ImageService imageService;
     private final CategoryRepository categoryRepository;
     private final SportRepository sportRepository;
 
@@ -28,17 +29,15 @@ public class CategoryService {
 }
 
     public Optional<Category> createCategory(long sportId, Category category) {
-        Optional<Sport> sport = sportRepository.findById(sportId);
-        if (sport.isEmpty()) {
-            return Optional.empty();
-        }
+        Sport sport = sportRepository.findById(sportId)
+            .orElseThrow(() -> new ServiceException(String.format("Sport with id: %s doesn't exist!", sportId)));
 
         Optional<Category> categoryExists = categoryRepository.findByName(category.getName());
         if (categoryExists.isPresent()) {
             throw new AlreadyExistsException(String.format("Category with name %s already exists.", category.getName()));
         }
 
-        category.setSport(sport.get());
+        category.setSport(sport);
         return Optional.of(categoryRepository.save(category));
     }
 
@@ -61,12 +60,18 @@ public class CategoryService {
         return Optional.empty();
     }
 
-    public Optional<Category> removeCategory(long sportId, long id) {
-        Optional<Category> deletedCategory = categoryRepository.findBySportIdAndId(sportId, id);
-        if(deletedCategory.isPresent()) {
-            categoryRepository.delete(deletedCategory.get());
-            return deletedCategory;
+    public void removeCategory(long sportId, long id) {
+        categoryRepository.findBySportIdAndId(sportId, id)
+            .ifPresent(category -> {
+                if (category.getPhotoUrl() != null) {
+                    imageService.deleteImage(category.getPhotoUrl());
+                }
+            });
+
+        try {
+            categoryRepository.deleteById(id);
+        } catch (Exception e) {
+            throw new ServiceException(String.format("Category doesn't exist: %d", id));
         }
-        return Optional.empty();
     }
 }

@@ -14,13 +14,9 @@ public class CategoryRequest {
     @NotNull(message = "Must have a name")
     private String name;
 
-    @NotNull(message = "Must have a photo")
-    private String photo;
-
     public Category toCategory() {
         return Category.builder()
                 .name(name)
-                .photoUrl(photo)
                 .build();
     }
 }
