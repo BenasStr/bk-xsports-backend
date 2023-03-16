@@ -1,10 +1,8 @@
 package com.ktu.xsports.api.controller;
 
 import com.ktu.xsports.api.domain.Category;
-import com.ktu.xsports.api.domain.Sport;
 import com.ktu.xsports.api.dto.request.CategoryRequest;
 import com.ktu.xsports.api.dto.response.CategoryResponse;
-import com.ktu.xsports.api.dto.response.SportResponse;
 import com.ktu.xsports.api.service.CategoryService;
 import com.ktu.xsports.api.service.ImageService;
 import jakarta.validation.Valid;
@@ -21,7 +19,6 @@ import java.util.Map;
 import java.util.Optional;
 
 import static com.ktu.xsports.api.util.Prefix.CATEGORY_FILE;
-import static com.ktu.xsports.api.util.Prefix.SPORT_FILE;
 
 @Validated
 @RestController
