@@ -38,15 +38,6 @@ import static com.ktu.xsports.api.util.Prefix.SPORT_FILE;
 @RequiredArgsConstructor
 @RequestMapping("/api/sports")
 @Slf4j
-@CrossOrigin(
-    origins = "*",
-    allowedHeaders = "*",
-    methods = {
-        RequestMethod.GET,
-        RequestMethod.POST,
-        RequestMethod.PUT,
-        RequestMethod.DELETE
-    })
 public class SportController {
 
     private final SportService sportService;
