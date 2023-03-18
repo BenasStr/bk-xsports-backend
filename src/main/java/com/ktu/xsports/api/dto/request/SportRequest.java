@@ -19,7 +19,7 @@ public class SportRequest {
     @NotNull(message = "Must have a name")
     private String name;
 
-    @JsonProperty("variants_ids")
+    @JsonProperty("variantsIds")
     @JsonDeserialize(converter = IdsToVariantsConverter.class)
     private List<Variant> variants;
 

@@ -18,11 +18,10 @@ public class TrickVariantRequest {
     private String description;
 
     @NotNull
-    @JsonProperty("short_description")
     private String shortDescription;
 
     @NotNull
-    @JsonProperty("variant_id")
+    @JsonProperty("variantId")
     @JsonDeserialize(converter = IdToVariantConverter.class)
     private Variant variant;
 

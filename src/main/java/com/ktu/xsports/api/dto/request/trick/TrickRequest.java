@@ -23,11 +23,11 @@ public class TrickRequest {
     @NotNull
     private String name;
 
-    @JsonProperty("trick_parents_ids")
+    @JsonProperty("trickParentsIds")
     @JsonDeserialize(converter = IdsToTricksConverter.class)
     private List<Trick> trickParent;
 
-    @JsonProperty("difficulty_id")
+    @JsonProperty("difficultyId")
     @JsonDeserialize(converter = IdToDifficultyConverter.class)
     private Difficulty difficulty;
 
@@ -35,7 +35,6 @@ public class TrickRequest {
     private String description;
 
     @NotNull
-    @JsonProperty("short_description")
     private String shortDescription;
 
     public Trick toTrick() {
