@@ -20,7 +20,7 @@ import java.util.List;
 @AllArgsConstructor
 public class TrickRequest {
 
-    @NotNull
+    @NotNull(message = "Missing name")
     private String name;
 
     @JsonProperty("trickParentsIds")
@@ -31,10 +31,10 @@ public class TrickRequest {
     @JsonDeserialize(converter = IdToDifficultyConverter.class)
     private Difficulty difficulty;
 
-    @NotNull
+    @NotNull(message = "Missing description")
     private String description;
 
-    @NotNull
+    @NotNull(message = "Missing short description")
     private String shortDescription;
 
     public Trick toTrick() {

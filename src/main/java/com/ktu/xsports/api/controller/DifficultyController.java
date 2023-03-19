@@ -20,7 +20,7 @@ public class DifficultyController {
 
     private final DifficultyService difficultyService;
 
-    @GetMapping
+    @GetMapping()
     private ResponseEntity<?> findStatuses() {
         log.info("Difficulty get called.");
         List<Difficulty> difficulties = difficultyService.findDifficulties();

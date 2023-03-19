@@ -33,9 +33,10 @@ public class SecurityConfiguration {
         categoriesEndpoints(http);
         tricksEndpoints(http);
         variantEndpoints(http);
-        healthEndpoint(http);
+        difficultyEndpoints(http);
         imageEndpoints(http);
         videoEndpoints(http);
+        healthEndpoint(http);
 
         testEndpoint(http);
 
@@ -112,6 +113,11 @@ public class SecurityConfiguration {
             .requestMatchers(POST, "/api/variants").hasAnyAuthority(ADMIN, MODERATOR)
             .requestMatchers(PUT, "/api/variants/{variantId}").hasAnyAuthority(ADMIN, MODERATOR)
             .requestMatchers(DELETE, "/api/variants/{variantId}").hasAnyAuthority(ADMIN, MODERATOR);
+    }
+
+    private void difficultyEndpoints(HttpSecurity http) throws Exception {
+        http.authorizeHttpRequests()
+            .requestMatchers(GET, "/api/difficulties").hasAnyAuthority(ADMIN, MODERATOR);
     }
 
     private void healthEndpoint(HttpSecurity http) throws Exception {

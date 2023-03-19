@@ -39,13 +39,21 @@ public class TrickController {
         @PathVariable Long categoryId,
         @PathVariable Long sportId,
         @AuthenticationPrincipal User user,
-        @RequestParam(defaultValue = "all") String difficulty
+        @RequestParam(defaultValue = "all") String difficulty,
+        @RequestParam(defaultValue = "false") Boolean extended
     ) {
         log.info("User is fetching multiple tricks.");
         List<TrickVariant> tricks = trickService.findTricks(sportId, categoryId, difficulty, user.getId());
-        List<TrickBasicResponse> trickResponses = tricks.stream()
-            .map(trick -> modelMapper.map(trick, TrickBasicResponse.class))
-            .toList();
+        List<?> trickResponses;
+        if (extended) {
+            trickResponses = tricks.stream()
+                .map(trick -> modelMapper.map(trick, TrickExtendedResponse.class))
+                .toList();
+        } else {
+            trickResponses = tricks.stream()
+                .map(trick -> modelMapper.map(trick, TrickBasicResponse.class))
+                .toList();
+        }
 
         return ResponseEntity.ok(
             Map.of("data", trickResponses)
