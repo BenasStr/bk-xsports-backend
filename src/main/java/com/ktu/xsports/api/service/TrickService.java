@@ -32,9 +32,9 @@ public class TrickService {
     private final CategoryService categoryService;
     private final UserService userService;
 
-    public List<TrickVariant> findTricks(Long sportId, Long categoryId, String difficulty, Long userId) {
+    public List<TrickVariant> findTricks(Long sportId, Long categoryId, String difficulty, Long userId, String variant) {
         categoryService.findCategory(sportId, categoryId);
-        List<TrickVariant> trickVariants = trickVariantRepository.findAll("Standard");
+        List<TrickVariant> trickVariants = trickVariantRepository.findAll(variant);
         trickVariants.forEach(trickVariant -> setProgress(trickVariant, userId));
 
         return trickVariants;

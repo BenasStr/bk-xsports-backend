@@ -40,10 +40,11 @@ public class TrickController {
         @PathVariable Long sportId,
         @AuthenticationPrincipal User user,
         @RequestParam(defaultValue = "all") String difficulty,
+        @RequestParam(defaultValue = "Standard") String variant,
         @RequestParam(defaultValue = "false") Boolean extended
     ) {
         log.info("User is fetching multiple tricks.");
-        List<TrickVariant> tricks = trickService.findTricks(sportId, categoryId, difficulty, user.getId());
+        List<TrickVariant> tricks = trickService.findTricks(sportId, categoryId, difficulty, user.getId(), variant);
         List<?> trickResponses;
         if (extended) {
             trickResponses = tricks.stream()
