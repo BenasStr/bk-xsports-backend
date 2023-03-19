@@ -18,6 +18,7 @@ public class CategoryService {
     private final ImageService imageService;
     private final CategoryRepository categoryRepository;
     private final SportRepository sportRepository;
+    private final SportService sportService;
 
     public List<Category> findCategories(long sportId) {
         return categoryRepository.findAllBySportId(sportId);
@@ -28,36 +29,31 @@ public class CategoryService {
             .orElseThrow(() -> new ServiceException("Category doesn't exist"));
 }
 
-    public Optional<Category> createCategory(long sportId, Category category) {
-        Sport sport = sportRepository.findById(sportId)
-            .orElseThrow(() -> new ServiceException(String.format("Sport with id: %s doesn't exist!", sportId)));
+    public Category createCategory(long sportId, Category category) {
+        Sport sport = sportService.findSportById(sportId);
 
-        Optional<Category> categoryExists = categoryRepository.findByName(category.getName());
+        Optional<Category> categoryExists = categoryRepository.findByNameAndSportId(category.getName(), sportId);
         if (categoryExists.isPresent()) {
             throw new AlreadyExistsException(String.format("Category with name %s already exists.", category.getName()));
         }
 
         category.setSport(sport);
-        return Optional.of(categoryRepository.save(category));
+        return categoryRepository.save(category);
     }
 
-    public Optional<Category> updateCategory(long sportId, Category category, long id) {
-        Optional<Sport> sport = sportRepository.findById(sportId);
-        if (sport.isEmpty()) {
-            return Optional.empty();
-        }
+    public Category updateCategory(long sportId, Category category, long id) {
+       Sport sport = sportService.findSportById(sportId);
 
-        Optional<Category> categoryExists = categoryRepository.findByName(category.getName());
+        Optional<Category> categoryExists = categoryRepository.findByNameAndSportId(category.getName(), sportId);
         if (categoryExists.isPresent()) {
             throw new AlreadyExistsException(String.format("Category with name %s already exists.", category.getName()));
         }
 
         category.setId(id);
-        category.setSport(sport.get());
-        if(categoryRepository.findBySportIdAndId(sportId, id).isPresent()) {
-            return Optional.of(categoryRepository.save(category));
-        }
-        return Optional.empty();
+        category.setSport(sport);
+        categoryRepository.findBySportIdAndId(sportId, id)
+            .orElseThrow(() -> new ServiceException("Category doesn't exist"));
+        return categoryRepository.save(category);
     }
 
     public void removeCategory(long sportId, long id) {

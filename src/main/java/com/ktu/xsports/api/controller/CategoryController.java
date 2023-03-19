@@ -16,7 +16,6 @@ import org.springframework.web.multipart.MultipartFile;
 
 import java.util.List;
 import java.util.Map;
-import java.util.Optional;
 
 import static com.ktu.xsports.api.util.Prefix.CATEGORY_FILE;
 
@@ -61,11 +60,10 @@ public class CategoryController {
             @PathVariable Long sportId
     ) {
         log.info("Category create called.");
-        Category category = categoryRequest.toCategory();
-        Optional<Category> newCategory = categoryService.createCategory(sportId, category);
-
-        return ResponseEntity.of(
-                newCategory.map(c -> Map.of("data", modelMapper.map(c, CategoryResponse.class))));
+        Category newCategory = categoryService.createCategory(sportId, categoryRequest.toCategory());
+        return ResponseEntity.ok(
+                Map.of("data", modelMapper.map(newCategory, CategoryResponse.class))
+        );
     }
 
     @PostMapping("/{categoryId}/image")
@@ -88,11 +86,11 @@ public class CategoryController {
             @PathVariable long sportId
     ) {
         log.info("Category update called.");
-        Category category = categoryRequest.toCategory();
-        Optional<Category> newCategory = categoryService.updateCategory(sportId, category, categoryId);
+        Category newCategory = categoryService.updateCategory(sportId, categoryRequest.toCategory(), categoryId);
 
-        return ResponseEntity.of(
-                newCategory.map(c -> Map.of("data", modelMapper.map(c, CategoryResponse.class))));
+        return ResponseEntity.ok(
+                Map.of("data", modelMapper.map(newCategory, CategoryResponse.class))
+        );
     }
 
     @PutMapping("/category/{categoryId}/image")

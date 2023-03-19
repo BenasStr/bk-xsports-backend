@@ -62,7 +62,7 @@ public class SportService {
     }
 
     public Sport updateSport(Sport sport, long id) {
-        Optional<Sport> existingName = sportRepository.findByName(sport.getName());
+        Optional<Sport> existingName = sportRepository.findByNameAndNotId(sport.getName(), id);
         if (existingName.isPresent()) {
             throw new AlreadyExistsException(String.format("Sport with name %s already exists", sport.getName()));
         }
@@ -87,11 +87,7 @@ public class SportService {
         sportRepository.deleteById(id);
     }
 
-    public void removeMyListSport(long sportId, String email) {
-        User user = userRepository.findByEmail(email).orElseThrow(() ->
-                new ServiceException("This user doesn't exist")
-            );
-
+    public void removeMyListSport(long sportId, User user) {
         Sport sport = sportRepository.findById(sportId).orElseThrow(() ->
                 new ServiceException(String.format("Sport with id %d does not exist", sportId))
             );
