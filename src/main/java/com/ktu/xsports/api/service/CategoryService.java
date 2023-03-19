@@ -32,7 +32,7 @@ public class CategoryService {
     public Category createCategory(long sportId, Category category) {
         Sport sport = sportService.findSportById(sportId);
 
-        Optional<Category> categoryExists = categoryRepository.findByNameAndSportId(category.getName(), sportId);
+        Optional<Category> categoryExists = categoryRepository.findCategoryWithName(category.getName(), sportId);
         if (categoryExists.isPresent()) {
             throw new AlreadyExistsException(String.format("Category with name %s already exists.", category.getName()));
         }
@@ -41,17 +41,17 @@ public class CategoryService {
         return categoryRepository.save(category);
     }
 
-    public Category updateCategory(long sportId, Category category, long id) {
+    public Category updateCategory(long sportId, Category category, long categoryId) {
        Sport sport = sportService.findSportById(sportId);
 
-        Optional<Category> categoryExists = categoryRepository.findByNameAndSportId(category.getName(), sportId);
+        Optional<Category> categoryExists = categoryRepository.findCategoryWithName(category.getName(), sportId, categoryId);
         if (categoryExists.isPresent()) {
             throw new AlreadyExistsException(String.format("Category with name %s already exists.", category.getName()));
         }
 
-        category.setId(id);
+        category.setId(categoryId);
         category.setSport(sport);
-        categoryRepository.findBySportIdAndId(sportId, id)
+        categoryRepository.findBySportIdAndId(sportId, categoryId)
             .orElseThrow(() -> new ServiceException("Category doesn't exist"));
         return categoryRepository.save(category);
     }

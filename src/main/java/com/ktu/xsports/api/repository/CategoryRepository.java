@@ -16,5 +16,8 @@ public interface CategoryRepository extends JpaRepository<Category, Long> {
     Optional<Category> findBySportIdAndId(long sportId, long id);
 
     @Query("SELECT c FROM categories c WHERE c.name = :name AND c.sport.id = :sportId")
-    Optional<Category> findByNameAndSportId(String name, Long sportId);
+    Optional<Category> findCategoryWithName(String name, Long sportId);
+
+    @Query("SELECT c FROM categories c WHERE c.name = :name AND c.sport.id = :sportId")
+    Optional<Category> findCategoryWithName(String name, Long sportId, Long categoryId);
 }
