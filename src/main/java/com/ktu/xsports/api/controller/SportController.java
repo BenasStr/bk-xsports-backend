@@ -5,7 +5,6 @@ import com.ktu.xsports.api.domain.User;
 import com.ktu.xsports.api.dto.request.SportRequest;
 import com.ktu.xsports.api.dto.response.SportResponse;
 import com.ktu.xsports.api.service.ImageService;
-import com.ktu.xsports.api.service.JwtService;
 import com.ktu.xsports.api.service.SportService;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
@@ -20,7 +19,6 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestHeader;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
@@ -40,7 +38,6 @@ public class SportController {
 
     private final SportService sportService;
     private final ImageService imageService;
-    private final JwtService jwtService;
     private final ModelMapper modelMapper;
 
     @GetMapping()

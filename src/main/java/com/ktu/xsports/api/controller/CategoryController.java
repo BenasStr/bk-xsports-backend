@@ -25,7 +25,6 @@ import static com.ktu.xsports.api.util.Prefix.CATEGORY_FILE;
 @RequestMapping("api/sports/{sportId}/categories")
 @Slf4j
 public class CategoryController {
-
     private final CategoryService categoryService;
     private final ImageService imageService;
     private final ModelMapper modelMapper;

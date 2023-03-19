@@ -17,7 +17,6 @@ import java.util.Optional;
 public class CategoryService {
     private final ImageService imageService;
     private final CategoryRepository categoryRepository;
-    private final SportRepository sportRepository;
     private final SportService sportService;
 
     public List<Category> findCategories(long sportId) {
