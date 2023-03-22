@@ -14,13 +14,13 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 @AllArgsConstructor
 public class TrickVariantRequest {
-    @NotNull
+    @NotNull(message = "Description is required")
     private String description;
 
-    @NotNull
+    @NotNull(message = "Short description is required")
     private String shortDescription;
 
-    @NotNull
+    @NotNull(message = "Variant id is required")
     @JsonProperty("variantId")
     @JsonDeserialize(converter = IdToVariantConverter.class)
     private Variant variant;
