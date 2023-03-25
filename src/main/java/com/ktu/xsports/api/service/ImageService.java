@@ -6,6 +6,7 @@ import io.minio.GetObjectArgs;
 import io.minio.MinioClient;
 import io.minio.PutObjectArgs;
 import io.minio.RemoveObjectArgs;
+import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.compress.utils.IOUtils;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -16,14 +17,11 @@ import java.util.Objects;
 
 @Service
 @Slf4j
+@RequiredArgsConstructor
 public class ImageService {
     private static final String IMAGE_BUCKET = "images";
-
-    @Autowired
-    private HostConfiguration hostConfiguration;
-
-    @Autowired
-    private MinioClient minioClient;
+    private final HostConfiguration hostConfiguration;
+    private final MinioClient minioClient;
 
     public byte[] getImage(String imageName) {
         try {

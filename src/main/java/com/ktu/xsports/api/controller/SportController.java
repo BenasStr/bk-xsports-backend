@@ -94,11 +94,13 @@ public class SportController {
         @RequestParam("file") MultipartFile image,
         @PathVariable int id
     ) {
+        log.info("User is updating sport picture");
         Sport sport = sportService.findSportById(id);
-        String fileName = imageService.uploadImage(image, SPORT_FILE+sport.getId());
-        sport.setPhotoUrl(fileName);
-        sportService.updateSport(sport, sport.getId());
-        return ResponseEntity.ok("");
+        String fileName = sport.getPhotoUrl() == null || sport.getPhotoUrl().equals("") ?
+            imageService.uploadImage(image, SPORT_FILE+sport.getId()) :
+            imageService.updateImage(image, sport.getPhotoUrl());
+
+        return ResponseEntity.ok(Map.of("data", fileName));
     }
 
     @PostMapping("/my_list")
@@ -120,20 +122,6 @@ public class SportController {
         return ResponseEntity.ok(
                 Map.of("data", modelMapper.map(sport, SportResponse.class))
         );
-    }
-
-    @PutMapping("/sport/{id}/image")
-    public ResponseEntity<?> updateUserProfileImage(
-        @RequestParam("file") MultipartFile file,
-        @PathVariable long id
-    ) {
-        log.info("User is updating profile picture");
-        Sport sport = sportService.findSportById(id);
-        String fileName = sport.getPhotoUrl() == null ?
-            imageService.uploadImage(file, SPORT_FILE+sport.getId()) :
-            imageService.updateImage(file, sport.getPhotoUrl());
-
-        return ResponseEntity.ok(Map.of("data", fileName));
     }
 
     @DeleteMapping("/{id}")
