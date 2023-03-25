@@ -128,12 +128,10 @@ public class SecurityConfiguration {
     private void imageEndpoints(HttpSecurity http) throws Exception {
         //User based requests
         http.authorizeHttpRequests()
-            .requestMatchers(GET, "/api/images/{fileName}").hasAnyAuthority(USER, ADMIN, MODERATOR)
+            .requestMatchers(GET, "/api/images/{fileName}").permitAll()
             .requestMatchers(POST, "/api/images/user").hasAnyAuthority(USER, ADMIN, MODERATOR)
             .requestMatchers(PUT, "/api/images/user").hasAnyAuthority(USER, ADMIN, MODERATOR)
             .requestMatchers(DELETE, "/api/images/user").hasAnyAuthority(USER, ADMIN, MODERATOR);
-
-
     }
 
     private void videoEndpoints(HttpSecurity http) throws Exception {
