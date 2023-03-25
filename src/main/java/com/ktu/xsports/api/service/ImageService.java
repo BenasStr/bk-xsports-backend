@@ -40,7 +40,7 @@ public class ImageService {
     }
 
     public String uploadImage(MultipartFile image, String name) {
-        String imageName = addTypeExtension(image, getLastPart(name));
+        String imageName = addTypeExtension(image, name);
         try {
 
             minioClient.putObject(PutObjectArgs.builder()
@@ -58,13 +58,12 @@ public class ImageService {
     }
 
     public String updateImage(MultipartFile image, String fileName) {
-        fileName = getLastPart(fileName);
         deleteImage(fileName);
 
         try {
             minioClient.putObject(PutObjectArgs.builder()
                 .bucket(IMAGE_BUCKET)
-                .object(fileName)
+                .object(getLastPart(fileName))
                 .stream(image.getInputStream(), image.getSize(), -1)
                 .contentType(image.getContentType())
                 .build());
@@ -77,6 +76,7 @@ public class ImageService {
     }
 
     public void deleteImage(String fileName) {
+        getLastPart(fileName);
         try {
             minioClient.removeObject(
                 RemoveObjectArgs.builder()
@@ -89,9 +89,7 @@ public class ImageService {
     }
 
     private String getLastPart(String url) {
-        Pattern pattern = Pattern.compile("([^/]+)$");
-        Matcher matcher = pattern.matcher(url);
-        return matcher.group(0);
+        return url.split("/")[5];
     }
 
     private String addTypeExtension(MultipartFile multipartFile, String name) {
