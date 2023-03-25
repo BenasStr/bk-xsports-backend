@@ -14,6 +14,8 @@ import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.util.Objects;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 @Service
 @Slf4j
@@ -38,7 +40,7 @@ public class ImageService {
     }
 
     public String uploadImage(MultipartFile image, String name) {
-        String imageName = addTypeExtension(image, name);
+        String imageName = addTypeExtension(image, getLastPart(name));
         try {
 
             minioClient.putObject(PutObjectArgs.builder()
@@ -56,6 +58,7 @@ public class ImageService {
     }
 
     public String updateImage(MultipartFile image, String fileName) {
+        fileName = getLastPart(fileName);
         deleteImage(fileName);
 
         try {
@@ -83,6 +86,12 @@ public class ImageService {
         } catch (Exception e) {
             throw new ImageUploadException("Couldn't remove image");
         }
+    }
+
+    private String getLastPart(String url) {
+        Pattern pattern = Pattern.compile("([^/]+)$");
+        Matcher matcher = pattern.matcher(url);
+        return matcher.group(0);
     }
 
     private String addTypeExtension(MultipartFile multipartFile, String name) {
