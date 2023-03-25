@@ -38,8 +38,8 @@ public class ImageService {
     }
 
     public String uploadImage(MultipartFile image, String name) {
+        String imageName = addTypeExtension(image, name);
         try {
-            String imageName = addTypeExtension(image, name);
 
             minioClient.putObject(PutObjectArgs.builder()
                 .bucket(IMAGE_BUCKET)
