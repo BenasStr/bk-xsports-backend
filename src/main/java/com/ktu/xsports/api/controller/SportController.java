@@ -99,6 +99,8 @@ public class SportController {
         String fileName = sport.getPhotoUrl() == null || sport.getPhotoUrl().equals("") ?
             imageService.uploadImage(image, SPORT_FILE+sport.getId()) :
             imageService.updateImage(image, sport.getPhotoUrl());
+        sport.setPhotoUrl(fileName);
+        sportService.updateSport(sport, id);
 
         return ResponseEntity.ok(Map.of("data", fileName));
     }
