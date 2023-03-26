@@ -128,7 +128,7 @@ public class SecurityConfiguration {
     private void imageEndpoints(HttpSecurity http) throws Exception {
         //User based requests
         http.authorizeHttpRequests()
-            .requestMatchers(GET, "/api/images/{fileName}").permitAll()
+            .requestMatchers(GET, "/api/images/{fileName}").hasAnyAuthority(USER, ADMIN, MODERATOR)
             .requestMatchers(POST, "/api/images/user").hasAnyAuthority(USER, ADMIN, MODERATOR)
             .requestMatchers(PUT, "/api/images/user").hasAnyAuthority(USER, ADMIN, MODERATOR)
             .requestMatchers(DELETE, "/api/images/user").hasAnyAuthority(USER, ADMIN, MODERATOR);
