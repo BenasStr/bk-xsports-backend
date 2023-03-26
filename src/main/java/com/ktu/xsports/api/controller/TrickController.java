@@ -154,7 +154,7 @@ public class TrickController {
         @PathVariable Long trickId,
         @AuthenticationPrincipal User user
     ) {
-        trickService.findTrickById(sportId, categoryId, trickId);
+        trickService.findTrickById(sportId, categoryId, trickId, user.getId());
         Trick trick = progressService.updateProgress(user.getId(), trickId);
         return ResponseEntity.ok(Map.of("data", modelMapper.map(trick, TrickExtendedResponse.class)));
     }

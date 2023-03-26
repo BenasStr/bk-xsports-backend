@@ -18,6 +18,7 @@ import java.util.List;
 import java.util.Map;
 
 import static com.ktu.xsports.api.util.Prefix.CATEGORY_FILE;
+import static com.ktu.xsports.api.util.Prefix.SPORT_FILE;
 
 @Validated
 @RestController
@@ -68,14 +69,18 @@ public class CategoryController {
     @PostMapping("/{categoryId}/image")
     public ResponseEntity<?> uploadCategoryImage(
         @RequestParam("file") MultipartFile image,
-        @PathVariable int categoryId,
-        @PathVariable long sportId
+        @PathVariable Long categoryId,
+        @PathVariable Long sportId
     ) {
         Category category = categoryService.findCategory(sportId, categoryId);
-        String fileName = imageService.uploadImage(image, CATEGORY_FILE+category.getId());
+        String fileName = category.getPhotoUrl() == null || category.getPhotoUrl().equals("") ?
+            imageService.uploadImage(image, CATEGORY_FILE+category.getId()) :
+            imageService.updateImage(image, category.getPhotoUrl());
         category.setPhotoUrl(fileName);
         categoryService.updateCategory(sportId, category, category.getId());
-        return ResponseEntity.ok("");
+        return ResponseEntity.ok(
+            Map.of("data", fileName)
+        );
     }
 
     @PutMapping("/{categoryId}")

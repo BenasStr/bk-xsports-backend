@@ -89,6 +89,7 @@ public class SecurityConfiguration {
         http.authorizeHttpRequests()
             .requestMatchers(GET, "/api/sports/{sportId}/categories").hasAnyAuthority(USER, ADMIN, MODERATOR)
             .requestMatchers(GET, "/api/sports/{sportId}/categories/{id}").hasAnyAuthority(USER, ADMIN, MODERATOR)
+            .requestMatchers(POST, "/api/sports/{sportId}/categories/{categoryId}/image").hasAnyAuthority(ADMIN, MODERATOR)
             .requestMatchers(POST, "/api/sports/{sportId}/categories").hasAnyAuthority(ADMIN, MODERATOR)
             .requestMatchers(PUT, "/api/sports/{sportId}/categories/{id}").hasAnyAuthority(ADMIN, MODERATOR)
             .requestMatchers(DELETE, "/api/sports/{sportId}/categories/{id}").hasAnyAuthority(ADMIN, MODERATOR);

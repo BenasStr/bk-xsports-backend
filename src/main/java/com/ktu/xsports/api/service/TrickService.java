@@ -30,33 +30,23 @@ public class TrickService {
 
     private final VariantService variantService;
     private final CategoryService categoryService;
-    private final UserService userService;
 
     public List<TrickVariant> findTricks(Long sportId, Long categoryId, String difficulty, Long userId, String variant) {
         categoryService.findCategory(sportId, categoryId);
-        List<TrickVariant> trickVariants = trickVariantRepository.findAll(variant);
-        trickVariants.forEach(trickVariant -> setProgress(trickVariant, userId));
+        List<TrickVariant> trickVariants = trickVariantRepository.findAll(variant, sportId, categoryId);
+        trickVariants.forEach(trickVariant -> {
+            setProgress(trickVariant, userId);
+            setTrickVariantChildren(trickVariant, userId);
+            setTrickVariantParents(trickVariant, userId);
+            setTrickVariantVariants(trickVariant, userId);
+        });
 
         return trickVariants;
     }
 
-    public List<Trick> findTricks(Long sportId, Long categoryId, String difficulty, String email) {
-        User user = userService.findByEmail(email);
-        Category category = categoryService.findCategory(sportId, categoryId);
-
-        return difficulty.equals("all") ?
-            trickRepository.findAll(user.getId(), categoryId) :
-            trickRepository.findAll(user.getId(), categoryId, difficulty);
-    }
-
-    public Optional<Trick> findTrickById(Long sportId, Long categoryId, Long trickId) {
-        categoryService.findCategory(sportId, categoryId);
-        return trickRepository.findById(categoryId, trickId);
-    }
-
     public TrickVariant findTrickById(Long sportId, Long categoryId, Long trickId, Long userId) {
         categoryService.findCategory(sportId, categoryId);
-        TrickVariant trickVariant = trickVariantRepository.findById(categoryId, trickId)
+        TrickVariant trickVariant = trickVariantRepository.findById(trickId, categoryId, sportId)
             .orElseThrow(() -> new ServiceException("Trick doesn't exist"));
 
         setTrickVariantParents(trickVariant, userId);
