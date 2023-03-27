@@ -28,8 +28,16 @@ public interface TrickVariantRepository extends JpaRepository<TrickVariant, Long
         + "SELECT t FROM tricks_variants t "
         + "WHERE t.variant.name = :variantName "
         + "AND t.trick.category.sport.id = :sportId "
-        + "AND t.trick.category.id = :categoryId ")
+        + "AND t.trick.category.id = :categoryId " )
     List<TrickVariant> findAll(String variantName, Long sportId, Long categoryId);
+
+    @Query(""
+        + "SELECT t FROM tricks_variants t "
+        + "WHERE t.trick.category.sport.id = :sportId "
+        + "AND t.trick.category.id = :categoryId "
+        + "AND t.trick.id = :trickId "
+        + "AND t.variant.id <> :trickVariantId ")
+    List<TrickVariant> findTrickVariants(Long sportId, Long categoryId, Long trickVariantId, Long trickId);
 
     @Query("SELECT t FROM tricks_variants t WHERE t.variant.name = 'Standard' AND t.trick.id = :trickId")
     Optional<TrickVariant> findMainVariant(Long trickId);

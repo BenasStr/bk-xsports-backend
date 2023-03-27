@@ -36,11 +36,10 @@ public class TrickService {
         List<TrickVariant> trickVariants = trickVariantRepository.findAll(variant, sportId, categoryId);
         trickVariants.forEach(trickVariant -> {
             setProgress(trickVariant, userId);
-            setTrickVariantChildren(trickVariant, userId);
             setTrickVariantParents(trickVariant, userId);
+            setTrickVariantChildren(trickVariant, userId);
             setTrickVariantVariants(trickVariant, userId);
         });
-
         return trickVariants;
     }
 
@@ -58,41 +57,31 @@ public class TrickService {
     }
 
     private void setTrickVariantParents(TrickVariant trickVariant, Long userId) {
-        trickVariant.getTrick().getTrickParents()
+        trickVariant.getTrick()
+            .getTrickParents()
             .forEach(parent ->
-                parent.setTrickVariants(
-                    parent.getTrickVariants()
-                        .stream()
-                        .filter(variant -> variant.getVariant().getId() == trickVariant.getVariant().getId())
-                        .peek(variant -> setProgress(variant, userId))
-                        .toList()
-                )
+                parent.getTrickVariants()
+                    .forEach(
+                        variant -> setProgress(variant, userId)
+                    )
             );
     }
 
     private void setTrickVariantChildren(TrickVariant trickVariant, Long userId) {
-        trickVariant.getTrick().getTrickChildren()
+        trickVariant.getTrick()
+            .getTrickChildren()
             .forEach(parent ->
-                parent.setTrickVariants(
-                    parent.getTrickVariants()
-                        .stream()
-                        .filter(variant -> variant.getVariant().getId() == trickVariant.getVariant().getId())
-                        .peek(variant -> setProgress(variant, userId))
-                        .toList()
-                )
+                parent.getTrickVariants()
+                    .forEach(
+                        variant -> setProgress(variant, userId)
+                    )
             );
     }
 
     private void setTrickVariantVariants(TrickVariant trickVariant, Long userId) {
-        trickVariant.getTrick().setTrickVariants(
-            trickVariant.getTrick().getTrickVariants()
-                .stream()
-                .filter(variant ->
-                    variant.getId() != trickVariant.getId())
-                .peek(variant ->
-                    setProgress(variant, userId))
-                .toList()
-        );
+        trickVariant.getTrick()
+            .getTrickVariants()
+            .forEach(variant -> setProgress(variant, userId));
     }
 
     private void setTrickVariantVariants(TrickVariant trickVariant) {

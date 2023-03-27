@@ -8,6 +8,7 @@ import com.ktu.xsports.api.dto.request.trick.TrickVariantRequest;
 import com.ktu.xsports.api.dto.response.trick.TrickBasicResponse;
 import com.ktu.xsports.api.dto.response.trick.TrickExtendedResponse;
 import com.ktu.xsports.api.service.ProgressService;
+import com.ktu.xsports.api.service.ResponseCleanerService;
 import com.ktu.xsports.api.service.TrickService;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
@@ -32,6 +33,7 @@ public class TrickController {
     private final TrickService trickService;
     private final ProgressService progressService;
     private final ModelMapper modelMapper;
+    private final ResponseCleanerService responseCleanerService;
 
     @GetMapping()
     public ResponseEntity<?> findTricks(
@@ -48,6 +50,7 @@ public class TrickController {
         if (extended) {
             trickResponses = tricks.stream()
                 .map(trick -> modelMapper.map(trick, TrickExtendedResponse.class))
+                .peek(responseCleanerService::cleanResponse)
                 .toList();
         } else {
             trickResponses = tricks.stream()
