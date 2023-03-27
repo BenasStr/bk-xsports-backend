@@ -1,6 +1,5 @@
 package com.ktu.xsports.api.dto.response;
 
-import com.ktu.xsports.api.util.Role;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
@@ -13,6 +12,6 @@ public class UserResponse {
     String nickname;
     String email;
     String photoPath;
-    Role role;
+    String role;
     boolean isBlocked;
 }
