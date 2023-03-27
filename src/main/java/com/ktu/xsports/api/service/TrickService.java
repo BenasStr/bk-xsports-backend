@@ -1,25 +1,17 @@
 package com.ktu.xsports.api.service;
 
 import com.ktu.xsports.api.domain.Category;
-import com.ktu.xsports.api.domain.Progress;
 import com.ktu.xsports.api.domain.Trick;
 import com.ktu.xsports.api.domain.TrickVariant;
-import com.ktu.xsports.api.domain.User;
-import com.ktu.xsports.api.domain.Variant;
 import com.ktu.xsports.api.exceptions.ServiceException;
-import com.ktu.xsports.api.repository.ProgressRepository;
 import com.ktu.xsports.api.repository.TrickRepository;
 import com.ktu.xsports.api.repository.TrickVariantRepository;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
-import java.util.Collections;
 import java.util.List;
-import java.util.Objects;
 import java.util.Optional;
-import java.util.stream.Collectors;
-import javax.swing.text.html.Option;
 
 @Service
 @RequiredArgsConstructor
@@ -43,10 +35,8 @@ public class TrickService {
         return trickVariants;
     }
 
-    public TrickVariant findTrickById(Long sportId, Long categoryId, Long trickId, Long userId) {
-        categoryService.findCategory(sportId, categoryId);
-        TrickVariant trickVariant = trickVariantRepository.findById(trickId, categoryId, sportId)
-            .orElseThrow(() -> new ServiceException("Trick doesn't exist"));
+    public TrickVariant findTrickVariantById(Long sportId, Long categoryId, Long trickId, Long userId) {
+        TrickVariant trickVariant = findTrickVariantById(sportId, categoryId, trickId);
 
         setTrickVariantParents(trickVariant, userId);
         setTrickVariantChildren(trickVariant, userId);
@@ -54,6 +44,12 @@ public class TrickService {
         setProgress(trickVariant, userId);
 
         return trickVariant;
+    }
+
+    public TrickVariant findTrickVariantById(Long sportId, Long categoryId, Long trickId) {
+        categoryService.findCategory(sportId, categoryId);
+        return trickVariantRepository.findById(trickId, categoryId, sportId)
+            .orElseThrow(() -> new ServiceException("Trick doesn't exist"));
     }
 
     private void setTrickVariantParents(TrickVariant trickVariant, Long userId) {
@@ -103,7 +99,7 @@ public class TrickService {
         );
     }
 
-    public Trick findTrickById(Long trickId) {
+    public Trick findTrickVariantById(Long trickId) {
         return trickRepository.findById(trickId)
             .orElseThrow(() -> new ServiceException("Trick doesn't exist"));
     }
@@ -133,10 +129,10 @@ public class TrickService {
         return standardVariant;
     }
 
-    public TrickVariant createTrickVariant(Long sportId, Long categoryId, Long trickId, TrickVariant trickVariant) {
+    public TrickVariant createTrickVariant(Long sportId, Long categoryId, Long trickVariantId, TrickVariant trickVariant) {
         categoryService.findCategory(sportId, categoryId);
-        Trick trick = findTrickById(trickId);
-        trickVariant.setTrick(trick);
+        TrickVariant trick = findTrickVariantById(sportId, categoryId, trickVariantId);
+        trickVariant.setTrick(trick.getTrick());
         trickVariant.setVideoUrl("nope");
         return trickVariantRepository.save(trickVariant);
     }
@@ -175,26 +171,27 @@ public class TrickService {
     }
 
     public TrickVariant updateVariant(Long sportId, Long categoryId, Long trickId, Long variantId, TrickVariant trickVariant) {
-        categoryService.findCategory(sportId, categoryId);
-        Trick trick = findTrickById(trickId);
-        trickVariant.setTrick(trick);
+        TrickVariant trick = findTrickVariantById(sportId, categoryId, trickId);
+        trickVariant.setTrick(trick.getTrick());
         TrickVariant existingVariant = trickVariantRepository.findById(variantId)
             .orElseThrow(() -> new ServiceException("Variant doesn't exist!"));
+        trickVariant.setId(existingVariant.getId());
         trickVariant.setVideoUrl("nope");
         return trickVariantRepository.save(trickVariant);
     }
 
     public void removeTrick(Long sportId, Long categoryId, Long trickId) {
         categoryService.findCategory(sportId, categoryId);
-        Trick trick = findTrickById(trickId);
-        trick.getTrickVariants()
-            .forEach(variant -> trickVariantRepository.deleteById(variant.getId()));
-        trickRepository.deleteById(trickId);
+        TrickVariant trick = findTrickVariantById(sportId, categoryId, trickId);
+        trick.getTrick()
+                .getTrickVariants()
+                    .forEach(variant -> trickVariantRepository.deleteById(variant.getId()));
+        trickRepository.deleteById(trick.getTrick().getId());
     }
 
     public void removeTrickVariant(Long sportId, Long categoryId, Long trickId, Long variantId) {
         categoryService.findCategory(sportId, categoryId);
-        findTrickById(trickId);
+        findTrickVariantById(trickId);
         trickVariantRepository.deleteById(variantId);
     }
 }

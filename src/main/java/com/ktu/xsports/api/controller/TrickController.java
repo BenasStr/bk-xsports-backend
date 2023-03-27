@@ -71,7 +71,7 @@ public class TrickController {
         @AuthenticationPrincipal User user
     ) {
         log.info("User is fetching trick.");
-        TrickVariant trick = trickService.findTrickById(sportId, categoryId, trickId, user.getId());
+        TrickVariant trick = trickService.findTrickVariantById(sportId, categoryId, trickId, user.getId());
         return ResponseEntity.ok(
             Map.of("data", modelMapper.map(trick, TrickExtendedResponse.class))
         );
@@ -116,7 +116,7 @@ public class TrickController {
         @PathVariable long trickId,
         @RequestParam MultipartFile video
     ) {
-        Trick trick = trickService.findTrickById(trickId);
+        Trick trick = trickService.findTrickVariantById(trickId);
         return ResponseEntity.ok("");
     }
 
@@ -157,7 +157,7 @@ public class TrickController {
         @PathVariable Long trickId,
         @AuthenticationPrincipal User user
     ) {
-        trickService.findTrickById(sportId, categoryId, trickId, user.getId());
+        trickService.findTrickVariantById(sportId, categoryId, trickId, user.getId());
         Trick trick = progressService.updateProgress(user.getId(), trickId);
         return ResponseEntity.ok(Map.of("data", modelMapper.map(trick, TrickExtendedResponse.class)));
     }
