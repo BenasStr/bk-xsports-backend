@@ -101,7 +101,7 @@ public class TrickService {
 
     public Trick findTrickVariantById(Long trickId) {
         return trickRepository.findById(trickId)
-            .orElseThrow(() -> new ServiceException("Trick doesn't exist"));
+            .orElseThrow(() -> new ServiceException("Trick doesn't exist!"));
     }
 
     public TrickVariant createTrick(Long sportId, Long categoryId, Trick trick) {
@@ -191,7 +191,7 @@ public class TrickService {
 
     public void removeTrickVariant(Long sportId, Long categoryId, Long trickId, Long variantId) {
         categoryService.findCategory(sportId, categoryId);
-        findTrickVariantById(trickId);
+        findTrickVariantById(sportId, categoryId, variantId);
         trickVariantRepository.deleteById(variantId);
     }
 }

@@ -168,6 +168,7 @@ public class TrickController {
             @PathVariable Long categoryId,
             @PathVariable Long sportId
     ) {
+        log.info("User is deleting trick!");
         trickService.removeTrick(sportId, categoryId, trickId);
 
         return ResponseEntity.ok("");
@@ -180,6 +181,7 @@ public class TrickController {
         @PathVariable Long sportId,
         @PathVariable Long variantId
     ) {
+        log.info("User is deleting trick variant!");
         trickService.removeTrickVariant(sportId, categoryId, trickId, variantId);
         return ResponseEntity.ok("");
     }
