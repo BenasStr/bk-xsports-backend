@@ -1,6 +1,6 @@
 package com.ktu.xsports.api.controller;
 
-import com.ktu.xsports.api.service.VideoService;
+import com.ktu.xsports.api.service.media.VideoService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpHeaders;

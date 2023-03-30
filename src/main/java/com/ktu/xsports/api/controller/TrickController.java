@@ -1,5 +1,6 @@
 package com.ktu.xsports.api.controller;
 
+import com.ktu.xsports.api.domain.Category;
 import com.ktu.xsports.api.domain.Trick;
 import com.ktu.xsports.api.domain.TrickVariant;
 import com.ktu.xsports.api.domain.User;
@@ -8,7 +9,8 @@ import com.ktu.xsports.api.dto.request.trick.TrickVariantRequest;
 import com.ktu.xsports.api.dto.response.trick.TrickBasicResponse;
 import com.ktu.xsports.api.dto.response.trick.TrickExtendedResponse;
 import com.ktu.xsports.api.service.ProgressService;
-import com.ktu.xsports.api.service.ResponseCleanerService;
+import com.ktu.xsports.api.service.media.VideoService;
+import com.ktu.xsports.api.service.util.ResponseCleanerService;
 import com.ktu.xsports.api.service.TrickService;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
@@ -23,6 +25,9 @@ import org.springframework.web.multipart.MultipartFile;
 import java.util.List;
 import java.util.Map;
 
+import static com.ktu.xsports.api.util.Prefix.CATEGORY_FILE;
+import static com.ktu.xsports.api.util.Prefix.TRICK_FILE;
+
 @Validated
 @RestController
 @RequiredArgsConstructor
@@ -32,8 +37,9 @@ public class TrickController {
 
     private final TrickService trickService;
     private final ProgressService progressService;
-    private final ModelMapper modelMapper;
     private final ResponseCleanerService responseCleanerService;
+    private final VideoService videoService;
+    private final ModelMapper modelMapper;
 
     @GetMapping()
     public ResponseEntity<?> findTricks(
@@ -109,15 +115,24 @@ public class TrickController {
         );
     }
 
-    @PostMapping("/{trickId}/video")
+    @PostMapping("/{trickId}/variants/{variantId}/video")
     public ResponseEntity<?> uploadTrickVideo(
         @PathVariable long categoryId,
         @PathVariable long sportId,
         @PathVariable long trickId,
+        @PathVariable long variantId,
         @RequestParam MultipartFile video
     ) {
-        Trick trick = trickService.findTrickVariantById(trickId);
-        return ResponseEntity.ok("");
+        TrickVariant trickVariant = trickService.findTrickVariantById(sportId, categoryId, trickId);
+        String fileName = trickVariant.getVideoUrl() == null || trickVariant.getVideoUrl().equals("") ?
+            videoService.uploadVideo(video, TRICK_FILE+trickVariant.getId()) :
+            videoService.updateVideo(video, trickVariant.getVideoUrl());
+        trickVariant.setVideoUrl(fileName);
+        trickService.updateVariant(sportId, categoryId, trickId, variantId, trickVariant);
+
+        return ResponseEntity.ok(
+            Map.of("data", fileName)
+        );
     }
 
     @PutMapping("/{trickId}")

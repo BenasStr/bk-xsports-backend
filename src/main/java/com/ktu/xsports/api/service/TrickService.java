@@ -138,16 +138,18 @@ public class TrickService {
     }
 
     @Transactional
-    public TrickVariant updateTrick(Long sportId, Long categoryId, Trick trick, Long trickId) {
+    public TrickVariant updateTrick(Long sportId, Long categoryId, Trick trick, Long trickVariantId) {
         Category category = categoryService.findCategory(sportId, categoryId);
         trick.setCategory(category);
 
-        trickRepository.findById(trickId)
-            .orElseThrow(() -> new ServiceException("Trick not found"));
-        trick.setId(trickId);
+        TrickVariant trickVariant = findTrickVariantById(sportId, categoryId, trickVariantId);
+        trick.setId(trickVariantId);
+        trick.setTrickVariants(trickVariant.getTrick().getTrickVariants());
+        trick.setTrickChildren(trickVariant.getTrick().getTrickChildren());
+        trick.setTrickParents(trickVariant.getTrick().getTrickParents());
 
         Optional<Trick> existing = trickRepository.findByName(trick.getName());
-        if(existing.isPresent() && trickId != existing.get().getId()) {
+        if(existing.isPresent() && trickVariantId != existing.get().getId()) {
             throw new ServiceException("Trick already exists");
         }
 

@@ -3,7 +3,7 @@ package com.ktu.xsports.api.controller;
 import com.ktu.xsports.api.dto.request.LoginRequest;
 import com.ktu.xsports.api.dto.request.RegisterRequest;
 import com.ktu.xsports.api.dto.response.AuthenticationResponse;
-import com.ktu.xsports.api.service.AuthenticationService;
+import com.ktu.xsports.api.service.security.AuthenticationService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.ResponseEntity;

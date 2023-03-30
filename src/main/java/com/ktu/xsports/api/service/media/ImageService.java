@@ -1,4 +1,4 @@
-package com.ktu.xsports.api.service;
+package com.ktu.xsports.api.service.media;
 
 import com.ktu.xsports.api.exceptions.ImageUploadException;
 import com.ktu.xsports.config.HostConfiguration;
@@ -76,7 +76,7 @@ public class ImageService {
     }
 
     public void deleteImage(String fileName) {
-        getLastPart(fileName);
+        fileName = getLastPart(fileName);
         try {
             minioClient.removeObject(
                 RemoveObjectArgs.builder()

@@ -4,7 +4,7 @@ import com.ktu.xsports.api.domain.Sport;
 import com.ktu.xsports.api.domain.User;
 import com.ktu.xsports.api.dto.request.SportRequest;
 import com.ktu.xsports.api.dto.response.SportResponse;
-import com.ktu.xsports.api.service.ImageService;
+import com.ktu.xsports.api.service.media.ImageService;
 import com.ktu.xsports.api.service.SportService;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;

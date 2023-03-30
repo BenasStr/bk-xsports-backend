@@ -4,7 +4,7 @@ import com.ktu.xsports.api.domain.Category;
 import com.ktu.xsports.api.dto.request.CategoryRequest;
 import com.ktu.xsports.api.dto.response.CategoryResponse;
 import com.ktu.xsports.api.service.CategoryService;
-import com.ktu.xsports.api.service.ImageService;
+import com.ktu.xsports.api.service.media.ImageService;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -18,7 +18,6 @@ import java.util.List;
 import java.util.Map;
 
 import static com.ktu.xsports.api.util.Prefix.CATEGORY_FILE;
-import static com.ktu.xsports.api.util.Prefix.SPORT_FILE;
 
 @Validated
 @RestController

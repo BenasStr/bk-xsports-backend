@@ -101,6 +101,7 @@ public class SecurityConfiguration {
             .requestMatchers(GET, "/api/sports/{sportId}/categories/{categoryId}/tricks/{trickId}").hasAnyAuthority(USER, ADMIN, MODERATOR)
             .requestMatchers(POST, "/api/sports/{sportId}/categories/{categoryId}/tricks").hasAnyAuthority(ADMIN, MODERATOR)
             .requestMatchers(POST, "/api/sports/{sportId}/categories/{categoryId}/tricks/{trickId}/variant").hasAnyAuthority(ADMIN, MODERATOR)
+            .requestMatchers(POST, "/api/sports/{sportId}/categories/{categoryId}/tricks/{trickId}/variants/{variantId}/video").hasAnyAuthority(ADMIN, MODERATOR)
             .requestMatchers(PUT, "/api/sports/{sportId}/categories/{categoryId}/tricks/{trickId}").hasAnyAuthority(ADMIN, MODERATOR)
             .requestMatchers(PUT, "/api/sports/{sportId}/categories/{categoryId}/tricks/{trickId}/variant/{variantId}").hasAnyAuthority(ADMIN, MODERATOR)
             .requestMatchers(PUT, "/api/sports/{sportId}/categories/{categoryId}/tricks/{trickId}/progress").hasAnyAuthority(USER, ADMIN, MODERATOR)
@@ -129,18 +130,12 @@ public class SecurityConfiguration {
     private void imageEndpoints(HttpSecurity http) throws Exception {
         //User based requests
         http.authorizeHttpRequests()
-            .requestMatchers(GET, "/api/images/{fileName}").permitAll()
-            .requestMatchers(POST, "/api/images/user").hasAnyAuthority(USER, ADMIN, MODERATOR)
-            .requestMatchers(PUT, "/api/images/user").hasAnyAuthority(USER, ADMIN, MODERATOR)
-            .requestMatchers(DELETE, "/api/images/user").hasAnyAuthority(USER, ADMIN, MODERATOR);
+            .requestMatchers(GET, "/api/images/{fileName}").permitAll();
     }
 
     private void videoEndpoints(HttpSecurity http) throws Exception {
         http.authorizeHttpRequests()
-            .requestMatchers(GET, "/api/videos/{fileName}").hasAnyAuthority(USER, ADMIN, MODERATOR)
-            .requestMatchers(POST, "/api/videos").hasAnyAuthority(ADMIN, MODERATOR)
-            .requestMatchers(PUT, "/api/videos").hasAnyAuthority(ADMIN, MODERATOR)
-            .requestMatchers(DELETE, "/api/videos").hasAnyAuthority(ADMIN, MODERATOR);
+            .requestMatchers(GET, "/api/videos/{fileName}").permitAll();
     }
 
     private void testEndpoint(HttpSecurity http) throws Exception {

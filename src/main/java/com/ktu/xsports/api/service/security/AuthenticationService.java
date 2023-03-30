@@ -1,4 +1,4 @@
-package com.ktu.xsports.api.service;
+package com.ktu.xsports.api.service.security;
 
 import com.ktu.xsports.api.domain.User;
 import com.ktu.xsports.api.util.Role;

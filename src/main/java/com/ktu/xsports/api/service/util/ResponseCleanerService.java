@@ -1,4 +1,4 @@
-package com.ktu.xsports.api.service;
+package com.ktu.xsports.api.service.util;
 
 import com.ktu.xsports.api.dto.response.trick.TrickExtendedResponse;
 import org.springframework.stereotype.Service;

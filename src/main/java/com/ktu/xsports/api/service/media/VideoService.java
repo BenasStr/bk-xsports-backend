@@ -1,10 +1,11 @@
-package com.ktu.xsports.api.service;
+package com.ktu.xsports.api.service.media;
 
 import com.ktu.xsports.api.exceptions.ImageUploadException;
 import io.minio.GetObjectArgs;
 import io.minio.MinioClient;
 import io.minio.PutObjectArgs;
 import io.minio.RemoveObjectArgs;
+import lombok.RequiredArgsConstructor;
 import org.apache.commons.compress.utils.IOUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -14,11 +15,10 @@ import java.io.InputStream;
 import java.util.Objects;
 
 @Service
+@RequiredArgsConstructor
 public class VideoService {
     private static final String VIDEO_BUCKET = "videos";
-
-    @Autowired
-    private MinioClient minioClient;
+    private final MinioClient minioClient;
 
     public byte[] getVideo(String fileName) {
        try {
@@ -65,7 +65,7 @@ public class VideoService {
             minioClient.putObject(
                 PutObjectArgs.builder()
                     .bucket(VIDEO_BUCKET)
-                    .object(fileName)
+                    .object(getLastPart(fileName))
                     .stream(inputStream, inputStream.available(), -1)
                     .contentType(video.getContentType())
                     .build()
@@ -83,7 +83,7 @@ public class VideoService {
             minioClient.removeObject(
                 RemoveObjectArgs.builder()
                     .bucket(VIDEO_BUCKET)
-                    .object(fileName)
+                    .object(getLastPart(fileName))
                     .build()
             );
         } catch (Exception e) {
@@ -92,14 +92,14 @@ public class VideoService {
         }
     }
 
+    private String getLastPart(String url) {
+        return url.split("/")[5];
+    }
+
     private String addTypeExtension(MultipartFile file, String fileName) {
-        switch (Objects.requireNonNull(file.getContentType())) {
-            case "" -> {
-                return fileName + ".mp4";
-            }
-            default -> {
-                throw new ImageUploadException("Couldn't upload video");
-            }
+        if (Objects.requireNonNull(file.getContentType()).equals("")) {
+            return fileName + ".mp4";
         }
+        throw new ImageUploadException("Couldn't upload video");
     }
 }

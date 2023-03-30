@@ -6,6 +6,7 @@ import com.ktu.xsports.api.exceptions.AlreadyExistsException;
 import com.ktu.xsports.api.exceptions.ServiceException;
 import com.ktu.xsports.api.repository.SportRepository;
 import com.ktu.xsports.api.repository.UserRepository;
+import com.ktu.xsports.api.service.media.ImageService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
