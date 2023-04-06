@@ -14,8 +14,12 @@ public interface CategoryRepository extends JpaRepository<Category, Long> {
 
     List<Category> findAllBySportId(long sport);
 
-    @Query("SELECT c FROM categories c WHERE c.sport.id = :sportId AND c.name LIKE %:search% ")
-    List<Category> findAllBySportIdAndNameLike(long sportId, String search);
+    @Query(""
+        + "SELECT c FROM categories c "
+        + "WHERE c.sport.id = :sportId "
+        + "AND c.name "
+        + "LIKE %:search% ")
+    List<Category> findByNameContaining(long sportId, String search);
 
     Optional<Category> findBySportIdAndId(long sportId, long id);
 

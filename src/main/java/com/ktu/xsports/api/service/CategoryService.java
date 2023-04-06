@@ -19,10 +19,14 @@ public class CategoryService {
     private final CategoryRepository categoryRepository;
     private final SportService sportService;
 
+    public List<Category> findCategories(long sportId) {
+        return categoryRepository.findAllBySportId(sportId);
+    }
+
     public List<Category> findCategories(long sportId, String search) {
         return search == null || search.equals("") ?
             categoryRepository.findAllBySportId(sportId) :
-            categoryRepository.findAllBySportIdAndNameLike(sportId, search);
+            categoryRepository.findByNameContaining(sportId, search);
     }
 
     public Category findCategory(long sportId, long categoryId) {

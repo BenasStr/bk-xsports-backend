@@ -33,6 +33,14 @@ public interface TrickVariantRepository extends JpaRepository<TrickVariant, Long
 
     @Query(""
         + "SELECT t FROM tricks_variants t "
+        + "WHERE t.variant.name = :variantName "
+        + "AND t.trick.category.sport.id = :sportId "
+        + "AND t.trick.category.id = :categoryId "
+        + "AND t.trick.name LIKE %:search% " )
+    List<TrickVariant> findByNameContaining(String variantName, Long sportId, Long categoryId, String search);
+
+    @Query(""
+        + "SELECT t FROM tricks_variants t "
         + "WHERE t.trick.category.sport.id = :sportId "
         + "AND t.trick.category.id = :categoryId "
         + "AND t.trick.id = :trickId "

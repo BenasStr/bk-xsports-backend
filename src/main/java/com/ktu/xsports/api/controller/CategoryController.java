@@ -32,7 +32,7 @@ public class CategoryController {
     @GetMapping()
     public ResponseEntity<?> findSportsCategories(
         @PathVariable long sportId,
-        @RequestParam(defaultValue = "", name = "search") String search
+        @RequestParam(defaultValue = "") String search
     ) {
         log.info("Categories get called.");
         List<Category> categories = categoryService.findCategories(sportId, search);

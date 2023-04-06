@@ -47,12 +47,12 @@ public class UserController {
     public ResponseEntity<?> findUsers (
         @RequestParam(defaultValue = "1") int page,
         @RequestParam(defaultValue = "20", name = "per_page") int size,
-        @RequestParam(defaultValue = "", name = "username") String username,
+        @RequestParam(defaultValue = "") String search,
         @AuthenticationPrincipal User user
     ) {
         log.info("Getting users data list.");
         Pageable pageable = PageRequest.of(page - 1, size);
-        Page<User> usersPage = userService.findUsers(pageable, username);
+        Page<User> usersPage = userService.findUsers(pageable, search);
         Page<?> userResponsePage = user.getRole().equals(ADMIN) ?
             usersPage.map(u -> modelMapper.map(u, UserResponse.class)) :
             usersPage.map(u -> modelMapper.map(u, UserBasicResponse.class));

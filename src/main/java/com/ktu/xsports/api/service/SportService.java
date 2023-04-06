@@ -19,10 +19,15 @@ public class SportService {
     private final UserRepository userRepository;
     private final SportRepository sportRepository;
 
+
+    public List<Sport> findSports() {
+        return sportRepository.findAll();
+    }
+
     public List<Sport> findSports(String search) {
-        return search == null || search.equals("")?
+        return search == null || search.equals("") ?
             sportRepository.findAll() :
-            sportRepository.findByNameIsLike(search);
+            sportRepository.findByNameContaining(search);
     }
 
     public List<Sport> findMySports(long userId) {

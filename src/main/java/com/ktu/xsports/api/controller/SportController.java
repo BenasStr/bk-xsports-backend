@@ -42,7 +42,7 @@ public class SportController {
 
     @GetMapping()
     public ResponseEntity<?> findSports(
-        @RequestParam(defaultValue = "", name = "search") String search
+        @RequestParam(defaultValue = "") String search
     ) {
         log.info("finding sports");
         List<Sport> sports = sportService.findSports(search);

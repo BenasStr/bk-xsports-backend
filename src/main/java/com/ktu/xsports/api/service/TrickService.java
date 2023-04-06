@@ -19,9 +19,20 @@ public class TrickService {
 
     private final TrickRepository trickRepository;
     private final TrickVariantRepository trickVariantRepository;
-
     private final VariantService variantService;
     private final CategoryService categoryService;
+
+    public List<TrickVariant> findTricks(long sportId, long categoryId, long userId, String variant, String search) {
+        categoryService.findCategory(sportId, categoryId);
+        List<TrickVariant> trickVariants = trickVariantRepository.findByNameContaining(variant, sportId, categoryId, search);
+        trickVariants.forEach(trickVariant -> {
+            setProgress(trickVariant, userId);
+            setTrickVariantParents(trickVariant, userId);
+            setTrickVariantChildren(trickVariant, userId);
+            setTrickVariantVariants(trickVariant, userId);
+        });
+        return trickVariants;
+    }
 
     public List<TrickVariant> findTricks(Long sportId, Long categoryId, String difficulty, Long userId, String variant) {
         categoryService.findCategory(sportId, categoryId);

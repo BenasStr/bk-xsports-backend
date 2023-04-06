@@ -4,6 +4,8 @@ import com.ktu.xsports.api.domain.User;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.jpa.repository.Query;
+import org.springframework.data.mapping.model.SpELExpressionEvaluator;
 import org.springframework.stereotype.Repository;
 
 import java.util.Optional;
@@ -12,5 +14,9 @@ import java.util.Optional;
 public interface UserRepository extends JpaRepository<User, Long> {
     Optional<User> findByEmail(String email);
 
-    Page<User> findByNicknameContaining(String username, Pageable pageable);
+    @Query(""
+        + "SELECT u FROM users u "
+        + "WHERE u.nickname LIKE %:username% "
+        + "OR u.name LIKE %:username% ")
+    Page<User> findByUsernameContaining(String username, Pageable pageable);
 }
