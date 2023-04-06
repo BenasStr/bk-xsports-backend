@@ -13,6 +13,9 @@ import java.util.Optional;
 public interface SportRepository extends JpaRepository<Sport, Long> {
     Optional<Sport> findByName(String name);
 
+    @Query("SELECT  s FROM sports s WHERE s.name LIKE %:search%")
+    List<Sport> findByNameIsLike(String search);
+
     @Query("SELECT s FROM sports s WHERE s.name = :name AND s.id <> :id")
     Optional<Sport> findByNameAndNotId(String name, Long id);
 

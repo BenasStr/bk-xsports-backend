@@ -41,9 +41,11 @@ public class SportController {
     private final ModelMapper modelMapper;
 
     @GetMapping()
-    public ResponseEntity<?> findSports() {
+    public ResponseEntity<?> findSports(
+        @RequestParam(defaultValue = "", name = "search") String search
+    ) {
         log.info("finding sports");
-        List<Sport> sports = sportService.findSports();
+        List<Sport> sports = sportService.findSports(search);
         List<SportResponse> sportsResponse = sports.stream().map(
                 s -> modelMapper.map(s, SportResponse.class)
         ).toList();
