@@ -14,9 +14,11 @@ import org.springframework.web.bind.annotation.RestController;
 
 import java.util.Map;
 
+import static com.ktu.xsports.api.util.ApiVersionPrefix.*;
+
 @RestController
 @RequiredArgsConstructor
-@RequestMapping("/api/auth")
+@RequestMapping(API_V1 + "/auth")
 @Slf4j
 public class AuthenticationController {
 

@@ -24,12 +24,13 @@ import org.springframework.web.multipart.MultipartFile;
 import java.util.List;
 import java.util.Map;
 
+import static com.ktu.xsports.api.util.ApiVersionPrefix.*;
 import static com.ktu.xsports.api.util.Prefix.TRICK_FILE;
 
 @Validated
 @RestController
 @RequiredArgsConstructor
-@RequestMapping("/api/sports/{sportId}/categories/{categoryId}/tricks")
+@RequestMapping(API_V1 + "/sports/{sportId}/categories/{categoryId}/tricks")
 @Slf4j
 public class TrickController {
 

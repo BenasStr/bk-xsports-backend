@@ -22,13 +22,14 @@ import org.springframework.web.multipart.MultipartFile;
 
 import java.util.*;
 
+import static com.ktu.xsports.api.util.ApiVersionPrefix.*;
 import static com.ktu.xsports.api.util.Prefix.USER_FILE;
 import static com.ktu.xsports.api.util.Role.ADMIN;
 
 @Validated
 @RestController
 @RequiredArgsConstructor
-@RequestMapping("/api/v1/users")
+@RequestMapping(API_V1 + "/users")
 @Slf4j
 public class UserController {
     private final UserService userService;

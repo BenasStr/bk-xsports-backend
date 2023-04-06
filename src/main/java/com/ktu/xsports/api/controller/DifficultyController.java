@@ -12,9 +12,11 @@ import org.springframework.web.bind.annotation.RestController;
 import java.util.List;
 import java.util.Map;
 
+import static com.ktu.xsports.api.util.ApiVersionPrefix.*;
+
 @RestController
 @RequiredArgsConstructor
-@RequestMapping("api/difficulties")
+@RequestMapping(API_V1 + "/difficulties")
 @Slf4j
 public class DifficultyController {
 

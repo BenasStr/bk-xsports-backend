@@ -17,12 +17,13 @@ import org.springframework.web.multipart.MultipartFile;
 import java.util.List;
 import java.util.Map;
 
+import static com.ktu.xsports.api.util.ApiVersionPrefix.*;
 import static com.ktu.xsports.api.util.Prefix.CATEGORY_FILE;
 
 @Validated
 @RestController
 @RequiredArgsConstructor
-@RequestMapping("api/sports/{sportId}/categories")
+@RequestMapping(API_V1 + "/sports/{sportId}/categories")
 @Slf4j
 public class CategoryController {
     private final CategoryService categoryService;

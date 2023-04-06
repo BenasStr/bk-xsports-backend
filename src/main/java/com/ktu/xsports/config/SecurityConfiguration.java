@@ -1,5 +1,6 @@
 package com.ktu.xsports.config;
 
+import com.ktu.xsports.api.util.ApiVersionPrefix;
 import com.ktu.xsports.config.filter.JwtAuthenticationFilter;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Bean;
@@ -11,6 +12,7 @@ import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 
+import static com.ktu.xsports.api.util.ApiVersionPrefix.*;
 import static com.ktu.xsports.api.util.Role.*;
 import static org.springframework.http.HttpMethod.*;
 
@@ -38,8 +40,6 @@ public class SecurityConfiguration {
         videoEndpoints(http);
         healthEndpoint(http);
 
-        testEndpoint(http);
-
         http.sessionManagement().sessionCreationPolicy(SessionCreationPolicy.STATELESS);
 
         http.authenticationProvider(authenticationProvider)
@@ -50,95 +50,89 @@ public class SecurityConfiguration {
 
     private void authorizationEndpoints(HttpSecurity http) throws Exception {
         http.authorizeHttpRequests()
-                .requestMatchers("/api/auth/**").permitAll();
+                .requestMatchers(API_V1 + "/auth/**").permitAll();
     }
 
     private void userEndpoints(HttpSecurity http) throws Exception {
         //Basic user endpoints
         http.authorizeHttpRequests()
-            .requestMatchers(GET, "/api/v1/users/basic/{id}").hasAnyAuthority(USER, ADMIN, MODERATOR)
-            .requestMatchers(GET, "/api/v1/users/me").hasAnyAuthority(USER, ADMIN, MODERATOR)
-            .requestMatchers(PUT, "/api/v1/users/me").hasAnyAuthority(USER, ADMIN, MODERATOR)
-            .requestMatchers(POST, "/api/v1/users/me/image").hasAnyAuthority(USER, ADMIN, MODERATOR);
+            .requestMatchers(GET, API_V1 + "/users/basic/{id}").hasAnyAuthority(USER, ADMIN, MODERATOR)
+            .requestMatchers(GET, API_V1 + "/users/me").hasAnyAuthority(USER, ADMIN, MODERATOR)
+            .requestMatchers(PUT, API_V1 + "/users/me").hasAnyAuthority(USER, ADMIN, MODERATOR)
+            .requestMatchers(POST, API_V1 + "/users/me/image").hasAnyAuthority(USER, ADMIN, MODERATOR);
 
         //Administration endpoints
         http.authorizeHttpRequests()
-            .requestMatchers(GET, "/api/v1/users").hasAnyAuthority(USER, ADMIN, MODERATOR)
-            .requestMatchers(GET, "/api/v1/users/{id}").hasAnyAuthority(ADMIN)
-            .requestMatchers(POST, "/api/v1/users").hasAnyAuthority(ADMIN)
-            .requestMatchers(PUT, "/api/v1/users").hasAnyAuthority(ADMIN)
-            .requestMatchers(DELETE, "/api/v1/users").hasAnyAuthority(ADMIN);
+            .requestMatchers(GET, API_V1 + "/users").hasAnyAuthority(USER, ADMIN, MODERATOR)
+            .requestMatchers(GET, API_V1 + "/users/{id}").hasAnyAuthority(ADMIN)
+            .requestMatchers(POST, API_V1 + "/users").hasAnyAuthority(ADMIN)
+            .requestMatchers(PUT, API_V1 + "/users").hasAnyAuthority(ADMIN)
+            .requestMatchers(DELETE, API_V1 + "/users").hasAnyAuthority(ADMIN);
     }
 
     private void sportsEndpoints(HttpSecurity http) throws Exception {
         http.authorizeHttpRequests()
-            .requestMatchers(GET,"/api/sports").hasAnyAuthority(USER, ADMIN, MODERATOR)
-            .requestMatchers(GET, "/api/sports/my_list").hasAnyAuthority(USER, ADMIN, MODERATOR)
-            .requestMatchers(GET, "/api/sports/{id}").hasAnyAuthority(USER, ADMIN, MODERATOR)
-            .requestMatchers(GET, "/api/sports/my_list/explore").hasAnyAuthority(USER, ADMIN, MODERATOR)
-            .requestMatchers(POST, "/api/sports").hasAnyAuthority(ADMIN, MODERATOR)
-            .requestMatchers(POST, "/api/sports/my_list").hasAnyAuthority(USER, ADMIN, MODERATOR)
-            .requestMatchers(POST, "/api/sports/{id}/image").hasAnyAuthority(ADMIN, MODERATOR)
-            .requestMatchers(PUT, "/api/sports/{id}").hasAnyAuthority(ADMIN, MODERATOR)
-            .requestMatchers(DELETE, "api/sports/my_list").hasAnyAuthority(USER, ADMIN, MODERATOR)
-            .requestMatchers(DELETE, "/api/sports/{id}").hasAnyAuthority(ADMIN, MODERATOR);
+            .requestMatchers(GET,API_V1 + "/sports").hasAnyAuthority(USER, ADMIN, MODERATOR)
+            .requestMatchers(GET, API_V1 + "/sports/my_list").hasAnyAuthority(USER, ADMIN, MODERATOR)
+            .requestMatchers(GET, API_V1 + "/sports/{id}").hasAnyAuthority(USER, ADMIN, MODERATOR)
+            .requestMatchers(GET, API_V1 + "/sports/my_list/explore").hasAnyAuthority(USER, ADMIN, MODERATOR)
+            .requestMatchers(POST, API_V1 + "/sports").hasAnyAuthority(ADMIN, MODERATOR)
+            .requestMatchers(POST, API_V1 + "/sports/my_list").hasAnyAuthority(USER, ADMIN, MODERATOR)
+            .requestMatchers(POST, API_V1 + "/sports/{id}/image").hasAnyAuthority(ADMIN, MODERATOR)
+            .requestMatchers(PUT, API_V1 + "/sports/{id}").hasAnyAuthority(ADMIN, MODERATOR)
+            .requestMatchers(DELETE, API_V1 + "/sports/my_list").hasAnyAuthority(USER, ADMIN, MODERATOR)
+            .requestMatchers(DELETE, API_V1 + "/sports/{id}").hasAnyAuthority(ADMIN, MODERATOR);
     }
 
     private void categoriesEndpoints(HttpSecurity http) throws Exception {
         http.authorizeHttpRequests()
-            .requestMatchers(GET, "/api/sports/{sportId}/categories").hasAnyAuthority(USER, ADMIN, MODERATOR)
-            .requestMatchers(GET, "/api/sports/{sportId}/categories/{id}").hasAnyAuthority(USER, ADMIN, MODERATOR)
-            .requestMatchers(POST, "/api/sports/{sportId}/categories/{categoryId}/image").hasAnyAuthority(ADMIN, MODERATOR)
-            .requestMatchers(POST, "/api/sports/{sportId}/categories").hasAnyAuthority(ADMIN, MODERATOR)
-            .requestMatchers(PUT, "/api/sports/{sportId}/categories/{id}").hasAnyAuthority(ADMIN, MODERATOR)
-            .requestMatchers(DELETE, "/api/sports/{sportId}/categories/{id}").hasAnyAuthority(ADMIN, MODERATOR);
+            .requestMatchers(GET, API_V1 + "/sports/{sportId}/categories").hasAnyAuthority(USER, ADMIN, MODERATOR)
+            .requestMatchers(GET, API_V1 + "/sports/{sportId}/categories/{id}").hasAnyAuthority(USER, ADMIN, MODERATOR)
+            .requestMatchers(POST, API_V1 + "/sports/{sportId}/categories/{categoryId}/image").hasAnyAuthority(ADMIN, MODERATOR)
+            .requestMatchers(POST, API_V1 + "/sports/{sportId}/categories").hasAnyAuthority(ADMIN, MODERATOR)
+            .requestMatchers(PUT, API_V1 + "/sports/{sportId}/categories/{id}").hasAnyAuthority(ADMIN, MODERATOR)
+            .requestMatchers(DELETE, API_V1 + "/sports/{sportId}/categories/{id}").hasAnyAuthority(ADMIN, MODERATOR);
     }
 
     private void tricksEndpoints(HttpSecurity http) throws Exception {
         http.authorizeHttpRequests()
-            .requestMatchers(GET, "/api/sports/{sportId}/categories/{categoryId}/tricks").hasAnyAuthority(USER, ADMIN, MODERATOR)
-            .requestMatchers(GET, "/api/sports/{sportId}/categories/{categoryId}/tricks/{trickId}").hasAnyAuthority(USER, ADMIN, MODERATOR)
-            .requestMatchers(POST, "/api/sports/{sportId}/categories/{categoryId}/tricks").hasAnyAuthority(ADMIN, MODERATOR)
-            .requestMatchers(POST, "/api/sports/{sportId}/categories/{categoryId}/tricks/{trickId}/variant").hasAnyAuthority(ADMIN, MODERATOR)
-            .requestMatchers(POST, "/api/sports/{sportId}/categories/{categoryId}/tricks/{trickId}/variants/{variantId}/video").hasAnyAuthority(ADMIN, MODERATOR)
-            .requestMatchers(PUT, "/api/sports/{sportId}/categories/{categoryId}/tricks/{trickId}").hasAnyAuthority(ADMIN, MODERATOR)
-            .requestMatchers(PUT, "/api/sports/{sportId}/categories/{categoryId}/tricks/{trickId}/variant/{variantId}").hasAnyAuthority(ADMIN, MODERATOR)
-            .requestMatchers(PUT, "/api/sports/{sportId}/categories/{categoryId}/tricks/{trickId}/progress").hasAnyAuthority(USER, ADMIN, MODERATOR)
-            .requestMatchers(DELETE, "/api/sports/{sportId}/categories/{categoryId}/tricks/{trickId}").hasAnyAuthority(ADMIN, MODERATOR)
-            .requestMatchers(DELETE, "/api/sports/{sportId}/categories/{categoryId}/tricks/{trickId}/variant/{variantId}").hasAnyAuthority(ADMIN, MODERATOR);
+            .requestMatchers(GET, API_V1 + "/sports/{sportId}/categories/{categoryId}/tricks").hasAnyAuthority(USER, ADMIN, MODERATOR)
+            .requestMatchers(GET, API_V1 + "/sports/{sportId}/categories/{categoryId}/tricks/{trickId}").hasAnyAuthority(USER, ADMIN, MODERATOR)
+            .requestMatchers(POST, API_V1 + "/sports/{sportId}/categories/{categoryId}/tricks").hasAnyAuthority(ADMIN, MODERATOR)
+            .requestMatchers(POST, API_V1 + "/sports/{sportId}/categories/{categoryId}/tricks/{trickId}/variant").hasAnyAuthority(ADMIN, MODERATOR)
+            .requestMatchers(POST, API_V1 + "/sports/{sportId}/categories/{categoryId}/tricks/{trickId}/variants/{variantId}/video").hasAnyAuthority(ADMIN, MODERATOR)
+            .requestMatchers(PUT, API_V1 + "/sports/{sportId}/categories/{categoryId}/tricks/{trickId}").hasAnyAuthority(ADMIN, MODERATOR)
+            .requestMatchers(PUT, API_V1 + "/sports/{sportId}/categories/{categoryId}/tricks/{trickId}/variant/{variantId}").hasAnyAuthority(ADMIN, MODERATOR)
+            .requestMatchers(PUT, API_V1 + "/sports/{sportId}/categories/{categoryId}/tricks/{trickId}/progress").hasAnyAuthority(USER, ADMIN, MODERATOR)
+            .requestMatchers(DELETE, API_V1 + "/sports/{sportId}/categories/{categoryId}/tricks/{trickId}").hasAnyAuthority(ADMIN, MODERATOR)
+            .requestMatchers(DELETE, API_V1 + "/sports/{sportId}/categories/{categoryId}/tricks/{trickId}/variant/{variantId}").hasAnyAuthority(ADMIN, MODERATOR);
     }
 
     private void variantEndpoints(HttpSecurity http) throws Exception {
         http.authorizeHttpRequests()
-            .requestMatchers(GET, "/api/variants").hasAnyAuthority(ADMIN, MODERATOR)
-            .requestMatchers(POST, "/api/variants").hasAnyAuthority(ADMIN, MODERATOR)
-            .requestMatchers(PUT, "/api/variants/{variantId}").hasAnyAuthority(ADMIN, MODERATOR)
-            .requestMatchers(DELETE, "/api/variants/{variantId}").hasAnyAuthority(ADMIN, MODERATOR);
+            .requestMatchers(GET, API_V1 + "/variants").hasAnyAuthority(ADMIN, MODERATOR)
+            .requestMatchers(POST, API_V1 + "/variants").hasAnyAuthority(ADMIN, MODERATOR)
+            .requestMatchers(PUT, API_V1 + "/variants/{variantId}").hasAnyAuthority(ADMIN, MODERATOR)
+            .requestMatchers(DELETE, API_V1 + "/variants/{variantId}").hasAnyAuthority(ADMIN, MODERATOR);
     }
 
     private void difficultyEndpoints(HttpSecurity http) throws Exception {
         http.authorizeHttpRequests()
-            .requestMatchers(GET, "/api/difficulties").hasAnyAuthority(ADMIN, MODERATOR);
+            .requestMatchers(GET, API_V1 + "/difficulties").hasAnyAuthority(ADMIN, MODERATOR);
     }
 
     private void healthEndpoint(HttpSecurity http) throws Exception {
         http.authorizeHttpRequests()
-            .requestMatchers(GET, "/api/health").permitAll();
+            .requestMatchers(GET, API_V1 + "/health").permitAll();
     }
 
     private void imageEndpoints(HttpSecurity http) throws Exception {
-        //User based requests
         http.authorizeHttpRequests()
-            .requestMatchers(GET, "/api/images/{fileName}").permitAll();
+            .requestMatchers(GET, API_V1 + "/images/{fileName}").permitAll();
     }
 
     private void videoEndpoints(HttpSecurity http) throws Exception {
         http.authorizeHttpRequests()
-            .requestMatchers(GET, "/api/videos/{fileName}").permitAll();
-    }
-
-    private void testEndpoint(HttpSecurity http) throws Exception {
-        http.authorizeHttpRequests()
-            .requestMatchers(POST, "/api/users/test").permitAll();
+            .requestMatchers(GET, API_V1 + "/videos/{fileName}").permitAll();
     }
 }

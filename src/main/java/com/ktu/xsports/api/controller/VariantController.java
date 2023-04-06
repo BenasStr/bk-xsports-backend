@@ -22,10 +22,12 @@ import org.springframework.web.bind.annotation.RestController;
 import java.util.List;
 import java.util.Map;
 
+import static com.ktu.xsports.api.util.ApiVersionPrefix.*;
+
 @Validated
 @RestController
 @RequiredArgsConstructor
-@RequestMapping("/api/variants")
+@RequestMapping(API_V1 + "/variants")
 @Slf4j
 public class VariantController {
     private final VariantService variantService;

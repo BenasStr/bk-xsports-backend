@@ -12,9 +12,11 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+import static com.ktu.xsports.api.util.ApiVersionPrefix.*;
+
 @RestController
 @RequiredArgsConstructor
-@RequestMapping("api/videos")
+@RequestMapping(API_V1 + "/videos")
 @Slf4j
 public class VideoController {
     private final VideoService videoService;

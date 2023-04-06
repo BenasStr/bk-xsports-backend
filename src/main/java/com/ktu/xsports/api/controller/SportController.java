@@ -27,12 +27,13 @@ import org.springframework.web.multipart.MultipartFile;
 import java.util.List;
 import java.util.Map;
 
+import static com.ktu.xsports.api.util.ApiVersionPrefix.*;
 import static com.ktu.xsports.api.util.Prefix.SPORT_FILE;
 
 @Validated
 @RestController
 @RequiredArgsConstructor
-@RequestMapping("/api/sports")
+@RequestMapping(API_V1 + "/sports")
 @Slf4j
 public class SportController {
 
