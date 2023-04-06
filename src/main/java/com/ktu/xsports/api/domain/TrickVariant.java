@@ -27,7 +27,6 @@ public class TrickVariant {
     @ManyToOne
     private Variant variant;
 
-    @NotNull
     private String videoUrl;
 
     @NotNull

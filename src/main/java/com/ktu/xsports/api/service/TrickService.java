@@ -178,7 +178,11 @@ public class TrickService {
         TrickVariant existingVariant = trickVariantRepository.findById(variantId)
             .orElseThrow(() -> new ServiceException("Variant doesn't exist!"));
         trickVariant.setId(existingVariant.getId());
-        trickVariant.setVideoUrl("nope");
+
+        if(trickVariant.getVideoUrl() == null) {
+            trickVariant.setVideoUrl(existingVariant.getVideoUrl());
+        }
+
         return trickVariantRepository.save(trickVariant);
     }
 

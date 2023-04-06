@@ -7,7 +7,6 @@ import io.minio.PutObjectArgs;
 import io.minio.RemoveObjectArgs;
 import lombok.RequiredArgsConstructor;
 import org.apache.commons.compress.utils.IOUtils;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
@@ -19,6 +18,7 @@ import java.util.Objects;
 public class VideoService {
     private static final String VIDEO_BUCKET = "videos";
     private final MinioClient minioClient;
+    private final int fileSize = 25000000;
 
     public byte[] getVideo(String fileName) {
        try {
@@ -45,7 +45,7 @@ public class VideoService {
                 PutObjectArgs.builder()
                     .bucket(VIDEO_BUCKET)
                     .object(videoName)
-                    .stream(inputStream, inputStream.available(), -1)
+                    .stream(inputStream, inputStream.available(), fileSize)
                     .contentType(video.getContentType())
                     .build()
             );
@@ -53,7 +53,7 @@ public class VideoService {
             return videoName;
         } catch (Exception e) {
             //TODO add exception here
-            throw new ImageUploadException("");
+            throw new ImageUploadException(e.getMessage());
         }
     }
 
@@ -61,12 +61,11 @@ public class VideoService {
         deleteVideo(fileName);
         try {
             InputStream inputStream = video.getInputStream();
-
             minioClient.putObject(
                 PutObjectArgs.builder()
                     .bucket(VIDEO_BUCKET)
                     .object(getLastPart(fileName))
-                    .stream(inputStream, inputStream.available(), -1)
+                    .stream(inputStream, inputStream.available(), fileSize)
                     .contentType(video.getContentType())
                     .build()
             );
@@ -97,7 +96,8 @@ public class VideoService {
     }
 
     private String addTypeExtension(MultipartFile file, String fileName) {
-        if (Objects.requireNonNull(file.getContentType()).equals("")) {
+        System.out.println(Objects.requireNonNull(file.getContentType()));
+        if (Objects.requireNonNull(file.getContentType()).equals("video/mp4")) {
             return fileName + ".mp4";
         }
         throw new ImageUploadException("Couldn't upload video");

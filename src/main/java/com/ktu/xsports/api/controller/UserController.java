@@ -23,11 +23,12 @@ import org.springframework.web.multipart.MultipartFile;
 import java.util.*;
 
 import static com.ktu.xsports.api.util.Prefix.USER_FILE;
+import static com.ktu.xsports.api.util.Role.ADMIN;
 
 @Validated
 @RestController
 @RequiredArgsConstructor
-@RequestMapping("/api/users")
+@RequestMapping("/api/v1/users")
 @Slf4j
 public class UserController {
     private final UserService userService;
@@ -42,19 +43,19 @@ public class UserController {
         );
     }
 
-    //TODO this is broken
     @GetMapping()
     public ResponseEntity<?> findUsers (
         @RequestParam(defaultValue = "1") int page,
         @RequestParam(defaultValue = "20", name = "per_page") int size,
-        @RequestParam(defaultValue = "", name = "nickname") String nickname
+        @RequestParam(defaultValue = "", name = "username") String username,
+        @AuthenticationPrincipal User user
     ) {
         log.info("Getting users data list.");
         Pageable pageable = PageRequest.of(page - 1, size);
-        Page<User> usersPage = userService.findUsers(pageable, nickname);
-        Page<UserResponse> userResponsePage = usersPage.map(
-                user -> modelMapper.map(user, UserResponse.class)
-        );
+        Page<User> usersPage = userService.findUsers(pageable, username);
+        Page<?> userResponsePage = user.getRole().equals(ADMIN) ?
+            usersPage.map(u -> modelMapper.map(u, UserResponse.class)) :
+            usersPage.map(u -> modelMapper.map(u, UserBasicResponse.class));
 
         return ResponseEntity.ok(
                 PageableConverter.convert(page, size, userResponsePage)

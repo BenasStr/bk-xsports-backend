@@ -23,13 +23,13 @@ public class UserService {
     private final UserRepository userRepository;
     private final PasswordEncoder passwordEncoder;
 
-    public Page<User> findUsers(Pageable pageable, String nickname) {
-        if (nickname.equals("")) {
+    public Page<User> findUsers(Pageable pageable, String username) {
+        if (username.equals("")) {
             log.info("Fetching all users");
             return userRepository.findAll(pageable);
         }
         log.info("Fetching all users by username");
-        return userRepository.findByNicknameContaining(nickname, pageable);
+        return userRepository.findByNicknameContaining(username, pageable);
     }
 
     public User findById(long id) {

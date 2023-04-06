@@ -56,19 +56,18 @@ public class SecurityConfiguration {
     private void userEndpoints(HttpSecurity http) throws Exception {
         //Basic user endpoints
         http.authorizeHttpRequests()
-            .requestMatchers(GET, "/api/users/basic").hasAnyAuthority(USER, ADMIN, MODERATOR)
-            .requestMatchers(GET, "/api/users/basic/{id}").hasAnyAuthority(USER, ADMIN, MODERATOR)
-            .requestMatchers(GET, "/api/users/me").hasAnyAuthority(USER, ADMIN, MODERATOR)
-            .requestMatchers(PUT, "/api/users/me").hasAnyAuthority(USER, ADMIN, MODERATOR)
-            .requestMatchers(POST, "/api/users/me/image").hasAnyAuthority(USER, ADMIN, MODERATOR);
+            .requestMatchers(GET, "/api/v1/users/basic/{id}").hasAnyAuthority(USER, ADMIN, MODERATOR)
+            .requestMatchers(GET, "/api/v1/users/me").hasAnyAuthority(USER, ADMIN, MODERATOR)
+            .requestMatchers(PUT, "/api/v1/users/me").hasAnyAuthority(USER, ADMIN, MODERATOR)
+            .requestMatchers(POST, "/api/v1/users/me/image").hasAnyAuthority(USER, ADMIN, MODERATOR);
 
         //Administration endpoints
         http.authorizeHttpRequests()
-            .requestMatchers(GET, "/api/users").hasAnyAuthority(ADMIN)
-            .requestMatchers(GET, "/api/users/{id}").hasAnyAuthority(ADMIN)
-            .requestMatchers(POST, "/api/users").hasAnyAuthority(ADMIN)
-            .requestMatchers(PUT, "/api/users").hasAnyAuthority(ADMIN)
-            .requestMatchers(DELETE, "/api/users").hasAnyAuthority(ADMIN);
+            .requestMatchers(GET, "/api/v1/users").hasAnyAuthority(USER, ADMIN, MODERATOR)
+            .requestMatchers(GET, "/api/v1/users/{id}").hasAnyAuthority(ADMIN)
+            .requestMatchers(POST, "/api/v1/users").hasAnyAuthority(ADMIN)
+            .requestMatchers(PUT, "/api/v1/users").hasAnyAuthority(ADMIN)
+            .requestMatchers(DELETE, "/api/v1/users").hasAnyAuthority(ADMIN);
     }
 
     private void sportsEndpoints(HttpSecurity http) throws Exception {
