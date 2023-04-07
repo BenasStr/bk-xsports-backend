@@ -82,6 +82,9 @@ public class UserService {
     public User removeUser(long id) {
         log.info("Removing user by id");
         User deletedUser = findById(id);
+        if(deletedUser.getRole().equals(ADMIN)) {
+            throw new ServiceException("Deletion of ADMIN user is forbidden!");
+        }
         userRepository.delete(deletedUser);
         return deletedUser;
     }

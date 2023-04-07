@@ -128,11 +128,11 @@ public class SecurityConfiguration {
 
     private void imageEndpoints(HttpSecurity http) throws Exception {
         http.authorizeHttpRequests()
-            .requestMatchers(GET, API_V1 + "/images/{fileName}").permitAll();
+            .requestMatchers(GET, "/api/images/{fileName}").permitAll();
     }
 
     private void videoEndpoints(HttpSecurity http) throws Exception {
         http.authorizeHttpRequests()
-            .requestMatchers(GET, API_V1 + "/videos/{fileName}").permitAll();
+            .requestMatchers(GET, "/api/videos/{fileName}").permitAll();
     }
 }

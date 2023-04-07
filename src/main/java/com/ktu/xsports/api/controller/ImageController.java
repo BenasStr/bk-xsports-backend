@@ -9,11 +9,9 @@ import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
-import static com.ktu.xsports.api.util.ApiVersionPrefix.*;
-
 @RestController
 @RequiredArgsConstructor
-@RequestMapping(API_V1 + "/images")
+@RequestMapping("/images")
 @Slf4j
 public class ImageController {
     private final ImageService imageService;
