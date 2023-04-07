@@ -54,10 +54,7 @@ public class UserController {
         log.info("Getting users data list.");
         Pageable pageable = PageRequest.of(page - 1, size);
         Page<User> usersPage = userService.findUsers(pageable, search);
-        Page<?> userResponsePage = user.getRole().equals(ADMIN) ?
-            usersPage.map(u -> modelMapper.map(u, UserResponse.class)) :
-            usersPage.map(u -> modelMapper.map(u, UserBasicResponse.class));
-
+        Page<?> userResponsePage = usersPage.map(u -> modelMapper.map(u, UserResponse.class));
         return ResponseEntity.ok(
                 PageableConverter.convert(page, size, userResponsePage)
         );

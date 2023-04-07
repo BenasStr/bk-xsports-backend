@@ -63,7 +63,7 @@ public class SecurityConfiguration {
 
         //Administration endpoints
         http.authorizeHttpRequests()
-            .requestMatchers(GET, API_V1 + "/users").hasAnyAuthority(USER, ADMIN, MODERATOR)
+            .requestMatchers(GET, API_V1 + "/users").hasAnyAuthority(ADMIN, MODERATOR)
             .requestMatchers(GET, API_V1 + "/users/{id}").hasAnyAuthority(ADMIN)
             .requestMatchers(POST, API_V1 + "/users").hasAnyAuthority(ADMIN)
             .requestMatchers(PUT, API_V1 + "/users").hasAnyAuthority(ADMIN)
