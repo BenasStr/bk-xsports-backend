@@ -24,7 +24,6 @@ import java.util.*;
 
 import static com.ktu.xsports.api.util.ApiVersionPrefix.*;
 import static com.ktu.xsports.api.util.Prefix.USER_FILE;
-import static com.ktu.xsports.api.util.Role.ADMIN;
 
 @Validated
 @RestController
@@ -49,11 +48,11 @@ public class UserController {
         @RequestParam(defaultValue = "1") int page,
         @RequestParam(defaultValue = "20", name = "per_page") int size,
         @RequestParam(defaultValue = "") String search,
-        @AuthenticationPrincipal User user
+        @RequestParam(defaultValue = "") String role
     ) {
         log.info("Getting users data list.");
         Pageable pageable = PageRequest.of(page - 1, size);
-        Page<User> usersPage = userService.findUsers(pageable, search);
+        Page<User> usersPage = userService.findUsers(pageable, search, role);
         Page<?> userResponsePage = usersPage.map(u -> modelMapper.map(u, UserResponse.class));
         return ResponseEntity.ok(
                 PageableConverter.convert(page, size, userResponsePage)

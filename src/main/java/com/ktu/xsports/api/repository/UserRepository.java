@@ -16,7 +16,18 @@ public interface UserRepository extends JpaRepository<User, Long> {
 
     @Query(""
         + "SELECT u FROM users u "
-        + "WHERE u.nickname LIKE %:username% "
-        + "OR u.name LIKE %:username% ")
-    Page<User> findByUsernameContaining(String username, Pageable pageable);
+        + "WHERE u.nickname LIKE %:search% "
+        + "OR u.name LIKE %:search% ")
+    Page<User> findByUsernameContaining(String search, Pageable pageable);
+
+    @Query(""
+        + "SELECT u FROM users u "
+        + "WHERE u.role = :role "
+        + "AND (u.name LIKE %:search% OR u.surname LIKE %:search% OR u.nickname LIKE %:search%) ")
+    Page<User> findByUsernameContainingAndRole(String search, String role, Pageable pageable);
+
+    @Query(""
+        + "SELECT u FROM users u "
+        + "WHERE u.role = :role ")
+    Page<User> findByRole(String role, Pageable pageable);
 }

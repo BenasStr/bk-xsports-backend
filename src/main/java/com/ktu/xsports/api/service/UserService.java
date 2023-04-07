@@ -29,6 +29,19 @@ public class UserService {
             userRepository.findByUsernameContaining(search, pageable);
     }
 
+    public Page<User> findUsers(Pageable pageable, String search, String role) {
+        if(search == null || search.equals("")) {
+            if (role == null || role.equals("")) {
+                return userRepository.findAll(pageable);
+            }
+            return userRepository.findByRole(role, pageable);
+        }
+        if (role == null || role.equals("")) {
+            return userRepository.findByUsernameContaining(search, pageable);
+        }
+        return userRepository.findByUsernameContainingAndRole(search, role, pageable);
+    }
+
     public User findById(long id) {
         log.info("Finding user by id {}", id);
         return userRepository.findById(id)

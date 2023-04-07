@@ -67,7 +67,7 @@ public class SecurityConfiguration {
             .requestMatchers(GET, API_V1 + "/users/{id}").hasAnyAuthority(ADMIN)
             .requestMatchers(POST, API_V1 + "/users").hasAnyAuthority(ADMIN)
             .requestMatchers(PUT, API_V1 + "/users").hasAnyAuthority(ADMIN)
-            .requestMatchers(DELETE, API_V1 + "/users").hasAnyAuthority(ADMIN);
+            .requestMatchers(DELETE, API_V1 + "/users/{id}").hasAnyAuthority(ADMIN);
     }
 
     private void sportsEndpoints(HttpSecurity http) throws Exception {
