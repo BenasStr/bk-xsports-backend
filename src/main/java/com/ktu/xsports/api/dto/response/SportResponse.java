@@ -11,5 +11,6 @@ public class SportResponse {
     long id;
     String name;
     String photo;
+    String publishStatus;
     List<VariantResponse> variants;
 }

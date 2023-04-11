@@ -1,6 +1,6 @@
 package com.ktu.xsports.api.service.media;
 
-import com.ktu.xsports.api.exceptions.ImageUploadException;
+import com.ktu.xsports.api.advice.exceptions.ImageUploadException;
 import io.minio.GetObjectArgs;
 import io.minio.MinioClient;
 import io.minio.PutObjectArgs;

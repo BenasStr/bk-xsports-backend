@@ -1,10 +1,13 @@
 package com.ktu.xsports.config;
 
+import com.ktu.xsports.api.converter.publish.PublishToPublishResponse;
 import com.ktu.xsports.api.converter.trick.TrickToTrickBasicResponseConverter;
 import com.ktu.xsports.api.converter.trick.TrickVariantToTrickBasicResponseConverter;
 import com.ktu.xsports.api.converter.trick.TrickVariantToTrickResponseConverter;
+import com.ktu.xsports.api.domain.Publish;
 import com.ktu.xsports.api.domain.Trick;
 import com.ktu.xsports.api.domain.TrickVariant;
+import com.ktu.xsports.api.dto.response.publish.PublishResponse;
 import com.ktu.xsports.api.dto.response.trick.TrickBasicResponse;
 import com.ktu.xsports.api.dto.response.trick.TrickExtendedResponse;
 import lombok.RequiredArgsConstructor;
@@ -20,6 +23,7 @@ public class ModelMapping {
         ModelMapper modelMapper = new ModelMapper();
 
         trickToTrickResponseMapping(modelMapper);
+        publishToPublishResponse(modelMapper);
 
         return modelMapper;
     }
@@ -33,5 +37,10 @@ public class ModelMapping {
 
         modelMapper.typeMap(Trick.class, TrickBasicResponse.class)
             .addMappings(new TrickToTrickBasicResponseConverter());
+    }
+
+    private void publishToPublishResponse(ModelMapper modelMapper) {
+        modelMapper.typeMap(Publish.class, PublishResponse.class)
+            .addMappings(new PublishToPublishResponse());
     }
 }

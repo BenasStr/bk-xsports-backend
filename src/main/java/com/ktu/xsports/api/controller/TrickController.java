@@ -1,6 +1,5 @@
 package com.ktu.xsports.api.controller;
 
-import com.ktu.xsports.api.domain.Trick;
 import com.ktu.xsports.api.domain.TrickVariant;
 import com.ktu.xsports.api.domain.User;
 import com.ktu.xsports.api.dto.request.trick.TrickRequest;
@@ -9,8 +8,8 @@ import com.ktu.xsports.api.dto.response.trick.TrickBasicResponse;
 import com.ktu.xsports.api.dto.response.trick.TrickExtendedResponse;
 import com.ktu.xsports.api.service.ProgressService;
 import com.ktu.xsports.api.service.media.VideoService;
+import com.ktu.xsports.api.service.trick.TrickGroupService;
 import com.ktu.xsports.api.service.util.ResponseCleanerService;
-import com.ktu.xsports.api.service.TrickService;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -33,8 +32,7 @@ import static com.ktu.xsports.api.util.Prefix.TRICK_FILE;
 @RequestMapping(API_V1 + "/sports/{sportId}/categories/{categoryId}/tricks")
 @Slf4j
 public class TrickController {
-
-    private final TrickService trickService;
+    private final TrickGroupService trickGroupService;
     private final ProgressService progressService;
     private final ResponseCleanerService responseCleanerService;
     private final VideoService videoService;
@@ -42,16 +40,18 @@ public class TrickController {
 
     @GetMapping()
     public ResponseEntity<?> findTricks(
-        @PathVariable Long categoryId,
-        @PathVariable Long sportId,
+        @PathVariable long categoryId,
+        @PathVariable long sportId,
         @AuthenticationPrincipal User user,
-        @RequestParam(defaultValue = "all") String difficulty,
         @RequestParam(defaultValue = "Standard") String variant,
         @RequestParam(defaultValue = "false") Boolean extended,
-        @RequestParam(defaultValue = "") String search
-        ) {
+        @RequestParam(defaultValue = "") String search,
+        @RequestParam(defaultValue = "") String publishStatus,
+        @RequestParam(defaultValue = "") String difficulty
+    ) {
         log.info("User is fetching multiple tricks.");
-        List<TrickVariant> tricks = trickService.findTricks(sportId, categoryId, user.getId(), variant, search);
+        List<TrickVariant> tricks = trickGroupService.findTricks(sportId, categoryId, variant, search, publishStatus, difficulty, user.getId());
+
         List<?> trickResponses;
         if (extended) {
             trickResponses = tricks.stream()
@@ -71,29 +71,33 @@ public class TrickController {
 
     @GetMapping("/{trickId}")
     public ResponseEntity<?> findTricksById(
-        @PathVariable Long categoryId,
-        @PathVariable Long sportId,
-        @PathVariable Long trickId,
+        @PathVariable long categoryId,
+        @PathVariable long sportId,
+        @PathVariable long trickId,
         @AuthenticationPrincipal User user
     ) {
         log.info("User is fetching trick.");
-        TrickVariant trick = trickService.findTrickVariantById(sportId, categoryId, trickId, user.getId());
+        TrickVariant trick = trickGroupService.findTrickById(sportId, categoryId, trickId, user.getId());
+        TrickExtendedResponse response = modelMapper.map(trick, TrickExtendedResponse.class);
+        responseCleanerService.cleanResponse(response);
         return ResponseEntity.ok(
-            Map.of("data", modelMapper.map(trick, TrickExtendedResponse.class))
+            Map.of("data", response)
         );
     }
-
+    //TODO: merge these two
     @PostMapping()
     public ResponseEntity<?> createTrick(
-            @RequestBody @Valid TrickRequest trickRequest,
-            @PathVariable long categoryId,
-            @PathVariable long sportId
+        @RequestBody @Valid TrickRequest trickRequest,
+        @PathVariable long categoryId,
+        @PathVariable long sportId
     ) {
         log.info("User is creating trick");
-        Trick trick = trickRequest.toTrick();
-        TrickVariant newTrick = trickService.createTrick(sportId, categoryId, trick);
+        TrickVariant trick = trickRequest.toTrick();
+        TrickVariant newTrick = trickGroupService.createStandardTrick(sportId, categoryId, trick);
+        TrickExtendedResponse response = modelMapper.map(newTrick, TrickExtendedResponse.class);
+        responseCleanerService.cleanResponse(response);
+
         return ResponseEntity.ok(
-            //TODO change response
             Map.of("data", modelMapper.map(newTrick, TrickExtendedResponse.class))
         );
     }
@@ -101,34 +105,32 @@ public class TrickController {
     @PostMapping("/{trickId}/variant")
     public ResponseEntity<?> createTrickVariant(
         @RequestBody @Valid TrickVariantRequest trickVariantRequest,
-        @PathVariable Long categoryId,
-        @PathVariable Long sportId,
-        @PathVariable Long trickId
+        @PathVariable long categoryId,
+        @PathVariable long sportId,
+        @PathVariable long trickId
     ) {
         log.info("User is creating trick variant");
         TrickVariant trickVariant = trickVariantRequest.toTrickVariant();
-        TrickVariant newVariant = trickService.createTrickVariant(sportId, categoryId, trickId, trickVariant);
+        TrickVariant newVariant = trickGroupService.createTrick(sportId, categoryId, trickId, trickVariant);
 
         return ResponseEntity.ok(
-            //TODO change response
             Map.of("data", modelMapper.map(newVariant, TrickBasicResponse.class))
         );
     }
 
-    @PostMapping("/{trickId}/variants/{variantId}/video")
+    @PostMapping("/{trickId}/video")
     public ResponseEntity<?> uploadTrickVideo(
         @PathVariable long categoryId,
         @PathVariable long sportId,
         @PathVariable long trickId,
-        @PathVariable long variantId,
         @RequestParam MultipartFile file
     ) {
-        TrickVariant trickVariant = trickService.findTrickVariantById(sportId, categoryId, trickId);
+        TrickVariant trickVariant = trickGroupService.findTrickById(sportId, categoryId, trickId);
         String fileName = trickVariant.getVideoUrl() == null || trickVariant.getVideoUrl().equals("") ?
             videoService.uploadVideo(file, TRICK_FILE+trickVariant.getId()) :
             videoService.updateVideo(file, trickVariant.getVideoUrl());
         trickVariant.setVideoUrl(fileName);
-        trickService.updateVariant(sportId, categoryId, trickId, variantId, trickVariant);
+//        trickVariantService.updateTrickVariant(sportId, categoryId, trickId, variantId, trickVariant);
 
         return ResponseEntity.ok(
             Map.of("data", fileName)
@@ -137,15 +139,16 @@ public class TrickController {
 
     @PutMapping("/{trickId}")
     public ResponseEntity<?> updateTrick(
-            @PathVariable Long trickId,
-            @RequestBody @Valid TrickRequest trickRequest,
-            @PathVariable Long categoryId,
-            @PathVariable Long sportId
+        @RequestBody @Valid TrickRequest trickRequest,
+        @PathVariable Long trickId,
+        @PathVariable Long categoryId,
+        @PathVariable Long sportId
     ) {
-        Trick trick = trickRequest.toTrick();
-        TrickVariant mainVariant = trickService.updateTrick(sportId, categoryId, trick, trickId);
+//        Trick trick = trickRequest.toTrick();
+//        TrickVariant mainVariant = trickService.updateTrick(sportId, categoryId, trick, trickId);
         return ResponseEntity.ok(
-            Map.of("data", modelMapper.map(mainVariant, TrickExtendedResponse.class))
+//            Map.of("data", modelMapper.map(mainVariant, TrickExtendedResponse.class))
+            ""
         );
     }
 
@@ -158,9 +161,8 @@ public class TrickController {
         @PathVariable Long variantId
     ) {
         TrickVariant trickVariant = trickVariantRequest.toTrickVariant();
-        TrickVariant variant = trickService.updateVariant(sportId, categoryId, trickId, variantId, trickVariant);
+        TrickVariant variant = trickGroupService.updateTrickVariant(sportId, categoryId, trickId, variantId, trickVariant);
         return ResponseEntity.ok(
-            //TODO change variant response.
             Map.of("data", modelMapper.map(variant, TrickExtendedResponse.class))
         );
     }
@@ -172,20 +174,23 @@ public class TrickController {
         @PathVariable Long trickId,
         @AuthenticationPrincipal User user
     ) {
-        trickService.findTrickVariantById(sportId, categoryId, trickId, user.getId());
-        Trick trick = progressService.updateProgress(user.getId(), trickId);
-        return ResponseEntity.ok(Map.of("data", modelMapper.map(trick, TrickExtendedResponse.class)));
+//        trickService.findTrickVariantById(sportId, categoryId, trickId);
+//        //TODO this is shit
+//        Trick trick = progressService.updateProgress(user.getId(), trickId);
+//        return ResponseEntity.ok(Map.of("data", modelMapper.map(trick, TrickExtendedResponse.class)));
+        return ResponseEntity.ok("");
     }
 
     @DeleteMapping("/{trickId}")
     public ResponseEntity<?> deleteTrick(
-            @PathVariable Long trickId,
-            @PathVariable Long categoryId,
-            @PathVariable Long sportId
+        @PathVariable Long trickId,
+        @PathVariable Long categoryId,
+        @PathVariable Long sportId
     ) {
-        log.info("User is deleting trick!");
-        trickService.removeTrick(sportId, categoryId, trickId);
-
+//        log.info("User is deleting trick!");
+//        trickService.removeTrick(sportId, categoryId, trickId);
+//
+//        return ResponseEntity.ok("");
         return ResponseEntity.ok("");
     }
 
@@ -196,8 +201,8 @@ public class TrickController {
         @PathVariable Long sportId,
         @PathVariable Long variantId
     ) {
-        log.info("User is deleting trick variant!");
-        trickService.removeTrickVariant(sportId, categoryId, trickId, variantId);
+//        log.info("User is deleting trick variant!");
+//        trickService.removeTrickVariant(sportId, categoryId, trickId, variantId);
         return ResponseEntity.ok("");
     }
 }

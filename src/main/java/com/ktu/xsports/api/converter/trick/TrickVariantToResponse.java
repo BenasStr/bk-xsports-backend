@@ -28,7 +28,7 @@ public interface TrickVariantToResponse {
         return trick.getTrick().getDifficulty().getName();
     }
 
-    default long mapCategory(TrickVariant trick) {
-        return trick.getTrick().getCategory().getId();
+    default String mapPublishStatus(TrickVariant trick) {
+        return trick.getTrick().getPublishStatus();
     }
 }

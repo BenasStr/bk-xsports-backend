@@ -1,8 +1,8 @@
 package com.ktu.xsports.api.service;
 
 import com.ktu.xsports.api.domain.Variant;
-import com.ktu.xsports.api.exceptions.AlreadyExistsException;
-import com.ktu.xsports.api.exceptions.ServiceException;
+import com.ktu.xsports.api.advice.exceptions.AlreadyExistsException;
+import com.ktu.xsports.api.advice.exceptions.ServiceException;
 import com.ktu.xsports.api.repository.VariantRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -14,7 +14,7 @@ import java.util.List;
 public class VariantService {
     private final VariantRepository variantRepository;
 
-    public Variant getMainVariant() {
+    public Variant getStandardVariant() {
         return variantRepository.findByName("Standard")
             .orElseThrow(() -> new ServiceException("Variant does not exist!"));
     }

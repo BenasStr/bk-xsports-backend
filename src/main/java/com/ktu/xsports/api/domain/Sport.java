@@ -33,6 +33,9 @@ public class Sport {
 
     private String photoUrl;
 
+    @NotNull
+    private String publishStatus;
+
     @ManyToMany
     @JoinTable(
         name = "sports_variants",

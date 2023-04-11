@@ -2,8 +2,8 @@ package com.ktu.xsports.api.service;
 
 import com.ktu.xsports.api.domain.Category;
 import com.ktu.xsports.api.domain.Sport;
-import com.ktu.xsports.api.exceptions.AlreadyExistsException;
-import com.ktu.xsports.api.exceptions.ServiceException;
+import com.ktu.xsports.api.advice.exceptions.AlreadyExistsException;
+import com.ktu.xsports.api.advice.exceptions.ServiceException;
 import com.ktu.xsports.api.repository.CategoryRepository;
 import com.ktu.xsports.api.service.media.ImageService;
 import lombok.RequiredArgsConstructor;
@@ -19,14 +19,8 @@ public class CategoryService {
     private final CategoryRepository categoryRepository;
     private final SportService sportService;
 
-    public List<Category> findCategories(long sportId) {
-        return categoryRepository.findAllBySportId(sportId);
-    }
-
-    public List<Category> findCategories(long sportId, String search) {
-        return search == null || search.equals("") ?
-            categoryRepository.findAllBySportId(sportId) :
-            categoryRepository.findByNameContaining(sportId, search);
+    public List<Category> findCategories(long sportId, String search, String publishStatus) {
+        return categoryRepository.findBySearchAndFilter(sportId, search, publishStatus);
     }
 
     public Category findCategory(long sportId, long categoryId) {

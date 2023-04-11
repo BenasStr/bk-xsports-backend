@@ -1,7 +1,7 @@
 package com.ktu.xsports.api.service;
 
 import com.ktu.xsports.api.domain.User;
-import com.ktu.xsports.api.exceptions.ServiceException;
+import com.ktu.xsports.api.advice.exceptions.ServiceException;
 import com.ktu.xsports.api.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;

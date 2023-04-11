@@ -10,4 +10,5 @@ public class CategoryResponse {
     String name;
     String photo;
     long sportId;
+    String publishStatus;
 }

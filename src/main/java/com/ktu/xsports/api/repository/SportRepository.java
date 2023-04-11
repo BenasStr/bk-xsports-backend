@@ -13,12 +13,22 @@ import java.util.Optional;
 public interface SportRepository extends JpaRepository<Sport, Long> {
     Optional<Sport> findByName(String name);
 
-    @Query("SELECT s FROM sports s WHERE s.name LIKE %:search%")
-    List<Sport> findByNameContaining(String search);
+    List<Sport> findByPublishStatus(String publishStatus);
 
-    @Query("SELECT s FROM sports s WHERE s.name = :name AND s.id <> :id")
+    @Query(""
+        + "SELECT s FROM sports s "
+        + "WHERE s.name LIKE %:search% "
+        + "AND s.publishStatus = :publishStatus ")
+    List<Sport> findBySearchAndFilter(String search, String publishStatus);
+
+    @Query(""
+        + "SELECT s FROM sports s "
+        + "WHERE s.name = :name "
+        + "AND s.id <> :id")
     Optional<Sport> findByNameAndNotId(String name, Long id);
 
-    @Query("SELECT s FROM sports s WHERE s NOT IN (SELECT u.sports FROM users u WHERE u.id = :userId)")
+    @Query(""
+        + "SELECT s FROM sports s "
+        + "WHERE s NOT IN (SELECT u.sports FROM users u WHERE u.id = :userId)")
     List<Sport> findExploreSports(long userId);
 }

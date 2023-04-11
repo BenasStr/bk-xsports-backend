@@ -1,6 +1,5 @@
 package com.ktu.xsports.config;
 
-import com.ktu.xsports.api.util.ApiVersionPrefix;
 import com.ktu.xsports.config.filter.JwtAuthenticationFilter;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Bean;
@@ -36,6 +35,7 @@ public class SecurityConfiguration {
         tricksEndpoints(http);
         variantEndpoints(http);
         difficultyEndpoints(http);
+        publishEndpoints(http);
         imageEndpoints(http);
         videoEndpoints(http);
         healthEndpoint(http);
@@ -100,7 +100,7 @@ public class SecurityConfiguration {
             .requestMatchers(GET, API_V1 + "/sports/{sportId}/categories/{categoryId}/tricks/{trickId}").hasAnyAuthority(USER, ADMIN, MODERATOR)
             .requestMatchers(POST, API_V1 + "/sports/{sportId}/categories/{categoryId}/tricks").hasAnyAuthority(ADMIN, MODERATOR)
             .requestMatchers(POST, API_V1 + "/sports/{sportId}/categories/{categoryId}/tricks/{trickId}/variant").hasAnyAuthority(ADMIN, MODERATOR)
-            .requestMatchers(POST, API_V1 + "/sports/{sportId}/categories/{categoryId}/tricks/{trickId}/variants/{variantId}/video").hasAnyAuthority(ADMIN, MODERATOR)
+            .requestMatchers(POST, API_V1 + "/sports/{sportId}/categories/{categoryId}/tricks/{trickId}/video").hasAnyAuthority(ADMIN, MODERATOR)
             .requestMatchers(PUT, API_V1 + "/sports/{sportId}/categories/{categoryId}/tricks/{trickId}").hasAnyAuthority(ADMIN, MODERATOR)
             .requestMatchers(PUT, API_V1 + "/sports/{sportId}/categories/{categoryId}/tricks/{trickId}/variant/{variantId}").hasAnyAuthority(ADMIN, MODERATOR)
             .requestMatchers(PUT, API_V1 + "/sports/{sportId}/categories/{categoryId}/tricks/{trickId}/progress").hasAnyAuthority(USER, ADMIN, MODERATOR)
@@ -119,6 +119,15 @@ public class SecurityConfiguration {
     private void difficultyEndpoints(HttpSecurity http) throws Exception {
         http.authorizeHttpRequests()
             .requestMatchers(GET, API_V1 + "/difficulties").hasAnyAuthority(ADMIN, MODERATOR);
+    }
+
+    private void publishEndpoints(HttpSecurity http) throws Exception {
+        http.authorizeHttpRequests()
+            .requestMatchers(GET, API_V1 + "/publish").hasAnyAuthority(ADMIN, MODERATOR)
+            .requestMatchers(POST, API_V1 + "/publish").hasAnyAuthority(ADMIN, MODERATOR)
+            .requestMatchers(POST, API_V1 + "/publish/{id}").hasAnyAuthority(ADMIN)
+            .requestMatchers(PUT, API_V1 + "/publish/{id}").hasAnyAuthority(ADMIN, MODERATOR)
+            .requestMatchers(DELETE, API_V1 + "/publish/{id}").hasAnyAuthority(ADMIN, MODERATOR);
     }
 
     private void healthEndpoint(HttpSecurity http) throws Exception {

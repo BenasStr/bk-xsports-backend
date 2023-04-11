@@ -1,9 +1,9 @@
 package com.ktu.xsports.api.advice;
 
-import com.ktu.xsports.api.exceptions.AlreadyExistsException;
-import com.ktu.xsports.api.exceptions.ImageUploadException;
-import com.ktu.xsports.api.exceptions.NotAnImageException;
-import com.ktu.xsports.api.exceptions.ServiceException;
+import com.ktu.xsports.api.advice.exceptions.AlreadyExistsException;
+import com.ktu.xsports.api.advice.exceptions.ImageUploadException;
+import com.ktu.xsports.api.advice.exceptions.NotAnImageException;
+import com.ktu.xsports.api.advice.exceptions.ServiceException;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;

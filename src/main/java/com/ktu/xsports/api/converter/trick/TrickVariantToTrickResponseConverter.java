@@ -23,7 +23,7 @@ public class TrickVariantToTrickResponseConverter extends PropertyMap<TrickVaria
         ).map(source, destination.getDifficulty());
 
         using(context ->
-            mapCategory((TrickVariant) context.getSource())
-        ).map(source, destination.getCategoryId());
+            mapPublishStatus((TrickVariant) context.getSource())
+        ).map(source, destination.getPublishStatus());
     }
 }

@@ -22,10 +22,6 @@ public class TrickToTrickBasicResponseConverter extends PropertyMap<Trick, Trick
         ).map(source, destination.getDifficulty());
 
         using(context ->
-            mapCategory((Trick) context.getSource())
-        ).map(source, destination.getCategoryId());
-
-        using(context ->
             mapShortDescription((Trick) context.getSource())
         ).map(source, destination.getShortDescription());
     }
@@ -52,14 +48,6 @@ public class TrickToTrickBasicResponseConverter extends PropertyMap<Trick, Trick
             .findFirst()
             .map(this::mapDifficulty)
             .orElse(null);
-    }
-
-    private long mapCategory(Trick trick) {
-        return trick.getTrickVariants()
-            .stream()
-            .findFirst()
-            .map(this::mapCategory)
-            .orElse(0L);
     }
 
     private String mapShortDescription(Trick trick) {

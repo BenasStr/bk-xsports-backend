@@ -12,20 +12,25 @@ import java.util.Optional;
 @Repository
 public interface CategoryRepository extends JpaRepository<Category, Long> {
 
-    List<Category> findAllBySportId(long sport);
-
     @Query(""
         + "SELECT c FROM categories c "
         + "WHERE c.sport.id = :sportId "
-        + "AND c.name "
-        + "LIKE %:search% ")
-    List<Category> findByNameContaining(long sportId, String search);
+        + "AND c.name LIKE %:search% "
+        + "AND c.publishStatus = :publishStatus ")
+    List<Category> findBySearchAndFilter(long sportId, String search, String publishStatus);
 
     Optional<Category> findBySportIdAndId(long sportId, long id);
 
-    @Query("SELECT c FROM categories c WHERE c.name = :name AND c.sport.id = :sportId")
+    @Query(""
+        + "SELECT c FROM categories c "
+        + "WHERE c.name = :name "
+        + "AND c.sport.id = :sportId ")
     Optional<Category> findCategoryWithName(String name, Long sportId);
 
-    @Query("SELECT c FROM categories c WHERE c.name = :name AND c.sport.id = :sportId AND c.id <> :categoryId")
+    @Query(""
+        + "SELECT c FROM categories c "
+        + "WHERE c.name = :name "
+        + "AND c.sport.id = :sportId "
+        + "AND c.id <> :categoryId ")
     Optional<Category> findCategoryWithName(String name, Long sportId, Long categoryId);
 }

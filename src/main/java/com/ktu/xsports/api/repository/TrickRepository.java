@@ -30,5 +30,5 @@ public interface TrickRepository extends JpaRepository<Trick, Long> {
         + "WHERE tv.variant.id = :variantId AND tv.trick.id IN :trickId")
     List<Trick> findByVariantIdAndTrickIds(Long variantId, List<Long> trickId);
 
-    Optional<Trick> findByName(@NotNull String name);
+    Optional<Trick> findByName(String name);
 }

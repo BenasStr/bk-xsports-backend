@@ -31,6 +31,9 @@ public class Category {
 
     private String photoUrl;
 
+    @NotNull
+    private String publishStatus;
+
     @ManyToOne
     @JoinColumn(name = "sport_id", nullable = false)
     private Sport sport;

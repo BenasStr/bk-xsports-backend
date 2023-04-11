@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<databaseChangeLog xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog
+                   https://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-latest.xsd">
+
+    <changeSet id="39" author="benas.strauka">
+        <preConditions>
+            <tableExists tableName="publishes"/>
+        </preConditions>
+        <comment>Add trick variant id to publishes.</comment>
+
+        <addColumn tableName="publishes">
+            <column name="trick_variant_id" type="int unsigned" defaultValue="1">
+                <constraints
+                    foreignKeyName="publishes_trick_variant_fk"
+                    references="tricks_variants(id)"
+                    nullable="false"/>
+            </column>
+        </addColumn>
+<!--        <dropColumn tableName="publishes">-->
+<!--            <column name="trick_variant_id"/>-->
+<!--        </dropColumn>-->
+    </changeSet>
+</databaseChangeLog>

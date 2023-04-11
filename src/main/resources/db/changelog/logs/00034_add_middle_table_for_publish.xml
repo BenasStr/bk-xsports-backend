@@ -1,0 +1,38 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<databaseChangeLog xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog
+                   https://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-latest.xsd">
+
+    <changeSet id="34" author="benas.strauka">
+        <preConditions>
+            <not>
+                <tableExists tableName="publishes_tricks_variants"/>
+            </not>
+        </preConditions>
+        <comment>Create middle table for publish</comment>
+
+        <createTable tableName="publishes_tricks_variants">
+            <column name="trick_variant_id" type="int unsigned">
+                <constraints
+                    foreignKeyName="publish_trick_variant_fk"
+                    references="tricks_variants(id)"
+                    nullable="false"
+                    unique="true"/>
+            </column>
+
+            <column name="publish_id" type="int unsigned">
+                <constraints
+                    foreignKeyName="trick_variant_publish_fk"
+                    references="publishes(id)"
+                    nullable="false"/>
+            </column>
+
+            <column name="update_to_trick_variant_id" type="int unsigned">
+                <constraints
+                    foreignKeyName="publish_updated_trick_variant_fk"
+                    references="tricks_variants(id)"/>
+            </column>
+        </createTable>
+    </changeSet>
+</databaseChangeLog>

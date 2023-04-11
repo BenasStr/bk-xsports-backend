@@ -10,10 +10,11 @@ import com.ktu.xsports.api.domain.TrickVariant;
 import jakarta.validation.constraints.NotNull;
 import lombok.AllArgsConstructor;
 import lombok.Data;
-import lombok.EqualsAndHashCode;
 import lombok.NoArgsConstructor;
 
 import java.util.List;
+
+import static com.ktu.xsports.api.util.PublishStatus.*;
 
 @Data
 @NoArgsConstructor
@@ -25,7 +26,7 @@ public class TrickRequest {
 
     @JsonProperty("trickParentsIds")
     @JsonDeserialize(converter = IdsToTricksConverter.class)
-    private List<Trick> trickParent;
+    private List<Trick> trickParents;
 
     @JsonProperty("difficultyId")
     @JsonDeserialize(converter = IdToDifficultyConverter.class)
@@ -37,18 +38,21 @@ public class TrickRequest {
     @NotNull(message = "Missing short description")
     private String shortDescription;
 
-    public Trick toTrick() {
-        return Trick.builder()
-            .name(name)
-            .trickParents(trickParent)
-            .difficulty(difficulty)
-            .trickVariants(
-                List.of(TrickVariant.builder()
-                        .description(description)
-                        .shortDescription(shortDescription)
-                    .build()
-                )
-            )
+    public TrickVariant toTrick() {
+
+        return TrickVariant.builder()
+            .trick(Trick.builder()
+                .name(name)
+                .trickParents(trickParents)
+                .trickChildren(List.of())
+                .trickVariants(List.of())
+                .difficulty(difficulty)
+                .publishStatus(NOT_PUBLISHED)
+                .build())
+            .description(description)
+            .shortDescription(shortDescription)
+            .progress(null)
+            .videoUrl(null)
             .build();
     }
 }

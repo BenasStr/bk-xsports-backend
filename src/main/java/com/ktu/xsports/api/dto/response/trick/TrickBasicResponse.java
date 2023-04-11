@@ -11,5 +11,5 @@ public class TrickBasicResponse {
     String shortDescription;
     String status;
     String difficulty;
-    long categoryId;
+    String publishStatus;
 }

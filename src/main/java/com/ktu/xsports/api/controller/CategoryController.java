@@ -33,10 +33,11 @@ public class CategoryController {
     @GetMapping()
     public ResponseEntity<?> findSportsCategories(
         @PathVariable long sportId,
-        @RequestParam(defaultValue = "") String search
+        @RequestParam(defaultValue = "") String search,
+        @RequestParam(defaultValue = "") String publishStatus
     ) {
         log.info("Categories get called.");
-        List<Category> categories = categoryService.findCategories(sportId, search);
+        List<Category> categories = categoryService.findCategories(sportId, search, publishStatus);
         List<CategoryResponse> categoriesResponse = categories.stream().map(
                 c -> modelMapper.map(c, CategoryResponse.class)
         ).toList();

@@ -4,42 +4,34 @@ import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
-import jakarta.persistence.ManyToOne;
-import jakarta.persistence.OneToMany;
+import jakarta.persistence.OneToOne;
 import jakarta.validation.constraints.NotNull;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
-import java.util.List;
+import java.time.LocalDate;
 
 @Data
-@Entity(name = "tricks_variants")
+@Entity(name = "publishes")
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
-public class TrickVariant {
+public class Publish {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private long id;
 
     @NotNull
-    @ManyToOne
-    private Variant variant;
-
-    private String videoUrl;
+    private String name;
 
     @NotNull
-    private String description;
+    @OneToOne
+    private Category category;
 
-    @NotNull
-    private String shortDescription;
+    private LocalDate releaseDate;
 
-    @OneToMany(mappedBy = "trickVariant")
-    private List<Progress> progress;
-
-    @NotNull
-    @ManyToOne
-    private Trick trick;
+    @OneToOne
+    private TrickVariant trickVariant;
 }

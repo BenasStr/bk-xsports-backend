@@ -1,6 +1,6 @@
 package com.ktu.xsports.api.service.media;
 
-import com.ktu.xsports.api.exceptions.ImageUploadException;
+import com.ktu.xsports.api.advice.exceptions.ImageUploadException;
 import com.ktu.xsports.config.HostConfiguration;
 import io.minio.GetObjectArgs;
 import io.minio.MinioClient;
@@ -9,13 +9,10 @@ import io.minio.RemoveObjectArgs;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.compress.utils.IOUtils;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.util.Objects;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
 
 @Service
 @Slf4j

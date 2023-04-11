@@ -1,0 +1,35 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<databaseChangeLog xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog
+                   https://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-latest.xsd">
+
+    <changeSet id="33" author="benas.strauka">
+        <preConditions>
+            <not>
+                <tableExists tableName="publishes"/>
+            </not>
+        </preConditions>
+        <comment>Creating table for publishing.</comment>
+
+        <createTable tableName="publishes">
+            <column name="id" type="int unsigned" autoIncrement="true">
+                <constraints primaryKey="true"/>
+            </column>
+
+            <column name="name" type="varchar(255)">
+                <constraints nullable="false"/>
+            </column>
+
+            <column name="category_id" type="int unsigned">
+                <constraints
+                    foreignKeyName="categories_publishes_fk"
+                    references="categories(id)"
+                    nullable="false"
+                    unique="true"/>
+            </column>
+
+            <column name="release_date" type="date"/>
+        </createTable>
+    </changeSet>
+</databaseChangeLog>

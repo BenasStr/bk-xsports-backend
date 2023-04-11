@@ -2,8 +2,8 @@ package com.ktu.xsports.api.service;
 
 import com.ktu.xsports.api.domain.Sport;
 import com.ktu.xsports.api.domain.User;
-import com.ktu.xsports.api.exceptions.AlreadyExistsException;
-import com.ktu.xsports.api.exceptions.ServiceException;
+import com.ktu.xsports.api.advice.exceptions.AlreadyExistsException;
+import com.ktu.xsports.api.advice.exceptions.ServiceException;
 import com.ktu.xsports.api.repository.SportRepository;
 import com.ktu.xsports.api.repository.UserRepository;
 import com.ktu.xsports.api.service.media.ImageService;
@@ -19,15 +19,8 @@ public class SportService {
     private final UserRepository userRepository;
     private final SportRepository sportRepository;
 
-
-    public List<Sport> findSports() {
-        return sportRepository.findAll();
-    }
-
-    public List<Sport> findSports(String search) {
-        return search == null || search.equals("") ?
-            sportRepository.findAll() :
-            sportRepository.findByNameContaining(search);
+    public List<Sport> findSports(String search, String publishStatus) {
+        return sportRepository.findBySearchAndFilter(search, publishStatus);
     }
 
     public List<Sport> findMySports(long userId) {

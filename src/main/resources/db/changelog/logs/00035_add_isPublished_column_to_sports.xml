@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<databaseChangeLog xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog
+                   https://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-latest.xsd">
+
+    <changeSet id="35" author="benas.strauka">
+        <preConditions>
+            <tableExists tableName="sports"/>
+        </preConditions>
+        <comment>Adding is published state to sports.</comment>
+
+        <addColumn tableName="sports">
+            <column name="publish_status" type="varchar(255)" defaultValue="NOT_PUBLISHED">
+                <constraints
+                    nullable="false"/>
+            </column>
+        </addColumn>
+    </changeSet>
+</databaseChangeLog>

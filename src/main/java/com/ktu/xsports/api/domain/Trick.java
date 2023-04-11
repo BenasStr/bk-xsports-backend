@@ -37,6 +37,9 @@ public class Trick {
     @ManyToOne
     private Difficulty difficulty;
 
+    @NotNull
+    private String publishStatus;
+
     @ManyToMany
     @JoinTable(
         name = "tricks_references",
