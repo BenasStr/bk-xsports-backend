@@ -1,11 +1,9 @@
 package com.ktu.xsports.config;
 
 import com.ktu.xsports.api.converter.publish.PublishToPublishResponse;
-import com.ktu.xsports.api.converter.trick.TrickToTrickBasicResponseConverter;
 import com.ktu.xsports.api.converter.trick.TrickVariantToTrickBasicResponseConverter;
 import com.ktu.xsports.api.converter.trick.TrickVariantToTrickResponseConverter;
 import com.ktu.xsports.api.domain.Publish;
-import com.ktu.xsports.api.domain.Trick;
 import com.ktu.xsports.api.domain.TrickVariant;
 import com.ktu.xsports.api.dto.response.publish.PublishResponse;
 import com.ktu.xsports.api.dto.response.trick.TrickBasicResponse;
@@ -34,9 +32,6 @@ public class ModelMapping {
 
         modelMapper.typeMap(TrickVariant.class, TrickBasicResponse.class)
             .addMappings(new TrickVariantToTrickBasicResponseConverter());
-
-        modelMapper.typeMap(Trick.class, TrickBasicResponse.class)
-            .addMappings(new TrickToTrickBasicResponseConverter());
     }
 
     private void publishToPublishResponse(ModelMapper modelMapper) {

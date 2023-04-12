@@ -1,5 +1,6 @@
 package com.ktu.xsports.api.controller;
 
+import com.ktu.xsports.api.domain.Trick;
 import com.ktu.xsports.api.domain.TrickVariant;
 import com.ktu.xsports.api.domain.User;
 import com.ktu.xsports.api.dto.request.trick.TrickRequest;
@@ -173,11 +174,10 @@ public class TrickController {
         @PathVariable Long trickId,
         @AuthenticationPrincipal User user
     ) {
-//        trickService.findTrickVariantById(sportId, categoryId, trickId);
-//        //TODO this is shit
-//        Trick trick = progressService.updateProgress(user.getId(), trickId);
-//        return ResponseEntity.ok(Map.of("data", modelMapper.map(trick, TrickExtendedResponse.class)));
-        return ResponseEntity.ok("");
+        log.info("User is updating progress on trick!");
+        trickGroupService.findTrickById(sportId, categoryId, trickId);
+        Trick trick = progressService.updateProgress(user.getId(), trickId);
+        return ResponseEntity.ok(Map.of("data", modelMapper.map(trick, TrickExtendedResponse.class)));
     }
 
     @DeleteMapping("/{trickId}")
@@ -186,22 +186,9 @@ public class TrickController {
         @PathVariable Long categoryId,
         @PathVariable Long sportId
     ) {
-//        log.info("User is deleting trick!");
+        log.info("User is deleting trick!");
 //        trickService.removeTrick(sportId, categoryId, trickId);
-//
-//        return ResponseEntity.ok("");
-        return ResponseEntity.ok("");
-    }
 
-    @DeleteMapping("/{trickId}/variant/{variantId}")
-    public ResponseEntity<?> deleteTrickVariant(
-        @PathVariable Long trickId,
-        @PathVariable Long categoryId,
-        @PathVariable Long sportId,
-        @PathVariable Long variantId
-    ) {
-//        log.info("User is deleting trick variant!");
-//        trickService.removeTrickVariant(sportId, categoryId, trickId, variantId);
-        return ResponseEntity.ok("");
+        return ResponseEntity.noContent().build();
     }
 }
