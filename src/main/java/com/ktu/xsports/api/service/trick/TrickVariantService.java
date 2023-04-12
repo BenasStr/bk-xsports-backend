@@ -3,7 +3,7 @@ package com.ktu.xsports.api.service.trick;
 import com.ktu.xsports.api.advice.exceptions.ServiceException;
 import com.ktu.xsports.api.domain.Trick;
 import com.ktu.xsports.api.domain.TrickVariant;
-import com.ktu.xsports.api.domain.specification.TrickVariantSpecification;
+import com.ktu.xsports.api.specification.TrickVariantSpecification;
 import com.ktu.xsports.api.repository.TrickVariantRepository;
 import com.ktu.xsports.api.service.CategoryService;
 import com.ktu.xsports.api.service.VariantService;

@@ -18,8 +18,5 @@
                     nullable="false"/>
             </column>
         </addColumn>
-<!--        <dropColumn tableName="publishes">-->
-<!--            <column name="trick_variant_id"/>-->
-<!--        </dropColumn>-->
     </changeSet>
 </databaseChangeLog>

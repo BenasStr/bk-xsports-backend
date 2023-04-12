@@ -11,5 +11,4 @@ public class TrickBasicResponse {
     String shortDescription;
     String status;
     String difficulty;
-    String publishStatus;
 }

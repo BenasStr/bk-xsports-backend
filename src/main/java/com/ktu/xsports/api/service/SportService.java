@@ -7,10 +7,14 @@ import com.ktu.xsports.api.advice.exceptions.ServiceException;
 import com.ktu.xsports.api.repository.SportRepository;
 import com.ktu.xsports.api.repository.UserRepository;
 import com.ktu.xsports.api.service.media.ImageService;
+import com.ktu.xsports.api.specification.SportSpecification;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
 import java.util.*;
+
+import static com.ktu.xsports.api.util.PublishStatus.PUBLISHED;
+import static com.ktu.xsports.api.util.Role.*;
 
 @Service
 @RequiredArgsConstructor
@@ -19,8 +23,14 @@ public class SportService {
     private final UserRepository userRepository;
     private final SportRepository sportRepository;
 
-    public List<Sport> findSports(String search, String publishStatus) {
-        return sportRepository.findBySearchAndFilter(search, publishStatus);
+    public List<Sport> findSports(String search, String publishStatus, User user) {
+        SportSpecification spec;
+        if(user.getRole().equals(USER)) {
+            spec = new SportSpecification(search, PUBLISHED);
+        } else {
+            spec = new SportSpecification(search, publishStatus);
+        }
+        return sportRepository.findAll(spec);
     }
 
     public List<Sport> findMySports(long userId) {

@@ -1,0 +1,35 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<databaseChangeLog xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog
+                   https://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-latest.xsd">
+
+    <changeSet id="40" author="benas.strauka">
+        <preConditions>
+            <not>
+                <tableExists tableName="changes"/>
+            </not>
+        </preConditions>
+        <comment>Create changes table.</comment>
+
+        <createTable tableName="changes">
+            <column name="id" type="int unsigned" autoIncrement="true">
+                <constraints primaryKey="true"/>
+            </column>
+
+            <column name="trick_variant_id" type="int unsigned">
+                <constraints
+                    foreignKeyName="changes_trick_variant_fk"
+                    references="tricks_variants(id)"
+                    nullable="false"/>
+            </column>
+
+            <column name="updated_trick_variant_id" type="int unsigned">
+                <constraints
+                    foreignKeyName="changes_updated_trick_variant_fk"
+                    references="tricks_variants(id)"
+                    nullable="false"/>
+            </column>
+        </createTable>
+    </changeSet>
+</databaseChangeLog>

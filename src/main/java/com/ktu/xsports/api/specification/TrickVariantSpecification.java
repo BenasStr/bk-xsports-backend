@@ -1,4 +1,4 @@
-package com.ktu.xsports.api.domain.specification;
+package com.ktu.xsports.api.specification;
 
 import com.ktu.xsports.api.domain.Category;
 import com.ktu.xsports.api.domain.Difficulty;

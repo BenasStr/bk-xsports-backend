@@ -1,6 +1,7 @@
 package com.ktu.xsports.api.controller;
 
 import com.ktu.xsports.api.domain.Category;
+import com.ktu.xsports.api.domain.User;
 import com.ktu.xsports.api.dto.request.CategoryRequest;
 import com.ktu.xsports.api.dto.response.CategoryResponse;
 import com.ktu.xsports.api.service.CategoryService;
@@ -10,6 +11,7 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.modelmapper.ModelMapper;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
@@ -34,12 +36,13 @@ public class CategoryController {
     public ResponseEntity<?> findSportsCategories(
         @PathVariable long sportId,
         @RequestParam(defaultValue = "") String search,
-        @RequestParam(defaultValue = "") String publishStatus
+        @RequestParam(defaultValue = "") String publishStatus,
+        @AuthenticationPrincipal User user
     ) {
         log.info("Categories get called.");
-        List<Category> categories = categoryService.findCategories(sportId, search, publishStatus);
+        List<Category> categories = categoryService.findCategories(sportId, search, publishStatus, user);
         List<CategoryResponse> categoriesResponse = categories.stream().map(
-                c -> modelMapper.map(c, CategoryResponse.class)
+            c -> modelMapper.map(c, CategoryResponse.class)
         ).toList();
         return ResponseEntity.ok(Map.of("data", categoriesResponse));
     }
@@ -53,7 +56,7 @@ public class CategoryController {
         Category category = categoryService.findCategory(sportId, categoryId);
 
         return ResponseEntity.ok(
-                Map.of("data", modelMapper.map(category, CategoryResponse.class))
+            Map.of("data", modelMapper.map(category, CategoryResponse.class))
         );
     }
 
@@ -65,7 +68,7 @@ public class CategoryController {
         log.info("Category create called.");
         Category newCategory = categoryService.createCategory(sportId, categoryRequest.toCategory());
         return ResponseEntity.ok(
-                Map.of("data", modelMapper.map(newCategory, CategoryResponse.class))
+            Map.of("data", modelMapper.map(newCategory, CategoryResponse.class))
         );
     }
 

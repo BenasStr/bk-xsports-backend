@@ -16,7 +16,6 @@ import java.util.List;
 public class PublishService {
 
     private final PublishRepository publishRepository;
-    private final TrickService trickService;
 
     public Publish findById(long id) {
         return publishRepository.findById(id)

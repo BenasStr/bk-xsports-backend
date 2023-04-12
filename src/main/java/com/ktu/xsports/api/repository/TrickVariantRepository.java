@@ -1,8 +1,6 @@
 package com.ktu.xsports.api.repository;
 
-import com.ktu.xsports.api.domain.Category;
 import com.ktu.xsports.api.domain.TrickVariant;
-import com.ktu.xsports.api.domain.specification.TrickVariantSpecification;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.JpaSpecificationExecutor;
 import org.springframework.data.jpa.repository.Query;

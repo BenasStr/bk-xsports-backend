@@ -84,7 +84,7 @@ public class TrickController {
             Map.of("data", response)
         );
     }
-    //TODO: merge these two
+
     @PostMapping()
     public ResponseEntity<?> createTrick(
         @RequestBody @Valid TrickRequest trickRequest,
@@ -130,7 +130,7 @@ public class TrickController {
             videoService.uploadVideo(file, TRICK_FILE+trickVariant.getId()) :
             videoService.updateVideo(file, trickVariant.getVideoUrl());
         trickVariant.setVideoUrl(fileName);
-//        trickVariantService.updateTrickVariant(sportId, categoryId, trickId, variantId, trickVariant);
+//        trickGroupService.updateTrick(sportId, categoryId, trickId, trickVariant);
 
         return ResponseEntity.ok(
             Map.of("data", fileName)
@@ -161,7 +161,7 @@ public class TrickController {
         @PathVariable Long variantId
     ) {
         TrickVariant trickVariant = trickVariantRequest.toTrickVariant();
-        TrickVariant variant = trickGroupService.updateTrickVariant(sportId, categoryId, trickId, variantId, trickVariant);
+        TrickVariant variant = trickGroupService.updateTrick(sportId, categoryId, trickId, variantId, trickVariant);
         return ResponseEntity.ok(
             Map.of("data", modelMapper.map(variant, TrickExtendedResponse.class))
         );

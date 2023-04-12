@@ -4,13 +4,20 @@ import com.ktu.xsports.api.domain.Category;
 import com.ktu.xsports.api.domain.Sport;
 import com.ktu.xsports.api.advice.exceptions.AlreadyExistsException;
 import com.ktu.xsports.api.advice.exceptions.ServiceException;
+import com.ktu.xsports.api.domain.User;
 import com.ktu.xsports.api.repository.CategoryRepository;
 import com.ktu.xsports.api.service.media.ImageService;
+import com.ktu.xsports.api.specification.CategorySpecification;
+import com.ktu.xsports.api.util.PublishStatus;
+import com.ktu.xsports.api.util.Role;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
 import java.util.Optional;
+
+import static com.ktu.xsports.api.util.PublishStatus.PUBLISHED;
+import static com.ktu.xsports.api.util.Role.USER;
 
 @Service
 @RequiredArgsConstructor
@@ -19,14 +26,20 @@ public class CategoryService {
     private final CategoryRepository categoryRepository;
     private final SportService sportService;
 
-    public List<Category> findCategories(long sportId, String search, String publishStatus) {
-        return categoryRepository.findBySearchAndFilter(sportId, search, publishStatus);
+    public List<Category> findCategories(long sportId, String search, String publishStatus, User user) {
+        CategorySpecification spec;
+        if (user.getRole().equals(USER)) {
+            spec = new CategorySpecification(sportId, search, PUBLISHED);
+        } else {
+            spec = new CategorySpecification(sportId, search, publishStatus);
+        }
+        return categoryRepository.findAll(spec);
     }
 
     public Category findCategory(long sportId, long categoryId) {
         return categoryRepository.findBySportIdAndId(sportId, categoryId)
             .orElseThrow(() -> new ServiceException("Category doesn't exist"));
-}
+    }
 
     public Category createCategory(long sportId, Category category) {
         Sport sport = sportService.findSportById(sportId);
@@ -68,5 +81,9 @@ public class CategoryService {
         } catch (Exception e) {
             throw new ServiceException(String.format("Category doesn't exist: %d", id));
         }
+    }
+
+    public boolean hasChanges(long sportId) {
+        return categoryRepository.containsChangedCategories(sportId);
     }
 }
