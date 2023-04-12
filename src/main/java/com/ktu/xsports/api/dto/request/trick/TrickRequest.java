@@ -47,7 +47,6 @@ public class TrickRequest {
                 .trickChildren(List.of())
                 .trickVariants(List.of())
                 .difficulty(difficulty)
-                .publishStatus(NOT_PUBLISHED)
                 .build())
             .description(description)
             .shortDescription(shortDescription)

@@ -26,8 +26,8 @@ public interface TrickVariantRepository extends JpaRepository<TrickVariant, Long
 
     @Query(""
         + "SELECT t FROM tricks_variants t "
-        + "WHERE t.trick.id = :trickId "
-        + "AND NOT t.variant.id = :variantId")
+            + "WHERE t.trick.id = :trickId "
+            + "AND NOT t.variant.id = :variantId")
     List<TrickVariant> findVariants(long trickId, long variantId);
 
 

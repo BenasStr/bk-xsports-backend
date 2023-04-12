@@ -50,7 +50,7 @@ public class TrickController {
         @RequestParam(defaultValue = "") String difficulty
     ) {
         log.info("User is fetching multiple tricks.");
-        List<TrickVariant> tricks = trickGroupService.findTricks(sportId, categoryId, variant, search, publishStatus, difficulty, user.getId());
+        List<TrickVariant> tricks = trickGroupService.findTricks(sportId, categoryId, variant, search, publishStatus, difficulty, user);
 
         List<?> trickResponses;
         if (extended) {
@@ -144,11 +144,10 @@ public class TrickController {
         @PathVariable Long categoryId,
         @PathVariable Long sportId
     ) {
-//        Trick trick = trickRequest.toTrick();
-//        TrickVariant mainVariant = trickService.updateTrick(sportId, categoryId, trick, trickId);
+        TrickVariant trick = trickRequest.toTrick();
+        TrickVariant mainVariant = trickGroupService.updateStandardTrick(sportId, categoryId, trickId, trick);
         return ResponseEntity.ok(
-//            Map.of("data", modelMapper.map(mainVariant, TrickExtendedResponse.class))
-            ""
+            Map.of("data", modelMapper.map(mainVariant, TrickExtendedResponse.class))
         );
     }
 

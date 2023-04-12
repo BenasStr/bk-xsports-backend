@@ -6,30 +6,16 @@
 
     <changeSet id="40" author="benas.strauka">
         <preConditions>
-            <not>
-                <tableExists tableName="changes"/>
-            </not>
+            <tableExists tableName="tricks_variants"/>
         </preConditions>
-        <comment>Create changes table.</comment>
+        <comment>Add "updated " column to trick variants</comment>
 
-        <createTable tableName="changes">
-            <column name="id" type="int unsigned" autoIncrement="true">
-                <constraints primaryKey="true"/>
-            </column>
-
-            <column name="trick_variant_id" type="int unsigned">
+        <addColumn tableName="tricks_variants">
+            <column name="updated_by" type="int unsigned">
                 <constraints
-                    foreignKeyName="changes_trick_variant_fk"
-                    references="tricks_variants(id)"
-                    nullable="false"/>
+                    foreignKeyName="updated_by_trick_variant_fk"
+                    references="tricks_variants(id)"/>
             </column>
-
-            <column name="updated_trick_variant_id" type="int unsigned">
-                <constraints
-                    foreignKeyName="changes_updated_trick_variant_fk"
-                    references="tricks_variants(id)"
-                    nullable="false"/>
-            </column>
-        </createTable>
+        </addColumn>
     </changeSet>
 </databaseChangeLog>

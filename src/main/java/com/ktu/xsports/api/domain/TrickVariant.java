@@ -1,11 +1,16 @@
 package com.ktu.xsports.api.domain;
 
+import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
+import jakarta.persistence.JoinColumn;
+import jakarta.persistence.JoinTable;
 import jakarta.persistence.ManyToOne;
+import jakarta.persistence.MapKey;
 import jakarta.persistence.OneToMany;
+import jakarta.persistence.OneToOne;
 import jakarta.validation.constraints.NotNull;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -42,4 +47,8 @@ public class TrickVariant {
     @NotNull
     @ManyToOne
     private Trick trick;
+
+    @OneToOne
+    @JoinColumn(name = "updated_by", referencedColumnName = "id")
+    private TrickVariant updatedBy;
 }

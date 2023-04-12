@@ -1,12 +1,16 @@
 package com.ktu.xsports.api.service.trick;
 
+import com.ktu.xsports.api.advice.exceptions.ServiceException;
 import com.ktu.xsports.api.domain.Trick;
 import com.ktu.xsports.api.domain.TrickVariant;
+import com.ktu.xsports.api.domain.User;
 import com.ktu.xsports.api.service.CategoryService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
+
+import static com.ktu.xsports.api.util.PublishStatus.PUBLISHED;
 
 @Service
 @RequiredArgsConstructor
@@ -16,23 +20,28 @@ public class TrickGroupService {
     private final TrickProgressFilterService trickProgressFilterService;
     private final CategoryService categoryService;
 
-    public List<TrickVariant> findTricks(long sportId, long categoryId, String variant, String search, String publishStatus, String difficulty, long userId) {
+    public List<TrickVariant> findTricks(long sportId, long categoryId, String variant, String search, String publishStatus, String difficulty, User user) {
         categoryService.findCategory(sportId, categoryId);
-        List<TrickVariant> tricks = trickVariantService.findTricks(categoryId, variant, search, publishStatus, difficulty);
-        trickProgressFilterService.filterProgressByUser(tricks, userId);
+        List<TrickVariant> tricks = trickVariantService.findTricks(categoryId, variant, search, publishStatus, difficulty, user);
+        trickProgressFilterService.filterProgressByUser(tricks, user.getId());
         return tricks;
     }
 
     public TrickVariant findTrickById(long sportId, long categoryId, long trickId, long userId) {
         categoryService.findCategory(sportId, categoryId);
-        TrickVariant trick = trickVariantService.findTrickById(categoryId, trickId);
+        TrickVariant trick = trickVariantService.findTrickById(trickId, categoryId);
         trickProgressFilterService.filterProgressByUser(trick, userId);
         return trick;
     }
 
     public TrickVariant findTrickById(long sportId, long categoryId, long trickId) {
         categoryService.findCategory(sportId, categoryId);
-        return trickVariantService.findTrickById(categoryId, trickId);
+        return trickVariantService.findTrickById(trickId, categoryId);
+    }
+
+    public TrickVariant findStandardTrickById(long sportId, long categoryId, long trickId) {
+        categoryService.findCategory(sportId, categoryId);
+        return trickVariantService.findStandardTrickVariantById(trickId, categoryId);
     }
 
     public TrickVariant createStandardTrick(long sportId, long categoryId, TrickVariant trickVariant) {
@@ -47,21 +56,40 @@ public class TrickGroupService {
     }
 
     public TrickVariant updateStandardTrick(long sportId, long categoryId, long trickId, TrickVariant trickVariant) {
-        return null;
+        TrickVariant currentTrick = findStandardTrickById(sportId, categoryId, trickId);
+        if (currentTrick.getTrick().getPublishStatus().equals(PUBLISHED)) {
+            Trick trick = trickService.createTrickCopy(currentTrick.getTrick(), trickVariant.getTrick());
+            trickVariant.setTrick(trick);
+            //TODO don't forget progress when migrating data
+            TrickVariant updated = trickVariantService.createStandardTrickCopy(currentTrick, trickVariant);
+            trickVariantService.createVariantsCopies(currentTrick, trickVariant.getTrick());
+            return trickVariantService.findStandardTrickVariantById(updated.getId(), categoryId);
+        }
+
+        Trick trick = trickService.updateTrick(currentTrick.getTrick(), trickVariant.getTrick());
+        trickVariant.setTrick(trick);
+        return trickVariantService.updateStandardTrick(currentTrick, trickVariant);
     }
 
     public TrickVariant updateTrick(long sportId, long categoryId, long trickId, long variantId, TrickVariant trickVariant) {
-        categoryService.findCategory(sportId, categoryId);
-        return trickVariantService.updateTrick(categoryId, trickId, variantId, trickVariant);
-    }
+        TrickVariant currentTrick = findStandardTrickById(sportId, categoryId, trickId);
+        if (currentTrick.getTrick().getPublishStatus().equals(PUBLISHED)) {
+            Trick trick = trickService.createTrickCopy(currentTrick.getTrick(), trickVariant.getTrick());
+            trickVariantService.createStandardTrickCopy(currentTrick, trick);
+            trickVariantService.createVariantsCopies(currentTrick, trickVariant, trick);
+            return trickVariantService.findTrickById(variantId, categoryId);
+        }
 
-    public void removeStandardTrick(long sportId, long categoryId, long trickId) {
+        TrickVariant matchedVariant = currentTrick.getTrick().getTrickVariants()
+            .stream()
+            .filter(variant -> variant.getId() == variantId)
+            .findFirst()
+            .orElseThrow(() -> new ServiceException("Given variant doesn't exist in this group!"));
 
+        return trickVariantService.updateTrick(matchedVariant, trickVariant);
     }
 
     public void removeTrick(long sportId, long categoryId, long trickId, long variantId) {
 
     }
-
-    //TODO create copy and update.
 }

@@ -2,20 +2,16 @@ package com.ktu.xsports.api.service.trick;
 
 import com.ktu.xsports.api.domain.Category;
 import com.ktu.xsports.api.domain.Trick;
-import com.ktu.xsports.api.domain.TrickVariant;
 import com.ktu.xsports.api.advice.exceptions.ServiceException;
 import com.ktu.xsports.api.repository.TrickRepository;
-import com.ktu.xsports.api.repository.TrickVariantRepository;
 import com.ktu.xsports.api.service.CategoryService;
-import com.ktu.xsports.api.service.VariantService;
-import com.ktu.xsports.api.util.PublishStatus;
-import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
-import java.util.List;
 import java.util.Optional;
 
+import static com.ktu.xsports.api.util.PublishStatus.NOT_PUBLISHED;
+import static com.ktu.xsports.api.util.PublishStatus.PUBLISHED;
 import static com.ktu.xsports.api.util.PublishStatus.UPDATED;
 
 @Service
@@ -25,9 +21,15 @@ public class TrickService {
     private final TrickRepository trickRepository;
     private final CategoryService categoryService;
 
+    public Trick findTrick(long trickId, long categoryId) {
+        return trickRepository.findById(categoryId, trickId)
+            .orElseThrow(() -> new ServiceException("Trick not found!"));
+    }
+
     public Trick createTrick(long sportId, long categoryId, Trick trick) {
         Category category = categoryService.findCategory(sportId, categoryId);
         trick.setCategory(category);
+        trick.setPublishStatus(NOT_PUBLISHED);
 
         Optional<Trick> existing = trickRepository.findByName(trick.getName());
         if(existing.isPresent()) {
@@ -36,8 +38,19 @@ public class TrickService {
         return trickRepository.save(trick);
     }
 
-    public Trick updateTrick(long sportId, long categoryId, long trickId, Trick trick) {
-        return null;
+    public Trick createTrickCopy(Trick currentTrick, Trick trick) {
+        trick.setPublishStatus(UPDATED);
+        trick.setCategory(currentTrick.getCategory());
+        return trickRepository.save(trick);
+    }
+
+
+    public Trick updateTrick(Trick currentTrick, Trick trick) {
+        trick.setId(currentTrick.getId());
+        trick.setPublishStatus(currentTrick.getPublishStatus());
+        trick.setTrickVariants(currentTrick.getTrickVariants());
+        trick.setTrickChildren(currentTrick.getTrickChildren());
+        return trickRepository.save(trick);
     }
 
     public void removeTrick(long sportId, long categoryId, long trickId) {

@@ -11,11 +11,13 @@ import jakarta.persistence.criteria.Join;
 import jakarta.persistence.criteria.Predicate;
 import jakarta.persistence.criteria.Root;
 import lombok.AllArgsConstructor;
+import lombok.Builder;
 import org.springframework.data.jpa.domain.Specification;
 
 import java.util.ArrayList;
 import java.util.List;
 
+@Builder
 @AllArgsConstructor
 public class TrickVariantSpecification implements Specification<TrickVariant> {
     private Long categoryId;
@@ -23,6 +25,7 @@ public class TrickVariantSpecification implements Specification<TrickVariant> {
     private String difficulty;
     private String publishStatus;
     private String variant;
+    private boolean filterUpdated;
 
     @Override
     public Predicate toPredicate(Root<TrickVariant> root, CriteriaQuery<?> query, CriteriaBuilder criteriaBuilder) {
@@ -49,6 +52,11 @@ public class TrickVariantSpecification implements Specification<TrickVariant> {
             Join<TrickVariant, Variant> variantJoin = root.join("variant");
             predicates.add(criteriaBuilder.equal(variantJoin.get("name"), variant));
         }
+
+        if (filterUpdated) {
+            predicates.add(criteriaBuilder.isNull(root.get("updatedBy")));
+        }
+
         return criteriaBuilder.and(predicates.toArray(new Predicate[0]));
     }
 }
