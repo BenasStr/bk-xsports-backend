@@ -8,6 +8,7 @@ import com.ktu.xsports.api.dto.response.trick.TrickExtendedResponse;
 import org.modelmapper.PropertyMap;
 import org.springframework.stereotype.Component;
 
+import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
@@ -34,6 +35,10 @@ public class TrickVariantToTrickResponseConverter extends PropertyMap<TrickVaria
         ).map(source, destination.getPublishStatus());
 
         using(context ->
+            mapLastUpdated((TrickVariant) context.getSource())
+        ).map(source, destination.getLastUpdated());
+
+        using(context ->
             mapVariantsCreated((TrickVariant) context.getSource())
         ).map(source, destination.getVariantsCreated());
 
@@ -55,6 +60,10 @@ public class TrickVariantToTrickResponseConverter extends PropertyMap<TrickVaria
         int variantsCreated = trickVariant.getTrick().getTrickVariants().size();
 
         return String.format("%d/%d", variantsCreated, variantsCount);
+    }
+
+    private LocalDate mapLastUpdated(TrickVariant trickVariant) {
+        return trickVariant.getTrick().getLastUpdated();
     }
 
     private List<TrickBasicResponse> mapParents(TrickVariant trickVariant) {
