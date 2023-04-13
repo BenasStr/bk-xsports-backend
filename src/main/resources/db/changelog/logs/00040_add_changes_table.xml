@@ -8,13 +8,13 @@
         <preConditions>
             <tableExists tableName="tricks_variants"/>
         </preConditions>
-        <comment>Add "updated " column to trick variants</comment>
+        <comment>Add "updated by" column to tricks</comment>
 
-        <addColumn tableName="tricks_variants">
+        <addColumn tableName="tricks">
             <column name="updated_by" type="int unsigned">
                 <constraints
-                    foreignKeyName="updated_by_trick_variant_fk"
-                    references="tricks_variants(id)"/>
+                    foreignKeyName="updated_by_trick_fk"
+                    references="tricks(id)"/>
             </column>
         </addColumn>
     </changeSet>

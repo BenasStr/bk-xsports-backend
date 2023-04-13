@@ -5,6 +5,7 @@ import com.ktu.xsports.api.domain.Publish;
 import com.ktu.xsports.api.domain.Trick;
 import com.ktu.xsports.api.domain.TrickVariant;
 import com.ktu.xsports.api.repository.PublishRepository;
+import com.ktu.xsports.api.service.trick.TrickGroupService;
 import com.ktu.xsports.api.service.trick.TrickService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -21,6 +22,7 @@ import static com.ktu.xsports.api.util.PublishStatus.PUBLISHED;
 public class PublishService {
 
     private final PublishRepository publishRepository;
+    private final TrickGroupService trickGroupService;
 
     public Publish findById(long id) {
         return publishRepository.findById(id)
@@ -37,8 +39,9 @@ public class PublishService {
 
     public void publish(long id) {
         Publish publish = findById(id);
+        List<Trick> trickList = getAffectedTricks(publish.getTrickVariant());
 
-        log.info("Publishing...");
+        trickList.forEach(trickGroupService::publishTrick);
     }
 
     public Publish updatePublish(Publish publish, long id) {

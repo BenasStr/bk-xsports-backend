@@ -54,7 +54,7 @@ public class TrickVariantSpecification implements Specification<TrickVariant> {
         }
 
         if (filterUpdated) {
-            predicates.add(criteriaBuilder.isNull(root.get("updatedBy")));
+            predicates.add(criteriaBuilder.isNull(trickJoin.get("updatedBy")));
         }
 
         return criteriaBuilder.and(predicates.toArray(new Predicate[0]));

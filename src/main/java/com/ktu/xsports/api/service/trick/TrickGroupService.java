@@ -59,11 +59,7 @@ public class TrickGroupService {
         TrickVariant currentTrick = findStandardTrickById(sportId, categoryId, trickId);
         if (currentTrick.getTrick().getPublishStatus().equals(PUBLISHED)) {
             Trick trick = trickService.createTrickCopy(currentTrick.getTrick(), trickVariant.getTrick());
-            trickVariant.setTrick(trick);
-            //TODO don't forget progress when migrating data
-            TrickVariant updated = trickVariantService.createStandardTrickCopy(currentTrick, trickVariant);
-            trickVariantService.createVariantsCopies(currentTrick, trickVariant.getTrick());
-            return trickVariantService.findStandardTrickVariantById(updated.getId(), categoryId);
+            return trickVariantService.createVariantsCopies(currentTrick, trickVariant, trick);
         }
 
         Trick trick = trickService.updateTrick(currentTrick.getTrick(), trickVariant.getTrick());
@@ -75,9 +71,7 @@ public class TrickGroupService {
         TrickVariant currentTrick = findStandardTrickById(sportId, categoryId, trickId);
         if (currentTrick.getTrick().getPublishStatus().equals(PUBLISHED)) {
             Trick trick = trickService.createTrickCopy(currentTrick.getTrick(), trickVariant.getTrick());
-            trickVariantService.createStandardTrickCopy(currentTrick, trick);
-            trickVariantService.createVariantsCopies(currentTrick, trickVariant, trick);
-            return trickVariantService.findTrickById(variantId, categoryId);
+            return trickVariantService.createVariantsCopies(currentTrick, trickVariant, trick);
         }
 
         TrickVariant matchedVariant = currentTrick.getTrick().getTrickVariants()

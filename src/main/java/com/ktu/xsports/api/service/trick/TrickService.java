@@ -3,6 +3,7 @@ package com.ktu.xsports.api.service.trick;
 import com.ktu.xsports.api.domain.Category;
 import com.ktu.xsports.api.domain.Trick;
 import com.ktu.xsports.api.advice.exceptions.ServiceException;
+import com.ktu.xsports.api.domain.TrickVariant;
 import com.ktu.xsports.api.repository.TrickRepository;
 import com.ktu.xsports.api.service.CategoryService;
 import lombok.RequiredArgsConstructor;
@@ -12,6 +13,7 @@ import java.util.Optional;
 
 import static com.ktu.xsports.api.util.PublishStatus.NOT_PUBLISHED;
 import static com.ktu.xsports.api.util.PublishStatus.PUBLISHED;
+import static com.ktu.xsports.api.util.PublishStatus.SCHEDULED;
 import static com.ktu.xsports.api.util.PublishStatus.UPDATED;
 
 @Service
@@ -41,7 +43,10 @@ public class TrickService {
     public Trick createTrickCopy(Trick currentTrick, Trick trick) {
         trick.setPublishStatus(UPDATED);
         trick.setCategory(currentTrick.getCategory());
-        return trickRepository.save(trick);
+        Trick updated = trickRepository.save(trick);
+        currentTrick.setUpdatedBy(trick);
+        trickRepository.save(currentTrick);
+        return updated;
     }
 
 
@@ -53,55 +58,23 @@ public class TrickService {
         return trickRepository.save(trick);
     }
 
+    public Trick publishTrick(Trick trick) {
+        if (trick.getPublishStatus().equals(UPDATED)) {
+            //TODO add the case when object is updated. Delete published and add make this published instead.
+//            Trick updatedTrick = trickRepository
+            trick.setPublishStatus(PUBLISHED);
+
+            return null;
+        }
+
+        if (trick.getPublishStatus().equals(SCHEDULED) || trick.getPublishStatus().equals(NOT_PUBLISHED)) {
+            trick.setPublishStatus(PUBLISHED);
+            return trickRepository.save(trick);
+        }
+        throw new ServiceException("Published trick got into the publish list...");
+    }
+
     public void removeTrick(long sportId, long categoryId, long trickId) {
 
     }
-
-//    public TrickVariant updateTrick(Long sportId, Long categoryId, Trick trick, Long trickVariantId) {
-//        Category category = categoryService.findCategory(sportId, categoryId);
-//        trick.setCategory(category);
-//
-//        TrickVariant trickVariant = findTrickVariantById(sportId, categoryId, trickVariantId);
-//        trick.setId(trickVariantId);
-//        trick.setTrickVariants(trickVariant.getTrick().getTrickVariants());
-//        trick.setTrickChildren(trickVariant.getTrick().getTrickChildren());
-//        trick.setTrickParents(trickVariant.getTrick().getTrickParents());
-//
-//        Optional<Trick> existing = trickRepository.findByName(trick.getName());
-//        if(existing.isPresent() && trickVariantId != existing.get().getId()) {
-//            throw new ServiceException("Trick already exists");
-//        }
-//
-//        Trick updatedTrick = trickRepository.save(trick);
-//
-//        trick.getTrickVariants()
-//            .forEach(variant -> {
-//                //TODO check for trick variants;
-////                variant.setId(updatedTrick);
-//                variant.setTrick(updatedTrick);
-//                variant.setVariant(variantService.getMainVariant());
-//                variant.setVideoUrl("nonde");
-//                trickVariantRepository.save(variant);
-//            });
-//
-////        TrickVariant standardVariant = trickVariantRepository.findStandardVariantById(updatedTrick.getId())
-////            .orElseThrow(() -> new ServiceException("Something went wrong!"));
-////        setTrickVariantVariants(standardVariant);
-//
-////        return standardVariant;
-//        return null;
-//    }
-//
-//    public void removeTrick(Long sportId, Long categoryId, Long trickId) {
-//        categoryService.findCategory(sportId, categoryId);
-//        TrickVariant trick = findTrickVariantById(sportId, categoryId, trickId);
-//        trick.getTrick()
-//                .getTrickVariants()
-//                    .forEach(variant -> trickVariantRepository.deleteById(variant.getId()));
-//        trickRepository.deleteById(trick.getTrick().getId());
-//    }
-//
-
-
-
 }

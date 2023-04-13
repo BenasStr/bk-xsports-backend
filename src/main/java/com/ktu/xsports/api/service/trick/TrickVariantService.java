@@ -11,6 +11,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
+import java.util.concurrent.atomic.AtomicLong;
 
 import static com.ktu.xsports.api.util.PublishStatus.PUBLISHED;
 import static com.ktu.xsports.api.util.Role.USER;
@@ -58,74 +59,45 @@ public class TrickVariantService {
         return trickVariantRepository.save(trickVariant);
     }
 
-    public TrickVariant createStandardTrickCopy(TrickVariant currentTrick, TrickVariant trickVariant) {
-        trickVariant.setVariant(variantService.getStandardVariant());
-        trickVariant.setVideoUrl(currentTrick.getVideoUrl());
-        TrickVariant updated = trickVariantRepository.save(trickVariant);
-        currentTrick.setUpdatedBy(updated);
-        return trickVariantRepository.save(currentTrick);
-    }
-
     public TrickVariant createStandardTrickCopy(TrickVariant currentTrick, Trick trick) {
-        TrickVariant updated = trickVariantRepository.save(TrickVariant.builder()
+        return trickVariantRepository.save(TrickVariant.builder()
             .trick(trick)
             .variant(currentTrick.getVariant())
             .videoUrl(currentTrick.getVideoUrl())
             .description(currentTrick.getDescription())
             .shortDescription(currentTrick.getShortDescription())
             .build());
-
-        currentTrick.setUpdatedBy(updated);
-        trickVariantRepository.save(currentTrick);
-        return updated;
     }
 
-    public void createVariantsCopies(TrickVariant currentTrick, Trick trick) {
+    public TrickVariant createVariantsCopies(TrickVariant currentTrick, TrickVariant trickVariant, Trick trick) {
+        AtomicLong updatedId = new AtomicLong(-1);
         currentTrick.getTrick().getTrickVariants()
             .forEach(variant -> {
-                if (!variant.getVariant().getName().equals("Standard")) {
-                    TrickVariant updated = trickVariantRepository.save(TrickVariant.builder()
-                            .trick(trick)
-                            .shortDescription(variant.getShortDescription())
-                            .description(variant.getDescription())
-                            .videoUrl(variant.getVideoUrl())
-                            .variant(variant.getVariant())
+                TrickVariant updated;
+                if (variant.getVariant().getName().equals(trickVariant.getVariant().getName())) {
+                    updated = trickVariantRepository.save(TrickVariant.builder()
+                        .trick(trick)
+                        .shortDescription(trickVariant.getShortDescription())
+                        .description(trickVariant.getDescription())
+                        .videoUrl(variant.getVideoUrl())
+                        .variant(trickVariant.getVariant())
                         .build());
-                    variant.setUpdatedBy(updated);
-                    trickVariantRepository.save(variant);
-                }
-            });
-    }
-
-
-    //TODO maybe use this for all tricks updates??????
-    public void createVariantsCopies(TrickVariant currentTrick, TrickVariant trickVariant, Trick trick) {
-        currentTrick.getTrick().getTrickVariants()
-            .forEach(variant -> {
-                if (!variant.getVariant().getName().equals("Standard")) {
-                    if (variant.getVariant().getName().equals(trickVariant.getVariant().getName())) {
-                        TrickVariant updated = trickVariantRepository.save(TrickVariant.builder()
-                            .trick(trick)
-                            .shortDescription(trickVariant.getShortDescription())
-                            .description(trickVariant.getDescription())
-                            .videoUrl(variant.getVideoUrl())
-                            .variant(trickVariant.getVariant())
-                            .build());
-                        variant.setUpdatedBy(updated);
-                        trickVariantRepository.save(variant);
-                        return;
-                    }
-                    TrickVariant updated = trickVariantRepository.save(TrickVariant.builder()
+                } else {
+                    updated = trickVariantRepository.save(TrickVariant.builder()
                         .trick(trick)
                         .shortDescription(variant.getShortDescription())
                         .description(variant.getDescription())
                         .videoUrl(variant.getVideoUrl())
                         .variant(variant.getVariant())
                         .build());
-                    variant.setUpdatedBy(updated);
-                    trickVariantRepository.save(variant);
+                }
+
+                if (updated.getVariant().getName().equals("Standard")) {
+                    updatedId.set(updated.getId());
                 }
             });
+        return trickVariantRepository.findById(updatedId.get())
+            .orElseThrow(() -> new ServiceException("Server error!"));
     }
 
     public TrickVariant createTrick(long categoryId, long trickId, TrickVariant trickVariant) {
