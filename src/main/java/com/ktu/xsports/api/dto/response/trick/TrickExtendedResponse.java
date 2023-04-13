@@ -12,6 +12,7 @@ import java.util.List;
 public class TrickExtendedResponse extends TrickBasicResponse {
     String video;
     String description;
+    String variantsCreated;
     List<TrickBasicResponse> trickParents;
     List<TrickBasicResponse> trickChildren;
     List<TrickBasicResponse> trickVariants;

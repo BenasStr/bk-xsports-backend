@@ -34,6 +34,10 @@ public class TrickVariantToTrickResponseConverter extends PropertyMap<TrickVaria
         ).map(source, destination.getPublishStatus());
 
         using(context ->
+            mapVariantsCreated((TrickVariant) context.getSource())
+        ).map(source, destination.getVariantsCreated());
+
+        using(context ->
             mapParents((TrickVariant) context.getSource())
         ).map(source, destination.getTrickParents());
 
@@ -44,6 +48,13 @@ public class TrickVariantToTrickResponseConverter extends PropertyMap<TrickVaria
         using(context ->
             mapVariants((TrickVariant) context.getSource())
         ).map(source, destination.getTrickVariants());
+    }
+
+    private String mapVariantsCreated(TrickVariant trickVariant) {
+        int variantsCount = trickVariant.getTrick().getCategory().getSport().getVariants().size();
+        int variantsCreated = trickVariant.getTrick().getTrickVariants().size();
+
+        return String.format("%d/%d", variantsCreated, variantsCount);
     }
 
     private List<TrickBasicResponse> mapParents(TrickVariant trickVariant) {
