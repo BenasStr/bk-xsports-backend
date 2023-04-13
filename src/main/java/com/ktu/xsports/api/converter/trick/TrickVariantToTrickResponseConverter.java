@@ -103,7 +103,6 @@ public class TrickVariantToTrickResponseConverter extends PropertyMap<TrickVaria
             .name(mapName(trickVariant))
             .shortDescription(trickVariant.getShortDescription())
             .status(mapProgress(trickVariant))
-            .publishStatus(mapPublishStatus(trickVariant))
             .build();
     }
 }
