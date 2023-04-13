@@ -13,6 +13,7 @@ import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
+import java.time.LocalDate;
 import java.util.List;
 
 @Data
@@ -33,6 +34,9 @@ public class Category {
 
     @NotNull
     private String publishStatus;
+
+    @NotNull
+    private LocalDate lastUpdated;
 
     @ManyToOne
     @JoinColumn(name = "sport_id", nullable = false)
