@@ -5,6 +5,8 @@ import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
+import java.time.LocalDate;
+
 @Data
 @Builder
 @AllArgsConstructor
@@ -15,4 +17,6 @@ public class TrickBasicResponse {
     String shortDescription;
     String status;
     String difficulty;
+    String publishStatus;
+    LocalDate lastUpdated;
 }

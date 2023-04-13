@@ -75,27 +75,24 @@ public class TrickVariantToTrickResponseConverter extends PropertyMap<TrickVaria
     private Optional<TrickBasicResponse> mapVariants(List<TrickVariant> trickVariants, String variant) {
         return trickVariants.stream()
             .filter(trickVariant -> trickVariant.getVariant().getName().equals(variant))
-            .map(trickVariant ->
-                TrickBasicResponse.builder()
-                    .id(trickVariant.getId())
-                    .difficulty(mapDifficulty(trickVariant))
-                    .name(mapName(trickVariant))
-                    .shortDescription(trickVariant.getShortDescription())
-                    .status(mapProgress(trickVariant))
-                    .build()
-            ).findFirst();
+            .map(this::buildTrickBasicResponse)
+            .findFirst();
     }
 
     private List<TrickBasicResponse> mapVariants(TrickVariant trickVariant) {
         return trickVariant.getTrick().getTrickVariants().stream()
-            .map(variant ->
-                TrickBasicResponse.builder()
-                    .id(variant.getId())
-                    .difficulty(mapDifficulty(variant))
-                    .name(mapName(variant))
-                    .shortDescription(variant.getShortDescription())
-                    .status(mapProgress(variant))
-                    .build()
-            ).toList();
+            .map(this::buildTrickBasicResponse)
+            .toList();
+    }
+
+    private TrickBasicResponse buildTrickBasicResponse(TrickVariant trickVariant) {
+        return TrickBasicResponse.builder()
+            .id(trickVariant.getId())
+            .difficulty(mapDifficulty(trickVariant))
+            .name(mapName(trickVariant))
+            .shortDescription(trickVariant.getShortDescription())
+            .status(mapProgress(trickVariant))
+            .publishStatus(mapPublishStatus(trickVariant))
+            .build();
     }
 }
