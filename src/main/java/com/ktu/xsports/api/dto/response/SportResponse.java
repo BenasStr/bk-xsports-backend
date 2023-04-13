@@ -3,6 +3,7 @@ package com.ktu.xsports.api.dto.response;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
+import java.time.LocalDate;
 import java.util.List;
 
 @Data
@@ -12,5 +13,6 @@ public class SportResponse {
     String name;
     String photo;
     String publishStatus;
+    LocalDate lastUpdated;
     List<VariantResponse> variants;
 }
