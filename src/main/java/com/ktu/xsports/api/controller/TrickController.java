@@ -187,8 +187,7 @@ public class TrickController {
         @PathVariable Long sportId
     ) {
         log.info("User is deleting trick!");
-//        trickService.removeTrick(sportId, categoryId, trickId);
-
+        trickGroupService.removeTrick(sportId, categoryId, trickId);
         return ResponseEntity.noContent().build();
     }
 }

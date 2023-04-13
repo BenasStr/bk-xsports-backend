@@ -41,7 +41,7 @@ public class PublishService {
         Publish publish = findById(id);
         List<Trick> trickList = getAffectedTricks(publish.getTrickVariant());
 
-        trickList.forEach(trickGroupService::publishTrick);
+//        trickList.forEach(trickGroupService::publishTrick);
     }
 
     public Publish updatePublish(Publish publish, long id) {

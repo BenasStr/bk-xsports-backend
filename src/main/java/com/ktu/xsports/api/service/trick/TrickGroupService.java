@@ -83,7 +83,7 @@ public class TrickGroupService {
         return trickVariantService.updateTrick(matchedVariant, trickVariant);
     }
 
-    public void removeTrick(long sportId, long categoryId, long trickId, long variantId) {
+    public void removeTrick(long sportId, long categoryId, long trickId) {
 
     }
 }

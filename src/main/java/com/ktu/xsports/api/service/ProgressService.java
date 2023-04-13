@@ -15,14 +15,15 @@ import java.util.Optional;
 @RequiredArgsConstructor
 public class ProgressService {
     private final ProgressRepository progressRepository;
+
+
     public Optional<Progress> findTrickProgressByUser(Long trickVariantId, Long userId) {
         return progressRepository.findTrickAndUserId(trickVariantId, userId);
     }
 
 
     public Trick updateProgress(Long userId, Long trickId) {
-        //TODo fix this!!!
-        return Trick.builder().build();
+//        return Trick.builder().build();
 //        Trick trick = trickService.findTrickById(trickId);
 //        User user = userService.findById(userId);
 //
@@ -40,5 +41,6 @@ public class ProgressService {
 //        }
 //
 //        return trickService.findTrickById(trickId);
+        return null;
     }
 }
