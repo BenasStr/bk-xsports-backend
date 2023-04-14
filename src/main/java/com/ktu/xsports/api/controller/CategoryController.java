@@ -78,14 +78,9 @@ public class CategoryController {
         @PathVariable long categoryId,
         @PathVariable long sportId
     ) {
-        Category category = categoryService.findCategory(sportId, categoryId);
-        String fileName = category.getPhotoUrl() == null || category.getPhotoUrl().equals("") ?
-            imageService.uploadImage(image, CATEGORY_FILE+category.getId()) :
-            imageService.updateImage(image, category.getPhotoUrl());
-        category.setPhotoUrl(fileName);
-        categoryService.updateCategory(sportId, category, category.getId());
+        Category category = categoryService.updateCategoryImage(sportId, categoryId, image);
         return ResponseEntity.ok(
-            Map.of("data", fileName)
+            Map.of("data", category.getPhotoUrl())
         );
     }
 

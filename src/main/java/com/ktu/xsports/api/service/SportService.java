@@ -11,10 +11,12 @@ import com.ktu.xsports.api.specification.SportSpecification;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
+import org.springframework.web.multipart.MultipartFile;
 
 import java.time.LocalDate;
 import java.util.*;
 
+import static com.ktu.xsports.api.util.Prefix.SPORT_FILE;
 import static com.ktu.xsports.api.util.PublishStatus.NOT_PUBLISHED;
 import static com.ktu.xsports.api.util.PublishStatus.PUBLISHED;
 import static com.ktu.xsports.api.util.PublishStatus.UPDATED;
@@ -111,6 +113,15 @@ public class SportService {
 
         sport.setId(id);
         sport.setPublishStatus(existingSport.getPublishStatus());
+        return sportRepository.save(sport);
+    }
+
+    public Sport updateSportImage(long id, MultipartFile image) {
+        Sport sport = findSportById(id);
+        String fileName = sport.getPhotoUrl() == null || sport.getPhotoUrl().equals("") ?
+            imageService.uploadImage(image, SPORT_FILE+sport.getId()) :
+            imageService.updateImage(image, sport.getPhotoUrl());
+        sport.setPhotoUrl(fileName);
         return sportRepository.save(sport);
     }
 

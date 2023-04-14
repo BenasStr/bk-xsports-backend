@@ -11,11 +11,13 @@ import com.ktu.xsports.api.specification.CategorySpecification;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
+import org.springframework.web.multipart.MultipartFile;
 
 import java.time.LocalDate;
 import java.util.List;
 import java.util.Optional;
 
+import static com.ktu.xsports.api.util.Prefix.CATEGORY_FILE;
 import static com.ktu.xsports.api.util.PublishStatus.NOT_PUBLISHED;
 import static com.ktu.xsports.api.util.PublishStatus.PUBLISHED;
 import static com.ktu.xsports.api.util.PublishStatus.UPDATED;
@@ -83,6 +85,15 @@ public class CategoryService {
 
         category.setId(categoryId);
         category.setPublishStatus(existingCategory.getPublishStatus());
+        return categoryRepository.save(category);
+    }
+
+    public Category updateCategoryImage(long sportId, long categoryId, MultipartFile image) {
+        Category category = findCategory(sportId, categoryId);
+        String fileName = category.getPhotoUrl() == null || category.getPhotoUrl().equals("") ?
+            imageService.uploadImage(image, CATEGORY_FILE+category.getId()) :
+            imageService.updateImage(image, category.getPhotoUrl());
+        category.setPhotoUrl(fileName);
         return categoryRepository.save(category);
     }
 
