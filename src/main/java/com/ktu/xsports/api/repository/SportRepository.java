@@ -14,13 +14,10 @@ import java.util.Optional;
 public interface SportRepository extends JpaRepository<Sport, Long>, JpaSpecificationExecutor<Sport> {
     Optional<Sport> findByName(String name);
 
-    List<Sport> findByPublishStatus(String publishStatus);
-
     @Query(""
         + "SELECT s FROM sports s "
-        + "WHERE s.name LIKE %:search% "
-        + "AND s.publishStatus = :publishStatus ")
-    List<Sport> findBySearchAndFilter(String search, String publishStatus);
+        + "WHERE s.updatedBy.id = :updatedBy ")
+    Optional<Sport> findUpdatedBy(long updatedBy);
 
     @Query(""
         + "SELECT s FROM sports s "

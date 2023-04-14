@@ -9,6 +9,7 @@ import jakarta.persistence.JoinTable;
 import jakarta.persistence.ManyToMany;
 import jakarta.persistence.ManyToOne;
 import jakarta.persistence.OneToMany;
+import jakarta.persistence.OneToOne;
 import jakarta.validation.constraints.NotNull;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -50,4 +51,11 @@ public class Sport {
             referencedColumnName = "id")
     )
     private List<Variant> variants;
+
+    @OneToOne
+    @JoinColumn(name = "updated_by", referencedColumnName = "id")
+    private Sport updatedBy;
+
+    @OneToOne(mappedBy = "updatedBy")
+    private Sport updates;
 }
