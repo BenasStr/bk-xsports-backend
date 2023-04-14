@@ -54,7 +54,8 @@ public class TrickVariantService {
             .orElseThrow(() -> new ServiceException("Trick doesn't exist"));
     }
 
-    public TrickVariant createStandardTrick(TrickVariant trickVariant) {
+    public TrickVariant createStandardTrick(TrickVariant trickVariant, Trick trick) {
+        trickVariant.setTrick(trick);
         trickVariant.setVariant(variantService.getStandardVariant());
         return trickVariantRepository.save(trickVariant);
     }

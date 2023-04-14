@@ -131,7 +131,7 @@ public class TrickController {
             videoService.uploadVideo(file, TRICK_FILE+trickVariant.getId()) :
             videoService.updateVideo(file, trickVariant.getVideoUrl());
         trickVariant.setVideoUrl(fileName);
-//        trickGroupService.updateTrick(sportId, categoryId, trickId, trickVariant);
+//        trickGroupService.updateTrick(sportId, categoryId, trickId);
 
         return ResponseEntity.ok(
             Map.of("data", fileName)

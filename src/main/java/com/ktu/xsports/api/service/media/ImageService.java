@@ -50,6 +50,7 @@ public class ImageService {
             log.info("Image successfully uploaded");
             return hostConfiguration.getUrl() + "/images/" + imageName;
         } catch (Exception e) {
+
             throw new ImageUploadException("Couldn't upload image");
         }
     }

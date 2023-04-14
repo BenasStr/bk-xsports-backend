@@ -1,6 +1,7 @@
 package com.ktu.xsports.api.service.media;
 
 import com.ktu.xsports.api.advice.exceptions.ImageUploadException;
+import com.ktu.xsports.config.HostConfiguration;
 import io.minio.GetObjectArgs;
 import io.minio.MinioClient;
 import io.minio.PutObjectArgs;
@@ -18,6 +19,7 @@ import java.util.Objects;
 public class VideoService {
     private static final String VIDEO_BUCKET = "videos";
     private final MinioClient minioClient;
+    private final HostConfiguration hostConfiguration;
     private final int fileSize = 25000000;
 
     public byte[] getVideo(String fileName) {
@@ -50,7 +52,7 @@ public class VideoService {
                     .build()
             );
 
-            return videoName;
+            return hostConfiguration.getUrl() + "/videos/" + videoName;
         } catch (Exception e) {
             //TODO add exception here
             throw new ImageUploadException(e.getMessage());
@@ -70,7 +72,7 @@ public class VideoService {
                     .build()
             );
 
-            return fileName;
+            return hostConfiguration.getUrl() + "/videos/" + fileName;
         } catch (Exception e) {
             //TODO add exception here
             throw new ImageUploadException("");

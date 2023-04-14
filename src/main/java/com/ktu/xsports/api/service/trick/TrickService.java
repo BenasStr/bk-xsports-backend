@@ -9,6 +9,7 @@ import com.ktu.xsports.api.service.CategoryService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
+import java.time.LocalDate;
 import java.util.Optional;
 
 import static com.ktu.xsports.api.util.PublishStatus.NOT_PUBLISHED;
@@ -32,6 +33,7 @@ public class TrickService {
         Category category = categoryService.findCategory(sportId, categoryId);
         trick.setCategory(category);
         trick.setPublishStatus(NOT_PUBLISHED);
+        trick.setLastUpdated(LocalDate.now());
 
         Optional<Trick> existing = trickRepository.findByName(trick.getName());
         if(existing.isPresent()) {

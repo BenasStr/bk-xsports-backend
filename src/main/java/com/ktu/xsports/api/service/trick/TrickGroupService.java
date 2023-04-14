@@ -46,8 +46,7 @@ public class TrickGroupService {
 
     public TrickVariant createStandardTrick(long sportId, long categoryId, TrickVariant trickVariant) {
         Trick trick = trickService.createTrick(sportId, categoryId, trickVariant.getTrick());
-        trickVariant.setTrick(trick);
-        return trickVariantService.createStandardTrick(trickVariant);
+        return trickVariantService.createStandardTrick(trickVariant, trick);
     }
 
     public TrickVariant createTrick(long sportId, long categoryId, long trickId, TrickVariant trickVariant) {

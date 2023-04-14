@@ -75,8 +75,8 @@ public class CategoryController {
     @PostMapping("/{categoryId}/image")
     public ResponseEntity<?> uploadCategoryImage(
         @RequestParam("file") MultipartFile image,
-        @PathVariable Long categoryId,
-        @PathVariable Long sportId
+        @PathVariable long categoryId,
+        @PathVariable long sportId
     ) {
         Category category = categoryService.findCategory(sportId, categoryId);
         String fileName = category.getPhotoUrl() == null || category.getPhotoUrl().equals("") ?
