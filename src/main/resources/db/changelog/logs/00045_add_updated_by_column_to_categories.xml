@@ -10,7 +10,7 @@
         </preConditions>
         <comment>Add updated by column to categories.</comment>
 
-        <addColumn tableName="sports">
+        <addColumn tableName="categories">
             <column name="updated_by" type="int unsigned">
                 <constraints
                     foreignKeyName="updated_by_category_fk"
