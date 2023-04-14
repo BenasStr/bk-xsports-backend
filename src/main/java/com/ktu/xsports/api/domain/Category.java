@@ -7,6 +7,7 @@ import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
 import jakarta.persistence.OneToMany;
+import jakarta.persistence.OneToOne;
 import jakarta.validation.constraints.NotNull;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -44,4 +45,7 @@ public class Category {
 
     @OneToMany(mappedBy = "category")
     private List<Trick> trick;
+
+    @OneToOne(mappedBy = "updatedBy")
+    private Sport updates;
 }

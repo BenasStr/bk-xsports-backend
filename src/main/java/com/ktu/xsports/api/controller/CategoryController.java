@@ -49,8 +49,8 @@ public class CategoryController {
 
     @GetMapping("/{categoryId}")
     public ResponseEntity<?> findSportCategory(
-            @PathVariable long categoryId,
-            @PathVariable long sportId
+        @PathVariable long categoryId,
+        @PathVariable long sportId
     ) {
         log.info("Category get called.");
         Category category = categoryService.findCategory(sportId, categoryId);
@@ -62,8 +62,8 @@ public class CategoryController {
 
     @PostMapping()
     public ResponseEntity<?> createSportCategory(
-            @RequestBody @Valid CategoryRequest categoryRequest,
-            @PathVariable Long sportId
+        @RequestBody @Valid CategoryRequest categoryRequest,
+        @PathVariable Long sportId
     ) {
         log.info("Category create called.");
         Category newCategory = categoryService.createCategory(sportId, categoryRequest.toCategory());
@@ -91,9 +91,9 @@ public class CategoryController {
 
     @PutMapping("/{categoryId}")
     public ResponseEntity<?> updateSportCategory(
-            @PathVariable long categoryId,
-            @RequestBody @Valid CategoryRequest categoryRequest,
-            @PathVariable long sportId
+        @PathVariable long categoryId,
+        @RequestBody @Valid CategoryRequest categoryRequest,
+        @PathVariable long sportId
     ) {
         log.info("Category update called.");
         Category newCategory = categoryService.updateCategory(sportId, categoryRequest.toCategory(), categoryId);
