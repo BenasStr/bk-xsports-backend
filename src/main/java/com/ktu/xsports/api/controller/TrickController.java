@@ -119,7 +119,6 @@ public class TrickController {
         );
     }
 
-    //TODO this uploads, but doesn't save data into the database.
     @PostMapping("/{trickId}/video")
     public ResponseEntity<?> uploadTrickVideo(
         @PathVariable long categoryId,
@@ -127,15 +126,10 @@ public class TrickController {
         @PathVariable long trickId,
         @RequestParam MultipartFile file
     ) {
-        TrickVariant trickVariant = trickGroupService.findTrickById(sportId, categoryId, trickId);
-        String fileName = trickVariant.getVideoUrl() == null || trickVariant.getVideoUrl().equals("") ?
-            videoService.uploadVideo(file, TRICK_FILE+trickVariant.getId()) :
-            videoService.updateVideo(file, trickVariant.getVideoUrl());
-        trickVariant.setVideoUrl(fileName);
-//        trickGroupService.updateTrick(sportId, categoryId, trickId);
+        TrickVariant trickVariant = trickGroupService.uploadVideo(sportId, categoryId, trickId, file);
 
         return ResponseEntity.ok(
-            Map.of("data", fileName)
+            Map.of("data", trickVariant.getVideoUrl())
         );
     }
 

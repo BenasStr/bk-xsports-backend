@@ -6,12 +6,15 @@ import com.ktu.xsports.api.domain.TrickVariant;
 import com.ktu.xsports.api.domain.User;
 import com.ktu.xsports.api.service.CategoryService;
 import com.ktu.xsports.api.service.VariantService;
+import com.ktu.xsports.api.service.media.VideoService;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
+import org.springframework.web.multipart.MultipartFile;
 
 import java.util.List;
 
+import static com.ktu.xsports.api.util.Prefix.TRICK_FILE;
 import static com.ktu.xsports.api.util.PublishStatus.PUBLISHED;
 
 @Service
@@ -88,6 +91,11 @@ public class TrickGroupService {
             .orElseThrow(() -> new ServiceException("Given variant doesn't exist in this group!"));
 
         return trickVariantService.updateTrick(matchedVariant, trickVariant);
+    }
+
+    public TrickVariant uploadVideo(long sportId, long categoryId, long trickId, MultipartFile video) {
+        categoryService.findCategory(sportId, categoryId);
+        return trickVariantService.uploadVideo(categoryId, trickId, video);
     }
 
     @Transactional

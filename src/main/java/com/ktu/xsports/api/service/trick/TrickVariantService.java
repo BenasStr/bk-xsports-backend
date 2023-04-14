@@ -4,15 +4,18 @@ import com.ktu.xsports.api.advice.exceptions.ServiceException;
 import com.ktu.xsports.api.domain.Trick;
 import com.ktu.xsports.api.domain.TrickVariant;
 import com.ktu.xsports.api.domain.User;
+import com.ktu.xsports.api.service.media.VideoService;
 import com.ktu.xsports.api.specification.TrickVariantSpecification;
 import com.ktu.xsports.api.repository.TrickVariantRepository;
 import com.ktu.xsports.api.service.VariantService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
+import org.springframework.web.multipart.MultipartFile;
 
 import java.util.List;
 import java.util.concurrent.atomic.AtomicLong;
 
+import static com.ktu.xsports.api.util.Prefix.TRICK_FILE;
 import static com.ktu.xsports.api.util.PublishStatus.PUBLISHED;
 import static com.ktu.xsports.api.util.Role.USER;
 
@@ -21,6 +24,7 @@ import static com.ktu.xsports.api.util.Role.USER;
 public class TrickVariantService {
     private final TrickVariantRepository trickVariantRepository;
     private final VariantService variantService;
+    private final VideoService videoService;
 
     public List<TrickVariant> findTricks(long categoryId, String variant, String search, String publishStatus, String difficulty, User user) {
         TrickVariantSpecification spec;
@@ -129,19 +133,18 @@ public class TrickVariantService {
         return trickVariantRepository.save(trickVariant);
     }
 
+    public TrickVariant uploadVideo(long categoryId, long trickId, MultipartFile video) {
+        TrickVariant trickVariant = findTrickById(trickId, categoryId);
+        String fileName = trickVariant.getVideoUrl() == null || trickVariant.getVideoUrl().equals("") ?
+            videoService.uploadVideo(video, TRICK_FILE+trickVariant.getId()) :
+            videoService.updateVideo(video, trickVariant.getVideoUrl());
+        trickVariant.setVideoUrl(fileName);
+        return trickVariantRepository.save(trickVariant);
+    }
+
     public void removeTrickVariant(Long categoryId, Long trickId, Long variantId) {
         findTrickById(categoryId, variantId);
         trickVariantRepository.deleteById(variantId);
-    }
-
-
-    private void duplicateVariants(TrickVariant currentTrick, TrickVariant updatedVariant) {
-        currentTrick.getTrick().getTrickVariants()
-            .forEach(variant -> {
-                if (!variant.getVariant().getName().equals("Standard")) {
-                    duplicateVariant(currentTrick, updatedVariant.getTrick());
-                }
-            });
     }
 
     private void duplicateVariant(TrickVariant currentVariant, Trick trick) {
