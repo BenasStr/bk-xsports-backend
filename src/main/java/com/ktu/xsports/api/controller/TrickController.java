@@ -119,6 +119,7 @@ public class TrickController {
         );
     }
 
+    //TODO this uploads, but doesn't save data into the database.
     @PostMapping("/{trickId}/video")
     public ResponseEntity<?> uploadTrickVideo(
         @PathVariable long categoryId,
@@ -138,12 +139,13 @@ public class TrickController {
         );
     }
 
+    //TODo this doesn't work...
     @PutMapping("/{trickId}")
     public ResponseEntity<?> updateTrick(
         @RequestBody @Valid TrickRequest trickRequest,
-        @PathVariable Long trickId,
-        @PathVariable Long categoryId,
-        @PathVariable Long sportId
+        @PathVariable long trickId,
+        @PathVariable long categoryId,
+        @PathVariable long sportId
     ) {
         TrickVariant trick = trickRequest.toTrick();
         TrickVariant mainVariant = trickGroupService.updateStandardTrick(sportId, categoryId, trickId, trick);
@@ -152,13 +154,14 @@ public class TrickController {
         );
     }
 
+    //TODO this doesn't work...
     @PutMapping("/{trickId}/variant/{variantId}")
     public ResponseEntity<?> updateTrickVariant(
         @RequestBody @Valid TrickVariantRequest trickVariantRequest,
-        @PathVariable Long categoryId,
-        @PathVariable Long sportId,
-        @PathVariable Long trickId,
-        @PathVariable Long variantId
+        @PathVariable long categoryId,
+        @PathVariable long sportId,
+        @PathVariable long trickId,
+        @PathVariable long variantId
     ) {
         TrickVariant trickVariant = trickVariantRequest.toTrickVariant();
         TrickVariant variant = trickGroupService.updateTrick(sportId, categoryId, trickId, variantId, trickVariant);
@@ -167,11 +170,13 @@ public class TrickController {
         );
     }
 
+
+    //TODO update this
     @PutMapping("/{trickId}/progress")
     public ResponseEntity<?> updateTrickProgress (
-        @PathVariable Long categoryId,
-        @PathVariable Long sportId,
-        @PathVariable Long trickId,
+        @PathVariable long categoryId,
+        @PathVariable long sportId,
+        @PathVariable long trickId,
         @AuthenticationPrincipal User user
     ) {
         log.info("User is updating progress on trick!");
@@ -180,11 +185,13 @@ public class TrickController {
         return ResponseEntity.ok(Map.of("data", modelMapper.map(trick, TrickExtendedResponse.class)));
     }
 
+
+    //TODO this doesn't work...
     @DeleteMapping("/{trickId}")
     public ResponseEntity<?> deleteTrick(
-        @PathVariable Long trickId,
-        @PathVariable Long categoryId,
-        @PathVariable Long sportId
+        @PathVariable long trickId,
+        @PathVariable long categoryId,
+        @PathVariable long sportId
     ) {
         log.info("User is deleting trick!");
         trickGroupService.removeTrick(sportId, categoryId, trickId);

@@ -5,6 +5,7 @@ import com.ktu.xsports.api.domain.Trick;
 import com.ktu.xsports.api.domain.TrickVariant;
 import com.ktu.xsports.api.domain.User;
 import com.ktu.xsports.api.service.CategoryService;
+import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
@@ -44,6 +45,7 @@ public class TrickGroupService {
         return trickVariantService.findStandardTrickVariantById(trickId, categoryId);
     }
 
+    @Transactional
     public TrickVariant createStandardTrick(long sportId, long categoryId, TrickVariant trickVariant) {
         Trick trick = trickService.createTrick(sportId, categoryId, trickVariant.getTrick());
         return trickVariantService.createStandardTrick(trickVariant, trick);
