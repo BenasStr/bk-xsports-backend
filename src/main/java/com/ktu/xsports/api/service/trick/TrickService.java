@@ -44,6 +44,7 @@ public class TrickService {
 
     public Trick createTrickCopy(Trick currentTrick, Trick trick) {
         trick.setPublishStatus(UPDATED);
+        trick.setLastUpdated(LocalDate.now());
         trick.setCategory(currentTrick.getCategory());
         Trick updated = trickRepository.save(trick);
         currentTrick.setUpdatedBy(trick);
@@ -51,12 +52,13 @@ public class TrickService {
         return updated;
     }
 
-
     public Trick updateTrick(Trick currentTrick, Trick trick) {
         trick.setId(currentTrick.getId());
         trick.setPublishStatus(currentTrick.getPublishStatus());
         trick.setTrickVariants(currentTrick.getTrickVariants());
         trick.setTrickChildren(currentTrick.getTrickChildren());
+        trick.setCategory(currentTrick.getCategory());
+        trick.setLastUpdated(LocalDate.now());
         return trickRepository.save(trick);
     }
 

@@ -76,13 +76,9 @@ public class TrickVariantService {
             .forEach(variant -> {
                 TrickVariant updated;
                 if (variant.getVariant().getName().equals(trickVariant.getVariant().getName())) {
-                    updated = trickVariantRepository.save(TrickVariant.builder()
-                        .trick(trick)
-                        .shortDescription(trickVariant.getShortDescription())
-                        .description(trickVariant.getDescription())
-                        .videoUrl(variant.getVideoUrl())
-                        .variant(trickVariant.getVariant())
-                        .build());
+                    trickVariant.setTrick(trick);
+                    trickVariant.setVideoUrl(variant.getVideoUrl());
+                    updated = trickVariantRepository.save(trickVariant);
                 } else {
                     updated = trickVariantRepository.save(TrickVariant.builder()
                         .trick(trick)

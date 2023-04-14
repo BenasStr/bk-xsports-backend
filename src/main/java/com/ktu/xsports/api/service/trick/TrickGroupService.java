@@ -5,6 +5,7 @@ import com.ktu.xsports.api.domain.Trick;
 import com.ktu.xsports.api.domain.TrickVariant;
 import com.ktu.xsports.api.domain.User;
 import com.ktu.xsports.api.service.CategoryService;
+import com.ktu.xsports.api.service.VariantService;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -20,6 +21,7 @@ public class TrickGroupService {
     private final TrickVariantService trickVariantService;
     private final TrickProgressFilterService trickProgressFilterService;
     private final CategoryService categoryService;
+    private final VariantService variantService;
 
     public List<TrickVariant> findTricks(long sportId, long categoryId, String variant, String search, String publishStatus, String difficulty, User user) {
         categoryService.findCategory(sportId, categoryId);
@@ -51,15 +53,18 @@ public class TrickGroupService {
         return trickVariantService.createStandardTrick(trickVariant, trick);
     }
 
+    @Transactional
     public TrickVariant createTrick(long sportId, long categoryId, long trickId, TrickVariant trickVariant) {
         categoryService.findCategory(sportId, categoryId);
         return trickVariantService.createTrick(categoryId, trickId, trickVariant);
     }
 
+    @Transactional
     public TrickVariant updateStandardTrick(long sportId, long categoryId, long trickId, TrickVariant trickVariant) {
         TrickVariant currentTrick = findStandardTrickById(sportId, categoryId, trickId);
         if (currentTrick.getTrick().getPublishStatus().equals(PUBLISHED)) {
             Trick trick = trickService.createTrickCopy(currentTrick.getTrick(), trickVariant.getTrick());
+            trickVariant.setVariant(variantService.getStandardVariant());
             return trickVariantService.createVariantsCopies(currentTrick, trickVariant, trick);
         }
 
@@ -68,6 +73,7 @@ public class TrickGroupService {
         return trickVariantService.updateStandardTrick(currentTrick, trickVariant);
     }
 
+    @Transactional
     public TrickVariant updateTrick(long sportId, long categoryId, long trickId, long variantId, TrickVariant trickVariant) {
         TrickVariant currentTrick = findStandardTrickById(sportId, categoryId, trickId);
         if (currentTrick.getTrick().getPublishStatus().equals(PUBLISHED)) {
@@ -84,6 +90,7 @@ public class TrickGroupService {
         return trickVariantService.updateTrick(matchedVariant, trickVariant);
     }
 
+    @Transactional
     public void removeTrick(long sportId, long categoryId, long trickId) {
 
     }
