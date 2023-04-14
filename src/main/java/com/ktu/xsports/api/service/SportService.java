@@ -26,14 +26,13 @@ public class SportService {
     private final ImageService imageService;
     private final UserRepository userRepository;
     private final SportRepository sportRepository;
-    private boolean filterUpdated;
 
     public List<Sport> findSports(String search, String publishStatus, User user) {
         SportSpecification spec;
         if(user.getRole().equals(USER)) {
-            spec = new SportSpecification(search, PUBLISHED, false);
+            spec = new SportSpecification(search, PUBLISHED, true);
         } else {
-            spec = new SportSpecification(search, publishStatus, true);
+            spec = new SportSpecification(search, publishStatus, false);
         }
 
         return sportRepository.findAll(spec);
