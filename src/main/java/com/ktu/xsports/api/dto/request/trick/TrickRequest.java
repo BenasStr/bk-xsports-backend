@@ -43,7 +43,7 @@ public class TrickRequest {
         return TrickVariant.builder()
             .trick(Trick.builder()
                 .name(name)
-                .trickParents(trickParents)
+                .trickParents(trickParents == null ? List.of() : trickParents)
                 .trickChildren(List.of())
                 .trickVariants(List.of())
                 .difficulty(difficulty)
