@@ -63,7 +63,7 @@ public class CategoryController {
     @PostMapping()
     public ResponseEntity<?> createSportCategory(
         @RequestBody @Valid CategoryRequest categoryRequest,
-        @PathVariable Long sportId
+        @PathVariable long sportId
     ) {
         log.info("Category create called.");
         Category newCategory = categoryService.createCategory(sportId, categoryRequest.toCategory());

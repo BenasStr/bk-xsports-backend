@@ -8,15 +8,17 @@ import com.ktu.xsports.api.domain.User;
 import com.ktu.xsports.api.repository.CategoryRepository;
 import com.ktu.xsports.api.service.media.ImageService;
 import com.ktu.xsports.api.specification.CategorySpecification;
-import com.ktu.xsports.api.util.PublishStatus;
-import com.ktu.xsports.api.util.Role;
+import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
+import java.time.LocalDate;
 import java.util.List;
 import java.util.Optional;
 
+import static com.ktu.xsports.api.util.PublishStatus.NOT_PUBLISHED;
 import static com.ktu.xsports.api.util.PublishStatus.PUBLISHED;
+import static com.ktu.xsports.api.util.PublishStatus.UPDATED;
 import static com.ktu.xsports.api.util.Role.USER;
 
 @Service
@@ -29,9 +31,9 @@ public class CategoryService {
     public List<Category> findCategories(long sportId, String search, String publishStatus, User user) {
         CategorySpecification spec;
         if (user.getRole().equals(USER)) {
-            spec = new CategorySpecification(sportId, search, PUBLISHED);
+            spec = new CategorySpecification(sportId, search, PUBLISHED, true);
         } else {
-            spec = new CategorySpecification(sportId, search, publishStatus);
+            spec = new CategorySpecification(sportId, search, publishStatus, false);
         }
         return categoryRepository.findAll(spec);
     }
@@ -43,47 +45,74 @@ public class CategoryService {
 
     public Category createCategory(long sportId, Category category) {
         Sport sport = sportService.findSportById(sportId);
-
         Optional<Category> categoryExists = categoryRepository.findCategoryWithName(category.getName(), sportId);
         if (categoryExists.isPresent()) {
             throw new AlreadyExistsException(String.format("Category with name %s already exists.", category.getName()));
         }
 
         category.setSport(sport);
+        category.setPublishStatus(NOT_PUBLISHED);
+        category.setLastUpdated(LocalDate.now());
         return categoryRepository.save(category);
     }
 
+    @Transactional
     public Category updateCategory(long sportId, Category category, long categoryId) {
-       Sport sport = sportService.findSportById(sportId);
+        sportService.findSportById(sportId);
 
-        Optional<Category> categoryExists = categoryRepository.findCategoryWithName(category.getName(), sportId, categoryId);
-        if (categoryExists.isPresent()) {
+        Optional<Category> existingName = categoryRepository.findCategoryWithName(category.getName(), sportId, categoryId);
+        if (existingName.isPresent()) {
             throw new AlreadyExistsException(String.format("Category with name %s already exists.", category.getName()));
         }
 
+        Category existingCategory = findCategory(sportId, categoryId);
+        category.setLastUpdated(LocalDate.now());
+        category.setSport(existingCategory.getSport());
+        if (existingCategory.getPhotoUrl() != null) {
+            category.setPhotoUrl(existingCategory.getPhotoUrl());
+        }
+
+        if (existingCategory.getPublishStatus().equals(PUBLISHED)) {
+            category.setPublishStatus(UPDATED);
+            Category updated = categoryRepository.save(category);
+            existingCategory.setUpdatedBy(updated);
+            categoryRepository.save(existingCategory);
+            return categoryRepository.findById(updated.getId())
+                .orElseThrow(() -> new ServiceException("Failed updating category!"));
+        }
+
         category.setId(categoryId);
-        category.setSport(sport);
-        categoryRepository.findBySportIdAndId(sportId, categoryId)
-            .orElseThrow(() -> new ServiceException("Category doesn't exist"));
+        category.setPublishStatus(existingCategory.getPublishStatus());
         return categoryRepository.save(category);
     }
 
+    @Transactional
     public void removeCategory(long sportId, long id) {
-        categoryRepository.findBySportIdAndId(sportId, id)
-            .ifPresent(category -> {
-                if (category.getPhotoUrl() != null) {
+        Category category = findCategory(sportId, id);
+
+        if (category.getPublishStatus().equals(UPDATED)) {
+            Optional<Category> updated = categoryRepository.findUpdatedBy(category.getId());
+            if(updated.isPresent()) {
+                updated.get().setUpdatedBy(null);
+                categoryRepository.save(updated.get());
+                if(category.getPhotoUrl() != null &&
+                    updated.get().getUpdatedBy() != null &&
+                    !category.getPhotoUrl().equals(updated.get().getPhotoUrl())) {
                     imageService.deleteImage(category.getPhotoUrl());
                 }
-            });
-
-        try {
-            categoryRepository.deleteById(id);
-        } catch (Exception e) {
-            throw new ServiceException(String.format("Category doesn't exist: %d", id));
+            }
+        } else if (category.getUpdatedBy() != null) {
+            categoryRepository.findById(category.getId())
+                .ifPresent(updatedBy -> {
+                    updatedBy.setPublishStatus(PUBLISHED);
+                    categoryRepository.save(updatedBy);
+                });
         }
-    }
 
-    public boolean hasChanges(long sportId) {
-        return categoryRepository.containsChangedCategories(sportId);
+        if (category.getPhotoUrl() != null) {
+            imageService.deleteImage(category.getPhotoUrl());
+        }
+
+        categoryRepository.delete(category);
     }
 }

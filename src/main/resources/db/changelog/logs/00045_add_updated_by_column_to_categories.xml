@@ -14,7 +14,7 @@
             <column name="updated_by" type="int unsigned">
                 <constraints
                     foreignKeyName="updated_by_category_fk"
-                    references="sports(id)"/>
+                    references="categories(id)"/>
             </column>
         </addColumn>
     </changeSet>

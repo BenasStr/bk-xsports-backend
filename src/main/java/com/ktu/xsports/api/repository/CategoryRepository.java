@@ -1,6 +1,7 @@
 package com.ktu.xsports.api.repository;
 
 import com.ktu.xsports.api.domain.Category;
+import com.ktu.xsports.api.domain.Sport;
 import jakarta.validation.constraints.NotNull;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.JpaSpecificationExecutor;
@@ -19,6 +20,11 @@ public interface CategoryRepository extends JpaRepository<Category, Long>, JpaSp
         + "AND c.name LIKE %:search% "
         + "AND c.publishStatus = :publishStatus ")
     List<Category> findBySearchAndFilter(long sportId, String search, String publishStatus);
+
+    @Query(""
+        + "SELECT c FROM categories c "
+        + "WHERE c.updatedBy.id = :updatedBy ")
+    Optional<Category> findUpdatedBy(long updatedBy);
 
     Optional<Category> findBySportIdAndId(long sportId, long id);
 
