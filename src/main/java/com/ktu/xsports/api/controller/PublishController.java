@@ -4,6 +4,7 @@ import com.ktu.xsports.api.domain.Publish;
 import com.ktu.xsports.api.dto.request.PublishRequest;
 import com.ktu.xsports.api.dto.response.publish.PublishResponse;
 import com.ktu.xsports.api.service.PublishService;
+import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.modelmapper.ModelMapper;
@@ -47,7 +48,7 @@ public class PublishController {
 
     @PostMapping()
     public ResponseEntity<?> createPublish(
-        @RequestBody PublishRequest request
+        @RequestBody @Valid PublishRequest request
     ) {
         log.info("User is creating publish.");
         Publish publish = publishService.createPublish(request.toPublish());
@@ -62,7 +63,6 @@ public class PublishController {
         @PathVariable long id
     ) {
         log.info("User is publishing.");
-        publishService.publish(id);
         return ResponseEntity.noContent().build();
     }
 

@@ -9,8 +9,8 @@ import lombok.NoArgsConstructor;
 @Builder
 @AllArgsConstructor
 @NoArgsConstructor
-public class PublishItemResponse {
+public class PublishSportResponse {
     long id;
     String name;
-    String status;
+    PublishCategoryResponse category;
 }

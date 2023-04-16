@@ -31,7 +31,4 @@ public class Publish {
     private Category category;
 
     private LocalDate releaseDate;
-
-    @OneToOne
-    private TrickVariant trickVariant;
 }

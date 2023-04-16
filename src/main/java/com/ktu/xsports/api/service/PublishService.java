@@ -22,7 +22,6 @@ import static com.ktu.xsports.api.util.PublishStatus.PUBLISHED;
 public class PublishService {
 
     private final PublishRepository publishRepository;
-    private final TrickGroupService trickGroupService;
 
     public Publish findById(long id) {
         return publishRepository.findById(id)
@@ -34,20 +33,14 @@ public class PublishService {
     }
 
     public Publish createPublish(Publish publish) {
+        publish.setName(String.format("%s - %s", publish.getCategory().getSport().getName(), publish.getCategory().getName()));
         return publishRepository.save(publish);
     }
 
-    public void publish(long id) {
-        Publish publish = findById(id);
-        List<Trick> trickList = getAffectedTricks(publish.getTrickVariant());
-
-//        trickList.forEach(trickGroupService::publishTrick);
-    }
-
     public Publish updatePublish(Publish publish, long id) {
-        findById(id);
-
-        publish.setId(id);
+        Publish existing = findById(id);
+        publish.setId(existing.getId());
+        publish.setName(String.format("%s - %s", publish.getCategory().getSport().getName(), publish.getCategory().getName()));
         return publishRepository.save(publish);
     }
 

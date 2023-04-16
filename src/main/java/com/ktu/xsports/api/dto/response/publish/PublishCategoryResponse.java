@@ -1,16 +1,15 @@
 package com.ktu.xsports.api.dto.response.publish;
 
+import lombok.AllArgsConstructor;
+import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
-import java.time.LocalDate;
-import java.util.List;
-
 @Data
+@Builder
+@AllArgsConstructor
 @NoArgsConstructor
-public class PublishResponse {
+public class PublishCategoryResponse {
     long id;
     String name;
-    LocalDate releaseDate;
-    PublishSportResponse sport;
 }
