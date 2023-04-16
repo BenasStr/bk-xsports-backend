@@ -36,7 +36,6 @@ public class TrickController {
     private final TrickGroupService trickGroupService;
     private final ProgressService progressService;
     private final ResponseCleanerService responseCleanerService;
-    private final VideoService videoService;
     private final ModelMapper modelMapper;
 
     @GetMapping()
@@ -160,7 +159,7 @@ public class TrickController {
         TrickVariant trickVariant = trickVariantRequest.toTrickVariant();
         TrickVariant variant = trickGroupService.updateTrick(sportId, categoryId, trickId, variantId, trickVariant);
         return ResponseEntity.ok(
-            Map.of("data", modelMapper.map(variant, TrickExtendedResponse.class))
+            Map.of("data", modelMapper.map(variant, TrickBasicResponse.class))
         );
     }
 
@@ -179,8 +178,6 @@ public class TrickController {
         return ResponseEntity.ok(Map.of("data", modelMapper.map(trick, TrickExtendedResponse.class)));
     }
 
-
-    //TODO this doesn't work...
     @DeleteMapping("/{trickId}")
     public ResponseEntity<?> deleteTrick(
         @PathVariable long trickId,

@@ -80,7 +80,8 @@ public class TrickGroupService {
     public TrickVariant updateTrick(long sportId, long categoryId, long trickId, long variantId, TrickVariant trickVariant) {
         TrickVariant currentTrick = findStandardTrickById(sportId, categoryId, trickId);
         if (currentTrick.getTrick().getPublishStatus().equals(PUBLISHED)) {
-            Trick trick = trickService.createTrickCopy(currentTrick.getTrick(), trickVariant.getTrick());
+            Trick trick = trickService.createTrickCopy(currentTrick.getTrick());
+            trickVariant.setTrick(trick);
             return trickVariantService.createVariantsCopies(currentTrick, trickVariant, trick);
         }
 
@@ -100,6 +101,13 @@ public class TrickGroupService {
 
     @Transactional
     public void removeTrick(long sportId, long categoryId, long trickId) {
+        //TODO remove all variants if it's standard and the trick itself.
 
+        //TODO remove only that variant if it's
+
+        //TODO save video links and remove videos.
+
+        //TODO maybe implement DELETE publish state?
+        // Or should it say, that it will be deleted?
     }
 }

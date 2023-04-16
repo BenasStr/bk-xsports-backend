@@ -10,6 +10,8 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDate;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Optional;
 
 import static com.ktu.xsports.api.util.PublishStatus.NOT_PUBLISHED;
@@ -46,6 +48,20 @@ public class TrickService {
         trick.setPublishStatus(UPDATED);
         trick.setLastUpdated(LocalDate.now());
         trick.setCategory(currentTrick.getCategory());
+        Trick updated = trickRepository.save(trick);
+        currentTrick.setUpdatedBy(trick);
+        trickRepository.save(currentTrick);
+        return updated;
+    }
+
+    public Trick createTrickCopy(Trick currentTrick) {
+        Trick trick = Trick.builder()
+            .name(currentTrick.getName())
+            .difficulty(currentTrick.getDifficulty())
+            .category(currentTrick.getCategory())
+            .publishStatus(UPDATED)
+            .lastUpdated(LocalDate.now())
+            .build();
         Trick updated = trickRepository.save(trick);
         currentTrick.setUpdatedBy(trick);
         trickRepository.save(currentTrick);
