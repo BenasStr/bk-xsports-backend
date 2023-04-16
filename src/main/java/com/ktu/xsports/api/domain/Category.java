@@ -44,7 +44,7 @@ public class Category {
     private Sport sport;
 
     @OneToMany(mappedBy = "category")
-    private List<Trick> trick;
+    private List<Trick> tricks;
 
     @OneToOne
     @JoinColumn(name = "updated_by", referencedColumnName = "id")

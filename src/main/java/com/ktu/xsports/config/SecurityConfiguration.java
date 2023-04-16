@@ -124,6 +124,7 @@ public class SecurityConfiguration {
     private void publishEndpoints(HttpSecurity http) throws Exception {
         http.authorizeHttpRequests()
             .requestMatchers(GET, API_V1 + "/publish").hasAnyAuthority(ADMIN, MODERATOR)
+            .requestMatchers(GET, API_V1 + "/publish/categories").hasAnyAuthority(ADMIN, MODERATOR)
             .requestMatchers(POST, API_V1 + "/publish").hasAnyAuthority(ADMIN, MODERATOR)
             .requestMatchers(POST, API_V1 + "/publish/{id}").hasAnyAuthority(ADMIN)
             .requestMatchers(PUT, API_V1 + "/publish/{id}").hasAnyAuthority(ADMIN, MODERATOR)

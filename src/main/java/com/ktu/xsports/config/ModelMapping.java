@@ -1,10 +1,13 @@
 package com.ktu.xsports.config;
 
+import com.ktu.xsports.api.converter.publish.PublishToAvailableCategoriesResponse;
 import com.ktu.xsports.api.converter.publish.PublishToPublishResponse;
 import com.ktu.xsports.api.converter.trick.TrickVariantToTrickBasicResponseConverter;
 import com.ktu.xsports.api.converter.trick.TrickVariantToTrickResponseConverter;
 import com.ktu.xsports.api.domain.Publish;
+import com.ktu.xsports.api.domain.Sport;
 import com.ktu.xsports.api.domain.TrickVariant;
+import com.ktu.xsports.api.dto.response.publish.PublishAvailableCategoriesResponse;
 import com.ktu.xsports.api.dto.response.publish.PublishResponse;
 import com.ktu.xsports.api.dto.response.trick.TrickBasicResponse;
 import com.ktu.xsports.api.dto.response.trick.TrickExtendedResponse;
@@ -37,5 +40,8 @@ public class ModelMapping {
     private void publishToPublishResponse(ModelMapper modelMapper) {
         modelMapper.typeMap(Publish.class, PublishResponse.class)
             .addMappings(new PublishToPublishResponse());
+
+        modelMapper.typeMap(Sport.class, PublishAvailableCategoriesResponse.class)
+            .addMappings(new PublishToAvailableCategoriesResponse());
     }
 }

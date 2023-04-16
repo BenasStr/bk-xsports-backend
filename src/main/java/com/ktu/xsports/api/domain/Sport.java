@@ -42,6 +42,9 @@ public class Sport {
     @NotNull
     private LocalDate lastUpdated;
 
+    @OneToMany(mappedBy = "sport")
+    private List<Category> categories;
+
     @ManyToMany
     @JoinTable(
         name = "sports_variants",

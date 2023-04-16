@@ -30,6 +30,10 @@ public class CategoryService {
     private final CategoryRepository categoryRepository;
     private final SportService sportService;
 
+    public List<Category> findAll() {
+        return categoryRepository.findAll();
+    }
+
     public List<Category> findCategories(long sportId, String search, String publishStatus, User user) {
         CategorySpecification spec;
         if (user.getRole().equals(USER)) {

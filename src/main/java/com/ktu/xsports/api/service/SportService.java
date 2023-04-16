@@ -29,6 +29,10 @@ public class SportService {
     private final UserRepository userRepository;
     private final SportRepository sportRepository;
 
+    public List<Sport> findAll() {
+        return sportRepository.findAll();
+    }
+
     public List<Sport> findSports(String search, String publishStatus, User user) {
         SportSpecification spec;
         if(user.getRole().equals(USER)) {

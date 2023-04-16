@@ -1,7 +1,9 @@
 package com.ktu.xsports.api.service;
 
 import com.ktu.xsports.api.advice.exceptions.ServiceException;
+import com.ktu.xsports.api.domain.Category;
 import com.ktu.xsports.api.domain.Publish;
+import com.ktu.xsports.api.domain.Sport;
 import com.ktu.xsports.api.domain.Trick;
 import com.ktu.xsports.api.domain.TrickVariant;
 import com.ktu.xsports.api.repository.PublishRepository;
@@ -22,6 +24,7 @@ import static com.ktu.xsports.api.util.PublishStatus.PUBLISHED;
 public class PublishService {
 
     private final PublishRepository publishRepository;
+    private final SportService sportService;
 
     public Publish findById(long id) {
         return publishRepository.findById(id)
@@ -63,5 +66,23 @@ public class PublishService {
             trick.getTrickParents()
                 .forEach(parent -> addToTricksList(parent, trickList));
         }
+    }
+
+    public List<Sport> getPublishableItems() {
+        List<Sport> sports = sportService.findAll();
+
+        return sports.stream()
+            .filter(sport ->
+                sport.getCategories() != null
+                && sport.getCategories().stream()
+                    .filter(category ->
+                        category.getTricks() != null
+                        && category.getTricks().stream()
+                            .filter(trick -> trick.getPublishStatus().equals(PUBLISHED))
+                            .toList()
+                            .size() > 0
+                    ).toList()
+                    .size() > 0
+            ).toList();
     }
 }

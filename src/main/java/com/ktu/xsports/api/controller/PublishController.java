@@ -1,8 +1,12 @@
 package com.ktu.xsports.api.controller;
 
+import com.ktu.xsports.api.domain.Category;
 import com.ktu.xsports.api.domain.Publish;
+import com.ktu.xsports.api.domain.Sport;
 import com.ktu.xsports.api.dto.request.PublishRequest;
+import com.ktu.xsports.api.dto.response.publish.PublishAvailableCategoriesResponse;
 import com.ktu.xsports.api.dto.response.publish.PublishResponse;
+import com.ktu.xsports.api.dto.response.publish.PublishSportResponse;
 import com.ktu.xsports.api.service.PublishService;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
@@ -39,6 +43,19 @@ public class PublishController {
         List<Publish> publishes = publishService.getPublishes();
         List<PublishResponse> response = publishes.stream()
             .map(publish -> modelMapper.map(publish, PublishResponse.class))
+            .toList();
+
+        return ResponseEntity.ok(
+            Map.of("data", response)
+        );
+    }
+
+    @GetMapping("/categories")
+    public ResponseEntity<?> getPublishCategories() {
+        log.info("User is getting a list of publishable categories");
+        List<Sport> sports = publishService.getPublishableItems();
+        List<PublishAvailableCategoriesResponse> response = sports.stream()
+            .map(sport -> modelMapper.map(sport, PublishAvailableCategoriesResponse.class))
             .toList();
 
         return ResponseEntity.ok(
