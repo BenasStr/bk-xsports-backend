@@ -70,19 +70,22 @@ public class PublishService {
 
     public List<Sport> getPublishableItems() {
         List<Sport> sports = sportService.findAll();
+        sports.forEach(sport ->
+            sport.setCategories(sport.getCategories().stream()
+                .filter(category ->
+                    category.getTricks() != null
+                    && category.getTricks().stream()
+                        .filter(trick -> trick.getPublishStatus().equals(PUBLISHED))
+                        .toList()
+                        .size() > 0
+                ).toList()
+            )
+        );
 
         return sports.stream()
             .filter(sport ->
                 sport.getCategories() != null
-                && sport.getCategories().stream()
-                    .filter(category ->
-                        category.getTricks() != null
-                        && category.getTricks().stream()
-                            .filter(trick -> trick.getPublishStatus().equals(PUBLISHED))
-                            .toList()
-                            .size() > 0
-                    ).toList()
-                    .size() > 0
+                && sport.getCategories().size() > 0
             ).toList();
     }
 }
