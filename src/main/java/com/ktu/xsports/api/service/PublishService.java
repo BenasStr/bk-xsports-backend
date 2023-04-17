@@ -75,7 +75,7 @@ public class PublishService {
                 .filter(category ->
                     category.getTricks() != null
                     && category.getTricks().stream()
-                        .filter(trick -> trick.getPublishStatus().equals(PUBLISHED))
+                        .filter(trick -> !trick.getPublishStatus().equals(PUBLISHED))
                         .toList()
                         .size() > 0
                 ).toList()
