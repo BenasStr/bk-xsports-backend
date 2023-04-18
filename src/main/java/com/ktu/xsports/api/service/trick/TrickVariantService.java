@@ -147,15 +147,15 @@ public class TrickVariantService {
         trickVariantRepository.deleteById(variantId);
     }
 
-    private void duplicateVariant(TrickVariant currentVariant, Trick trick) {
-        trickVariantRepository.save(TrickVariant.builder()
-            .variant(currentVariant.getVariant())
-            .description(currentVariant.getDescription())
-            .shortDescription(currentVariant.getShortDescription())
-            .trick(trick)
-            .videoUrl(currentVariant.getVideoUrl())
-            .progress(currentVariant.getProgress())
-            .build()
-        );
+    public void removeVideos(Trick updated, Trick trickGroup) {
+        updated.getTrickVariants().forEach(u -> {
+            trickGroup.getTrickVariants().forEach(g -> {
+                if (u.getVariant().getName().equals(g.getVariant().getName())) {
+                    if (!u.getVideoUrl().equals(g.getVideoUrl())) {
+                        videoService.deleteVideo(u.getVideoUrl());
+                    }
+                }
+            });
+        });
     }
 }

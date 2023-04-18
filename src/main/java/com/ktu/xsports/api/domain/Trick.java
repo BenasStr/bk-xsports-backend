@@ -65,4 +65,7 @@ public class Trick {
     @OneToOne
     @JoinColumn(name = "updated_by", referencedColumnName = "id")
     private Trick updatedBy;
+
+    @OneToOne(mappedBy = "updatedBy")
+    private Trick updates;
 }

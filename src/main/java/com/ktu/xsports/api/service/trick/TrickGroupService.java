@@ -15,7 +15,10 @@ import org.springframework.web.multipart.MultipartFile;
 import java.util.List;
 
 import static com.ktu.xsports.api.util.Prefix.TRICK_FILE;
+import static com.ktu.xsports.api.util.PublishStatus.NOT_PUBLISHED;
 import static com.ktu.xsports.api.util.PublishStatus.PUBLISHED;
+import static com.ktu.xsports.api.util.PublishStatus.SCHEDULED;
+import static com.ktu.xsports.api.util.PublishStatus.UPDATED;
 
 @Service
 @RequiredArgsConstructor
@@ -108,6 +111,34 @@ public class TrickGroupService {
         //TODO save video links and remove videos.
 
         //TODO maybe implement DELETE publish state?
-        // Or should it say, that it will be deleted?
+        // or should it say, that it will be deleted?
+    }
+
+    @Transactional
+    public void publish(List<Trick> tricks) {
+        tricks.forEach(trick ->
+            trick.getTrickVariants()
+                .forEach(trickVariant -> {
+                    if (trickVariant.getTrick().getPublishStatus().equals(UPDATED)
+                        && trickVariant.getTrick().getUpdatedBy() != null
+                    ) {
+                        publishUpdatedTrickGroup(trickVariant);
+                    } else if (trickVariant.getTrick().getPublishStatus().equals(SCHEDULED)
+                        || trickVariant.getTrick().getPublishStatus().equals(NOT_PUBLISHED)) {
+                        publishCreatedTrickGroup(trickVariant);
+                    }
+                }
+            )
+        );
+    }
+
+    public void publishUpdatedTrickGroup(TrickVariant trickVariant) {
+        trickVariantService.removeVideos(trickVariant.getTrick().getUpdates(), trickVariant.getTrick());
+
+        trickService.publishUpdatedTrick(trickVariant.getTrick());
+    }
+
+    public void publishCreatedTrickGroup(TrickVariant trickVariant) {
+        trickService.publishCreatedTrick(trickVariant.getTrick());
     }
 }

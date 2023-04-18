@@ -80,6 +80,7 @@ public class PublishController {
         @PathVariable long id
     ) {
         log.info("User is publishing.");
+        publishService.publish(id);
         return ResponseEntity.noContent().build();
     }
 

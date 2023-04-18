@@ -78,23 +78,23 @@ public class TrickService {
         return trickRepository.save(trick);
     }
 
-    public Trick publishTrick(Trick trick) {
-        if (trick.getPublishStatus().equals(UPDATED)) {
-            //TODO add the case when object is updated. Delete published and add make this published instead.
-//            Trick updatedTrick = trickRepository
-            trick.setPublishStatus(PUBLISHED);
-
-            return null;
-        }
-
-        if (trick.getPublishStatus().equals(SCHEDULED) || trick.getPublishStatus().equals(NOT_PUBLISHED)) {
-            trick.setPublishStatus(PUBLISHED);
-            return trickRepository.save(trick);
-        }
-        throw new ServiceException("Published trick got into the publish list...");
-    }
-
     public void removeTrick(long sportId, long categoryId, long trickId) {
 
+    }
+
+    public void publishUpdatedTrick(Trick trick) {
+        Trick updated = trick.getUpdates();
+        trickRepository.delete(updated);
+
+        trick.setPublishStatus(PUBLISHED);
+        trick.setLastUpdated(LocalDate.now());
+        //I guess update progress here
+        trickRepository.save(trick);
+    }
+
+    public void publishCreatedTrick(Trick trick) {
+        trick.setPublishStatus(PUBLISHED);
+        trick.setLastUpdated(LocalDate.now());
+        trickRepository.save(trick);
     }
 }

@@ -4,6 +4,7 @@ import com.ktu.xsports.api.domain.Sport;
 import com.ktu.xsports.api.domain.User;
 import com.ktu.xsports.api.advice.exceptions.AlreadyExistsException;
 import com.ktu.xsports.api.advice.exceptions.ServiceException;
+import com.ktu.xsports.api.domain.Variant;
 import com.ktu.xsports.api.repository.SportRepository;
 import com.ktu.xsports.api.repository.UserRepository;
 import com.ktu.xsports.api.service.media.ImageService;
@@ -19,6 +20,7 @@ import java.util.*;
 import static com.ktu.xsports.api.util.Prefix.SPORT_FILE;
 import static com.ktu.xsports.api.util.PublishStatus.NOT_PUBLISHED;
 import static com.ktu.xsports.api.util.PublishStatus.PUBLISHED;
+import static com.ktu.xsports.api.util.PublishStatus.SCHEDULED;
 import static com.ktu.xsports.api.util.PublishStatus.UPDATED;
 import static com.ktu.xsports.api.util.Role.*;
 
@@ -166,5 +168,47 @@ public class SportService {
 
         user.getSports().remove(sport);
         userRepository.save(user);
+    }
+
+    public void publish(Sport sport) {
+        if (sport.getPublishStatus().equals(PUBLISHED)) {
+            if (sport.getUpdatedBy() == null) {
+                throw new ServiceException("Error occured while updating sport!");
+            }
+            publishUpdatedSport(sport);
+        } else if (sport.getPublishStatus().equals(NOT_PUBLISHED)
+                    || sport.getPublishStatus().equals(SCHEDULED)
+        ) {
+            publishCreatedSport(sport);
+        }
+    }
+
+    @Transactional
+    private void publishUpdatedSport(Sport sport) {
+        Sport updatedBy = sport.getUpdatedBy();
+
+        String imageName = sport.getPhotoUrl();
+        sport.setPhotoUrl(updatedBy.getPhotoUrl());
+        sport.setName(updatedBy.getName());
+        sport.setLastUpdated(LocalDate.now());
+        sport.setPublishStatus(PUBLISHED);
+        sport.setUpdatedBy(null);
+        sport.setVariants(new ArrayList<>(updatedBy.getVariants()));
+
+
+        sportRepository.save(sport);
+
+        if (imageName != null
+            && !imageName.equals(updatedBy.getPhotoUrl())) {
+            imageService.deleteImage(imageName);
+        }
+
+        sportRepository.delete(updatedBy);
+    }
+
+    private void publishCreatedSport(Sport sport) {
+        sport.setLastUpdated(LocalDate.now());
+        sport.setPublishStatus(PUBLISHED);
+        sportRepository.save(sport);
     }
 }

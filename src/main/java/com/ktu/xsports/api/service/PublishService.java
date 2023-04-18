@@ -25,6 +25,8 @@ public class PublishService {
 
     private final PublishRepository publishRepository;
     private final SportService sportService;
+    private final CategoryService categoryService;
+    private final TrickGroupService trickGroupService;
 
     public Publish findById(long id) {
         return publishRepository.findById(id)
@@ -52,22 +54,6 @@ public class PublishService {
         publishRepository.delete(existing);
     }
 
-    public List<Trick> getAffectedTricks(TrickVariant trickVariant) {
-        List<Trick> affectedTricks = new ArrayList<>();
-        addToTricksList(trickVariant.getTrick(), affectedTricks);
-        return affectedTricks;
-    }
-
-    private void addToTricksList(Trick trick, List<Trick> trickList) {
-        if (!trick.getPublishStatus().equals(PUBLISHED)) {
-            if (!trickList.contains(trick)) {
-                trickList.add(trick);
-            }
-            trick.getTrickParents()
-                .forEach(parent -> addToTricksList(parent, trickList));
-        }
-    }
-
     public List<Sport> getPublishableItems() {
         List<Sport> sports = sportService.findAll();
         sports.forEach(sport ->
@@ -88,4 +74,13 @@ public class PublishService {
                 && sport.getCategories().size() > 0
             ).toList();
     }
+
+    public void publish(long id) {
+        Publish publish = findById(id);
+        sportService.publish(publish.getCategory().getSport());
+        categoryService.publish(publish.getCategory());
+        trickGroupService.publish(publish.getCategory().getTricks());
+    }
+
+
 }

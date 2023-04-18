@@ -14,12 +14,14 @@ import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.time.LocalDate;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
 import static com.ktu.xsports.api.util.Prefix.CATEGORY_FILE;
 import static com.ktu.xsports.api.util.PublishStatus.NOT_PUBLISHED;
 import static com.ktu.xsports.api.util.PublishStatus.PUBLISHED;
+import static com.ktu.xsports.api.util.PublishStatus.SCHEDULED;
 import static com.ktu.xsports.api.util.PublishStatus.UPDATED;
 import static com.ktu.xsports.api.util.Role.USER;
 
@@ -129,5 +131,45 @@ public class CategoryService {
         }
 
         categoryRepository.delete(category);
+    }
+
+    public void publish(Category category) {
+        if (category.getPublishStatus().equals(PUBLISHED)) {
+            if (category.getUpdatedBy() == null) {
+                throw new ServiceException("Error occured while updating sport!");
+            }
+            publishUpdatedCategory(category);
+        } else if (category.getPublishStatus().equals(NOT_PUBLISHED)
+            || category.getPublishStatus().equals(SCHEDULED)
+        ) {
+            publishCreatedCategory(category);
+        }
+    }
+
+    @Transactional
+    private void publishUpdatedCategory(Category category) {
+        Category updatedBy = category.getUpdatedBy();
+
+        String imageName = category.getPhotoUrl();
+        category.setPhotoUrl(updatedBy.getPhotoUrl());
+        category.setName(updatedBy.getName());
+        category.setLastUpdated(LocalDate.now());
+        category.setPublishStatus(PUBLISHED);
+        category.setUpdatedBy(null);
+
+        categoryRepository.save(category);
+
+        if (imageName != null
+            && !imageName.equals(updatedBy.getPhotoUrl())) {
+            imageService.deleteImage(imageName);
+        }
+
+        categoryRepository.delete(updatedBy);
+    }
+
+    private void publishCreatedCategory(Category category) {
+        category.setLastUpdated(LocalDate.now());
+        category.setPublishStatus(PUBLISHED);
+        categoryRepository.save(category);
     }
 }
