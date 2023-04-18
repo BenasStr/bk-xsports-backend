@@ -24,10 +24,12 @@ public class TrickRequest {
     @NotNull(message = "Missing name")
     private String name;
 
+    @NotNull
     @JsonProperty("trickParentsIds")
     @JsonDeserialize(converter = IdsToTricksConverter.class)
     private List<Trick> trickParents;
 
+    @NotNull
     @JsonProperty("difficultyId")
     @JsonDeserialize(converter = IdToDifficultyConverter.class)
     private Difficulty difficulty;
