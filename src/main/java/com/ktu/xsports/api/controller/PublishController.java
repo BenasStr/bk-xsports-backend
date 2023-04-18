@@ -75,14 +75,17 @@ public class PublishController {
         );
     }
 
-    @PostMapping("/{id}")
+    @PostMapping("/now/sport/{sportId}/category/{categoryId}")
     public ResponseEntity<?> publish(
-        @PathVariable long id
+        @PathVariable long categoryId,
+        @PathVariable long sportId
     ) {
         log.info("User is publishing.");
-        publishService.publish(id);
+        publishService.publishByCategory(sportId, categoryId);
         return ResponseEntity.noContent().build();
     }
+
+    @PostMapping()
 
     @PutMapping("/{id}")
     public ResponseEntity<?> updatePublish(

@@ -82,5 +82,10 @@ public class PublishService {
         trickGroupService.publish(publish.getCategory().getTricks());
     }
 
-
+    public void publishByCategory(long sportId, long categoryId) {
+        Category category = categoryService.findCategory(sportId, categoryId);
+        sportService.publish(category.getSport());
+        categoryService.publish(category);
+        trickGroupService.publish(category.getTricks());
+    }
 }

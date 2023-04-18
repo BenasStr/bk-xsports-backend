@@ -126,7 +126,7 @@ public class SecurityConfiguration {
             .requestMatchers(GET, API_V1 + "/publish").hasAnyAuthority(ADMIN, MODERATOR)
             .requestMatchers(GET, API_V1 + "/publish/categories").hasAnyAuthority(ADMIN, MODERATOR)
             .requestMatchers(POST, API_V1 + "/publish").hasAnyAuthority(ADMIN, MODERATOR)
-            .requestMatchers(POST, API_V1 + "/publish/{id}").hasAnyAuthority(ADMIN)
+            .requestMatchers(POST, API_V1 + "/publish/now/sport/{sportId}/category/{categoryId}").hasAnyAuthority(ADMIN)
             .requestMatchers(PUT, API_V1 + "/publish/{id}").hasAnyAuthority(ADMIN, MODERATOR)
             .requestMatchers(DELETE, API_V1 + "/publish/{id}").hasAnyAuthority(ADMIN, MODERATOR);
     }
