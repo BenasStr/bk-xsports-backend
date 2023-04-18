@@ -4,6 +4,7 @@ import com.ktu.xsports.api.advice.exceptions.ServiceException;
 import com.ktu.xsports.api.domain.Trick;
 import com.ktu.xsports.api.domain.TrickVariant;
 import com.ktu.xsports.api.domain.User;
+import com.ktu.xsports.api.domain.Variant;
 import com.ktu.xsports.api.service.media.VideoService;
 import com.ktu.xsports.api.specification.TrickVariantSpecification;
 import com.ktu.xsports.api.repository.TrickVariantRepository;
@@ -147,11 +148,18 @@ public class TrickVariantService {
         trickVariantRepository.deleteById(variantId);
     }
 
+    public void removeTrickVariants(List<TrickVariant> trickVariants) {
+        trickVariants.forEach(trickVariant ->
+            trickVariantRepository.deleteById(trickVariant.getId()));
+    }
+
     public void removeVideos(Trick updated, Trick trickGroup) {
         updated.getTrickVariants().forEach(u -> {
             trickGroup.getTrickVariants().forEach(g -> {
                 if (u.getVariant().getName().equals(g.getVariant().getName())) {
-                    if (!u.getVideoUrl().equals(g.getVideoUrl())) {
+                    if (u.getVideoUrl() != null
+                        && g.getVideoUrl() != null
+                        && !u.getVideoUrl().equals(g.getVideoUrl())) {
                         videoService.deleteVideo(u.getVideoUrl());
                     }
                 }

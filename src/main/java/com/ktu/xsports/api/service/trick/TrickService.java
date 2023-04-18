@@ -6,6 +6,7 @@ import com.ktu.xsports.api.advice.exceptions.ServiceException;
 import com.ktu.xsports.api.domain.TrickVariant;
 import com.ktu.xsports.api.repository.TrickRepository;
 import com.ktu.xsports.api.service.CategoryService;
+import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
@@ -25,6 +26,11 @@ public class TrickService {
 
     private final TrickRepository trickRepository;
     private final CategoryService categoryService;
+
+    public Trick findTrick(long id) {
+        return trickRepository.findById(id)
+            .orElseThrow(() -> new ServiceException("Trick not found!"));
+    }
 
     public Trick findTrick(long trickId, long categoryId) {
         return trickRepository.findById(categoryId, trickId)
@@ -82,14 +88,20 @@ public class TrickService {
 
     }
 
+    @Transactional
     public void publishUpdatedTrick(Trick trick) {
         Trick updated = trick.getUpdates();
-        trickRepository.delete(updated);
+        updated.setTrickChildren(null);
+        updated.setTrickVariants(null);
+        updated.setUpdatedBy(null);
 
         trick.setPublishStatus(PUBLISHED);
         trick.setLastUpdated(LocalDate.now());
-        //I guess update progress here
+        trick.setUpdates(null);
+
+        trickRepository.save(updated);
         trickRepository.save(trick);
+        trickRepository.deleteById(updated.getId());
     }
 
     public void publishCreatedTrick(Trick trick) {

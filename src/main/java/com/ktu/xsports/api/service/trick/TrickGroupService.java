@@ -114,31 +114,28 @@ public class TrickGroupService {
         // or should it say, that it will be deleted?
     }
 
-    @Transactional
     public void publish(List<Trick> tricks) {
-        tricks.forEach(trick ->
-            trick.getTrickVariants()
-                .forEach(trickVariant -> {
-                    if (trickVariant.getTrick().getPublishStatus().equals(UPDATED)
-                        && trickVariant.getTrick().getUpdatedBy() != null
-                    ) {
-                        publishUpdatedTrickGroup(trickVariant);
-                    } else if (trickVariant.getTrick().getPublishStatus().equals(SCHEDULED)
-                        || trickVariant.getTrick().getPublishStatus().equals(NOT_PUBLISHED)) {
-                        publishCreatedTrickGroup(trickVariant);
-                    }
+        List<Long> modifiedTricksIds = tricks.stream()
+                .filter(trick -> !trick.getPublishStatus().equals(PUBLISHED))
+                .map(Trick::getId)
+                .toList();
+
+        publishAll(modifiedTricksIds);
+    }
+
+    public void publishAll(List<Long> ids) {
+        ids.forEach(id -> {
+                Trick trick = trickService.findTrick(id);
+
+                if (trick.getPublishStatus().equals(UPDATED)) {
+                    trickVariantService.removeVideos(trick.getUpdates(), trick);
+                    trickVariantService.removeTrickVariants(trick.getUpdates().getTrickVariants());
+                    trickService.publishUpdatedTrick(trick);
+                } else if (trick.getPublishStatus().equals(SCHEDULED)
+                    || trick.getPublishStatus().equals(NOT_PUBLISHED)) {
+                    trickService.publishCreatedTrick(trick);
                 }
-            )
+            }
         );
-    }
-
-    public void publishUpdatedTrickGroup(TrickVariant trickVariant) {
-        trickVariantService.removeVideos(trickVariant.getTrick().getUpdates(), trickVariant.getTrick());
-
-        trickService.publishUpdatedTrick(trickVariant.getTrick());
-    }
-
-    public void publishCreatedTrickGroup(TrickVariant trickVariant) {
-        trickService.publishCreatedTrick(trickVariant.getTrick());
     }
 }
