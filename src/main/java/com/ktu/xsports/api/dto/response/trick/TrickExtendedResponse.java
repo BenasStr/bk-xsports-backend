@@ -11,7 +11,7 @@ import java.util.List;
 @Data
 @NoArgsConstructor
 public class TrickExtendedResponse extends TrickBasicResponse {
-    String video;
+    String videoUrl;
     String description;
     String variantsCreated;
     LocalDate lastUpdated;

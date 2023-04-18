@@ -30,6 +30,7 @@ public class SportToSportResponse extends PropertyMap<Sport, SportResponse> {
                         .filter(trick -> !trick.getPublishStatus().equals(PUBLISHED))
                         .findFirst()
                         .orElse(null) != null
+                    || !category.getPublishStatus().equals(PUBLISHED)
                 ).findFirst()
                 .orElse(null) == null ? PUBLISHED : UPDATED;
         }

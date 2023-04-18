@@ -90,18 +90,13 @@ public class TrickService {
 
     @Transactional
     public void publishUpdatedTrick(Trick trick) {
-        Trick updated = trick.getUpdates();
-        updated.setTrickChildren(null);
-        updated.setTrickVariants(null);
-        updated.setUpdatedBy(null);
-
         trick.setPublishStatus(PUBLISHED);
         trick.setLastUpdated(LocalDate.now());
-        trick.setUpdates(null);
-
-        trickRepository.save(updated);
         trickRepository.save(trick);
-        trickRepository.deleteById(updated.getId());
+    }
+
+    public void removeUpdatedTrick(Trick trick) {
+        trickRepository.delete(trick);
     }
 
     public void publishCreatedTrick(Trick trick) {

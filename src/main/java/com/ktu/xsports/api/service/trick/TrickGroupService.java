@@ -130,7 +130,9 @@ public class TrickGroupService {
                 if (trick.getPublishStatus().equals(UPDATED)) {
                     trickVariantService.removeVideos(trick.getUpdates(), trick);
                     trickVariantService.removeTrickVariants(trick.getUpdates().getTrickVariants());
+                    Trick updated = trickService.findTrick(trick.getUpdates().getId());
                     trickService.publishUpdatedTrick(trick);
+                    trickService.removeUpdatedTrick(updated);
                 } else if (trick.getPublishStatus().equals(SCHEDULED)
                     || trick.getPublishStatus().equals(NOT_PUBLISHED)) {
                     trickService.publishCreatedTrick(trick);
