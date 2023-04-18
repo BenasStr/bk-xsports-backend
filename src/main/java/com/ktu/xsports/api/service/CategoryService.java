@@ -134,10 +134,8 @@ public class CategoryService {
     }
 
     public void publish(Category category) {
-        if (category.getPublishStatus().equals(PUBLISHED)) {
-            if (category.getUpdatedBy() == null) {
-                throw new ServiceException("Error occured while updating sport!");
-            }
+        if (category.getPublishStatus().equals(PUBLISHED)
+            && category.getUpdatedBy() != null) {
             publishUpdatedCategory(category);
         } else if (category.getPublishStatus().equals(NOT_PUBLISHED)
             || category.getPublishStatus().equals(SCHEDULED)

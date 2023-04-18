@@ -171,10 +171,8 @@ public class SportService {
     }
 
     public void publish(Sport sport) {
-        if (sport.getPublishStatus().equals(PUBLISHED)) {
-            if (sport.getUpdatedBy() == null) {
-                throw new ServiceException("Error occured while updating sport!");
-            }
+        if (sport.getPublishStatus().equals(PUBLISHED)
+            && sport.getUpdatedBy() != null) {
             publishUpdatedSport(sport);
         } else if (sport.getPublishStatus().equals(NOT_PUBLISHED)
                     || sport.getPublishStatus().equals(SCHEDULED)
