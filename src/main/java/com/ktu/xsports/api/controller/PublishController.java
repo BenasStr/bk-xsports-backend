@@ -85,8 +85,6 @@ public class PublishController {
         return ResponseEntity.noContent().build();
     }
 
-    @PostMapping()
-
     @PutMapping("/{id}")
     public ResponseEntity<?> updatePublish(
         @RequestBody PublishRequest request,
