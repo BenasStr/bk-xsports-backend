@@ -56,8 +56,8 @@ public class TrickVariantToTrickResponseConverter extends PropertyMap<TrickVaria
     }
 
     private String mapVariantsCreated(TrickVariant trickVariant) {
-        int variantsCount = trickVariant.getTrick().getCategory().getSport().getVariants().size() + 1;
-        int variantsCreated = trickVariant.getTrick().getTrickVariants().size();
+        int variantsCount = trickVariant.getTrick().getCategory().getSport().getVariants().size();
+        int variantsCreated = trickVariant.getTrick().getTrickVariants().size() - 1;
 
         return String.format("%d/%d", variantsCreated, variantsCount);
     }

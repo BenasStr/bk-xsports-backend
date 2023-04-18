@@ -13,5 +13,6 @@ public class CategoryResponse {
     String photo;
     long sportId;
     String publishStatus;
+    int tricksCount;
     LocalDate lastUpdated;
 }

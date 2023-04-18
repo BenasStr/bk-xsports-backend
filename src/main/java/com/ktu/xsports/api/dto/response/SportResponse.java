@@ -14,5 +14,6 @@ public class SportResponse {
     String photo;
     String publishStatus;
     LocalDate lastUpdated;
+    int categoriesCount;
     List<VariantResponse> variants;
 }
