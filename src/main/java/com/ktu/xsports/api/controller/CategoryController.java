@@ -32,6 +32,7 @@ public class CategoryController {
     private final ImageService imageService;
     private final ModelMapper modelMapper;
 
+    //TODO change filtering a bit.
     @GetMapping()
     public ResponseEntity<?> findSportsCategories(
         @PathVariable long sportId,

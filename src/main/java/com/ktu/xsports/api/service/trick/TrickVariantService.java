@@ -4,7 +4,6 @@ import com.ktu.xsports.api.advice.exceptions.ServiceException;
 import com.ktu.xsports.api.domain.Trick;
 import com.ktu.xsports.api.domain.TrickVariant;
 import com.ktu.xsports.api.domain.User;
-import com.ktu.xsports.api.domain.Variant;
 import com.ktu.xsports.api.service.media.VideoService;
 import com.ktu.xsports.api.specification.TrickVariantSpecification;
 import com.ktu.xsports.api.repository.TrickVariantRepository;
@@ -27,13 +26,14 @@ public class TrickVariantService {
     private final VariantService variantService;
     private final VideoService videoService;
 
-    public List<TrickVariant> findTricks(long categoryId, String variant, String search, String publishStatus, String difficulty, User user) {
+    public List<TrickVariant> findTricks(long categoryId, String variant, String search, String publishStatus, String difficulty, boolean missingVideo, User user) {
         TrickVariantSpecification spec;
         if (user.getRole().equals(USER)) {
             spec = TrickVariantSpecification.builder()
                 .categoryId(categoryId)
                 .search(search)
                 .publishStatus(PUBLISHED)
+                .filterUpdated(false)
                 .filterUpdated(false)
                 .build();
             return trickVariantRepository.findAll(spec);
@@ -45,6 +45,7 @@ public class TrickVariantService {
             .publishStatus(publishStatus)
             .variant(variant)
             .filterUpdated(true)
+            .missingVideo(missingVideo)
             .build();
         return trickVariantRepository.findAll(spec);
     }

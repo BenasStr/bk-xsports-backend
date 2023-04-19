@@ -1,5 +1,6 @@
 package com.ktu.xsports.api.service;
 
+import com.ktu.xsports.api.domain.Sport;
 import com.ktu.xsports.api.domain.User;
 import com.ktu.xsports.api.advice.exceptions.ServiceException;
 import com.ktu.xsports.api.repository.UserRepository;
@@ -87,5 +88,12 @@ public class UserService {
         }
         userRepository.delete(deletedUser);
         return deletedUser;
+    }
+
+    public void removeSportFromUserList(Sport sport, long userId) {
+        log.info("Removing sport from user list.");
+        User user = findById(userId);
+        user.getSports().remove(sport);
+        userRepository.save(user);
     }
 }

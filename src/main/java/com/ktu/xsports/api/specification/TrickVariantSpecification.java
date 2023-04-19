@@ -26,6 +26,8 @@ public class TrickVariantSpecification implements Specification<TrickVariant> {
     private String publishStatus;
     private String variant;
     private boolean filterUpdated;
+    private boolean missingVideo;
+    private boolean missingVariants;
 
     @Override
     public Predicate toPredicate(Root<TrickVariant> root, CriteriaQuery<?> query, CriteriaBuilder criteriaBuilder) {
@@ -56,6 +58,14 @@ public class TrickVariantSpecification implements Specification<TrickVariant> {
         if (filterUpdated) {
             predicates.add(criteriaBuilder.isNull(trickJoin.get("updatedBy")));
         }
+
+        if (missingVideo) {
+            predicates.add(criteriaBuilder.isNotNull(root.get("videoUrl")));
+        }
+
+//        if (missingVariants) {
+//            predicates.add(criteriaBuilder.);
+//        }
 
         return criteriaBuilder.and(predicates.toArray(new Predicate[0]));
     }

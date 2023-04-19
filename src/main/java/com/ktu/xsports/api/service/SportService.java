@@ -30,6 +30,7 @@ public class SportService {
     private final ImageService imageService;
     private final UserRepository userRepository;
     private final SportRepository sportRepository;
+    private final UserService userService;
 
     public List<Sport> findAll() {
         return sportRepository.findAll();
@@ -46,23 +47,40 @@ public class SportService {
         return sportRepository.findAll(spec);
     }
 
-    public List<Sport> findMySports(User user)
+    public List<Sport> findMySports(long userId)
     {
-        return userRepository.findById(user.getId())
-            .orElseThrow(() -> new ServiceException("User does not exist."))
-            .getSports();
-        //TODO this will be hard to update.
+        User user = userService.findById(userId);
+
+        if (user.getRole().equals(USER)) {
+            return user.getSports()
+                .stream()
+                .filter(sport -> sport.getPublishStatus().equals(PUBLISHED))
+                .toList();
+        }
+
+        return user.getSports()
+            .stream()
+            .filter(sport -> sport.getUpdatedBy() == null)
+            .toList();
     }
 
-    public List<Sport> findExploreSports(User userId) {
-        SportSpecification spec;
+    public List<Sport> findExploreSports(long userId) {
+        User user = userService.findById(userId);
 
-        if (userId.getRole().equals(USER)) {
-            spec = SportSpecification.builder()
-                .isBasicUser(true)
-                .build();
+        if (user.getRole().equals(USER)) {
+            return sportRepository.findAll()
+                .stream()
+                .filter(sport ->
+                    sport.getPublishStatus().equals(PUBLISHED)
+                    && !user.getSports().contains(sport))
+                .toList();
         }
-        return sportRepository.findExploreSports(userId.getId());
+
+        return sportRepository.findAll().stream()
+            .filter(sport ->
+                sport.getUpdatedBy() == null
+                && !user.getSports().contains(sport))
+            .toList();
     }
 
     public void addSportToUserList(int sportId, String email) {
@@ -161,13 +179,11 @@ public class SportService {
         sportRepository.delete(sport);
     }
 
-    public void removeMyListSport(long sportId, User user) {
+    public void removeMyListSport(long sportId, long userId) {
         Sport sport = sportRepository.findById(sportId).orElseThrow(() ->
                 new ServiceException(String.format("Sport with id %d does not exist", sportId))
             );
-
-        user.getSports().remove(sport);
-        userRepository.save(user);
+        userService.removeSportFromUserList(sport, userId);
     }
 
     public void publish(Sport sport) {

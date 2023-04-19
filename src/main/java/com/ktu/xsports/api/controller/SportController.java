@@ -4,7 +4,6 @@ import com.ktu.xsports.api.domain.Sport;
 import com.ktu.xsports.api.domain.User;
 import com.ktu.xsports.api.dto.request.SportRequest;
 import com.ktu.xsports.api.dto.response.SportResponse;
-import com.ktu.xsports.api.service.media.ImageService;
 import com.ktu.xsports.api.service.SportService;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
@@ -28,7 +27,6 @@ import java.util.List;
 import java.util.Map;
 
 import static com.ktu.xsports.api.util.ApiVersionPrefix.*;
-import static com.ktu.xsports.api.util.Prefix.SPORT_FILE;
 
 @Validated
 @RestController
@@ -38,9 +36,9 @@ import static com.ktu.xsports.api.util.Prefix.SPORT_FILE;
 public class SportController {
 
     private final SportService sportService;
-    private final ImageService imageService;
     private final ModelMapper modelMapper;
 
+    //TODO change filtering a bit
     @GetMapping()
     public ResponseEntity<?> findSports(
         @RequestParam(defaultValue = "") String search,
@@ -60,7 +58,7 @@ public class SportController {
         @AuthenticationPrincipal User user
     ) {
         log.info("finding my sports");
-        List<Sport> sports = sportService.findMySports(user);
+        List<Sport> sports = sportService.findMySports(user.getId());
         List<SportResponse> sportResponse = sports.stream().map(
             sport -> modelMapper.map(sport, SportResponse.class)
         ).toList();
@@ -70,7 +68,7 @@ public class SportController {
     @GetMapping("/my_list/explore")
     public ResponseEntity<?> findAllExploreTricks(@AuthenticationPrincipal User user) {
         log.info("Finding explorable sports.");
-        List<Sport> sports = sportService.findExploreSports(user);
+        List<Sport> sports = sportService.findExploreSports(user.getId());
         List<SportResponse> sportResponse = sports.stream().map(
             sport -> modelMapper.map(sport, SportResponse.class)
         ).toList();
@@ -140,7 +138,7 @@ public class SportController {
         @RequestParam("sportId") int sportId
     ) {
         log.info("removing sport from my list");
-        sportService.removeMyListSport(sportId, user);
+        sportService.removeMyListSport(sportId, user.getId());
         return ResponseEntity.noContent().build();
     }
 }

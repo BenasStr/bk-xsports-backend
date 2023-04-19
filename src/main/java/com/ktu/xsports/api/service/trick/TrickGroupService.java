@@ -29,9 +29,9 @@ public class TrickGroupService {
     private final CategoryService categoryService;
     private final VariantService variantService;
 
-    public List<TrickVariant> findTricks(long sportId, long categoryId, String variant, String search, String publishStatus, String difficulty, User user) {
+    public List<TrickVariant> findTricks(long sportId, long categoryId, String variant, String search, String publishStatus, String difficulty, boolean missingVideo, User user) {
         categoryService.findCategory(sportId, categoryId);
-        List<TrickVariant> tricks = trickVariantService.findTricks(categoryId, variant, search, publishStatus, difficulty, user);
+        List<TrickVariant> tricks = trickVariantService.findTricks(categoryId, variant, search, publishStatus, difficulty, missingVideo, user);
         trickProgressFilterService.filterProgressByUser(tricks, user.getId());
         return tricks;
     }

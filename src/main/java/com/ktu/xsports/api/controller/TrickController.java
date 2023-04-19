@@ -47,10 +47,11 @@ public class TrickController {
         @RequestParam(defaultValue = "false") Boolean extended,
         @RequestParam(defaultValue = "") String search,
         @RequestParam(defaultValue = "") String publishStatus,
-        @RequestParam(defaultValue = "") String difficulty
+        @RequestParam(defaultValue = "") String difficulty,
+        @RequestParam(defaultValue = "false") boolean missingVideo
     ) {
         log.info("User is fetching multiple tricks.");
-        List<TrickVariant> tricks = trickGroupService.findTricks(sportId, categoryId, variant, search, publishStatus, difficulty, user);
+        List<TrickVariant> tricks = trickGroupService.findTricks(sportId, categoryId, variant, search, publishStatus, difficulty, missingVideo, user);
 
         List<?> trickResponses;
         if (extended) {
@@ -132,7 +133,6 @@ public class TrickController {
         );
     }
 
-    //TODo this doesn't work...
     @PutMapping("/{trickId}")
     public ResponseEntity<?> updateTrick(
         @RequestBody @Valid TrickRequest trickRequest,
@@ -147,7 +147,6 @@ public class TrickController {
         );
     }
 
-    //TODO this doesn't work...
     @PutMapping("/{trickId}/variant/{variantId}")
     public ResponseEntity<?> updateTrickVariant(
         @RequestBody @Valid TrickVariantRequest trickVariantRequest,
