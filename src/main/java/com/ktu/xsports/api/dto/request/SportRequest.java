@@ -26,7 +26,7 @@ public class SportRequest {
     public Sport toSport() {
         return Sport.builder()
             .name(name)
-            .variants(variants)
+            .variants(variants == null ? List.of() : variants)
             .categories(List.of())
             .users(List.of())
             .build();

@@ -1,9 +1,12 @@
 package com.ktu.xsports.api.converter.sport;
 
+import com.ktu.xsports.api.domain.Category;
 import com.ktu.xsports.api.domain.Sport;
 import com.ktu.xsports.api.dto.response.SportResponse;
 import org.modelmapper.PropertyMap;
 import org.springframework.stereotype.Component;
+
+import java.util.List;
 
 import static com.ktu.xsports.api.util.PublishStatus.PUBLISHED;
 import static com.ktu.xsports.api.util.PublishStatus.UPDATED;
@@ -38,6 +41,14 @@ public class SportToSportResponse extends PropertyMap<Sport, SportResponse> {
     }
 
     private int mapCategoriesCount(Sport sport) {
-        return sport.getCategories().size();
+        return sport.getPublishStatus().equals(UPDATED) ?
+            countCategories(sport.getUpdates().getCategories()) :
+            countCategories(sport.getCategories());
+    }
+
+    private int countCategories(List<Category> categories) {
+        return (int) categories.stream()
+            .filter(category -> !category.getPublishStatus().equals(UPDATED))
+            .count();
     }
 }

@@ -14,7 +14,6 @@ import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.time.LocalDate;
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
@@ -37,6 +36,9 @@ public class CategoryService {
     }
 
     public List<Category> findCategories(long sportId, String search, String publishStatus, User user) {
+        Sport sport = sportService.findSportById(sportId);
+        sportId = sport.getUpdates() == null ? sport.getId() : sport.getUpdates().getId();
+
         CategorySpecification spec;
         if (user.getRole().equals(USER)) {
             spec = new CategorySpecification(sportId, search, PUBLISHED, true);
@@ -47,6 +49,9 @@ public class CategoryService {
     }
 
     public Category findCategory(long sportId, long categoryId) {
+        Sport sport = sportService.findSportById(sportId);
+        sportId = sport.getUpdates() == null ? sport.getId() : sport.getUpdates().getId();
+
         return categoryRepository.findBySportIdAndId(sportId, categoryId)
             .orElseThrow(() -> new ServiceException("Category doesn't exist"));
     }

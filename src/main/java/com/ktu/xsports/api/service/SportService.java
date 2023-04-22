@@ -11,6 +11,7 @@ import com.ktu.xsports.api.service.media.ImageService;
 import com.ktu.xsports.api.specification.SportSpecification;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
@@ -18,6 +19,7 @@ import java.time.LocalDate;
 import java.util.*;
 
 import static com.ktu.xsports.api.util.Prefix.SPORT_FILE;
+import static com.ktu.xsports.api.util.PublishStatus.DELETED;
 import static com.ktu.xsports.api.util.PublishStatus.NOT_PUBLISHED;
 import static com.ktu.xsports.api.util.PublishStatus.PUBLISHED;
 import static com.ktu.xsports.api.util.PublishStatus.SCHEDULED;
@@ -26,6 +28,7 @@ import static com.ktu.xsports.api.util.Role.*;
 
 @Service
 @RequiredArgsConstructor
+@Slf4j
 public class SportService {
     private final ImageService imageService;
     private final UserRepository userRepository;
@@ -104,10 +107,6 @@ public class SportService {
     }
 
     public Sport createSport(Sport sport) {
-        Optional<Sport> existingSport = sportRepository.findByName(sport.getName());
-        if(existingSport.isPresent()) {
-            throw new AlreadyExistsException(String.format("Sport with name %s already exists", sport.getName()));
-        }
         sport.setPublishStatus(NOT_PUBLISHED);
         sport.setLastUpdated(LocalDate.now());
         return sportRepository.save(sport);
@@ -115,11 +114,6 @@ public class SportService {
 
     @Transactional
     public Sport updateSport(Sport sport, long id) {
-        Optional<Sport> existingName = sportRepository.findByNameAndNotId(sport.getName(), id);
-        if (existingName.isPresent()) {
-            throw new AlreadyExistsException(String.format("Sport with name %s already exists", sport.getName()));
-        }
-
         Sport existingSport = findSportById(id);
         sport.setLastUpdated(LocalDate.now());
         if (existingSport.getPhotoUrl() != null) {
@@ -154,29 +148,23 @@ public class SportService {
         Sport sport = findSportById(id);
 
         if (sport.getPublishStatus().equals(UPDATED)) {
-            Optional<Sport> updated = sportRepository.findUpdatedBy(sport.getId());
-            if(updated.isPresent()) {
-                updated.get().setUpdatedBy(null);
-                sportRepository.save(updated.get());
-                if(sport.getPhotoUrl() != null &&
-                    updated.get().getUpdatedBy() != null &&
-                    !sport.getPhotoUrl().equals(updated.get().getPhotoUrl())) {
-                    imageService.deleteImage(sport.getPhotoUrl());
-                }
+            Sport updated = findSportById(sport.getUpdates().getId());
+            updated.setUpdatedBy(null);
+            sportRepository.save(updated);
+            if(!sport.getPhotoUrl().equals(updated.getPhotoUrl())) {
+                imageService.deleteImage(sport.getPhotoUrl());
             }
-        } else if (sport.getUpdatedBy() != null) {
-            sportRepository.findById(sport.getId())
-                .ifPresent(updatedBy -> {
-                    updatedBy.setPublishStatus(PUBLISHED);
-                    sportRepository.save(updatedBy);
-                });
+            sportRepository.deleteById(sport.getId());
+        } else if (sport.getPublishStatus().equals(PUBLISHED)) {
+            if (sport.getCategories().size() == 0) {
+                sport.setPublishStatus(DELETED);
+                sportRepository.save(sport);
+            } else {
+                throw new ServiceException("Can't delete sport it contains categories!");
+            }
+        } else {
+            sportRepository.deleteById(sport.getId());
         }
-
-        if (sport.getPhotoUrl() != null) {
-            imageService.deleteImage(sport.getPhotoUrl());
-        }
-
-        sportRepository.delete(sport);
     }
 
     public void removeMyListSport(long sportId, long userId) {
@@ -194,10 +182,11 @@ public class SportService {
                     || sport.getPublishStatus().equals(SCHEDULED)
         ) {
             publishCreatedSport(sport);
+        } else if (sport.getPublishStatus().equals(DELETED)) {
+            publishDeleteSport(sport);
         }
     }
 
-    @Transactional
     private void publishUpdatedSport(Sport sport) {
         Sport updatedBy = sport.getUpdatedBy();
 
@@ -209,20 +198,29 @@ public class SportService {
         sport.setUpdatedBy(null);
         sport.setVariants(new ArrayList<>(updatedBy.getVariants()));
 
-
         sportRepository.save(sport);
 
         if (imageName != null
             && !imageName.equals(updatedBy.getPhotoUrl())) {
+            log.info("Uga buga :(");
             imageService.deleteImage(imageName);
         }
 
-        sportRepository.delete(updatedBy);
+        publishRemoveCopy(updatedBy.getId());
+    }
+
+    private void publishRemoveCopy(long copySportId) {
+        Sport copy = findSportById(copySportId);
+        sportRepository.deleteById(copy.getId());
     }
 
     private void publishCreatedSport(Sport sport) {
         sport.setLastUpdated(LocalDate.now());
         sport.setPublishStatus(PUBLISHED);
         sportRepository.save(sport);
+    }
+
+    private void publishDeleteSport(Sport sport) {
+        sportRepository.deleteById(sport.getId());
     }
 }
