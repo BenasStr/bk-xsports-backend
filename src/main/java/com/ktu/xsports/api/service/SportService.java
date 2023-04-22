@@ -183,7 +183,7 @@ public class SportService {
         ) {
             publishCreatedSport(sport);
         } else if (sport.getPublishStatus().equals(DELETED)) {
-            publishDeleteSport(sport);
+            sportRepository.deleteById(sport.getId());
         }
     }
 
@@ -218,9 +218,5 @@ public class SportService {
         sport.setLastUpdated(LocalDate.now());
         sport.setPublishStatus(PUBLISHED);
         sportRepository.save(sport);
-    }
-
-    private void publishDeleteSport(Sport sport) {
-        sportRepository.deleteById(sport.getId());
     }
 }

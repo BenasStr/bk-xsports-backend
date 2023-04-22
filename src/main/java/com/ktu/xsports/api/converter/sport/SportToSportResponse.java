@@ -17,15 +17,15 @@ public class SportToSportResponse extends PropertyMap<Sport, SportResponse> {
     @Override
     protected void configure() {
         using(context ->
-            mapSportStatus((Sport) context.getSource())
-        ).map(source, destination.getPublishStatus());
+            mapSportContentStatus((Sport) context.getSource())
+        ).map(source, destination.getContentStatus());
 
         using(context ->
             mapCategoriesCount((Sport) context.getSource())
         ).map(source, destination.getCategoriesCount());
     }
 
-    private String mapSportStatus(Sport sport) {
+    private String mapSportContentStatus(Sport sport) {
         if (sport.getPublishStatus().equals(PUBLISHED)) {
             return sport.getCategories().stream()
                 .filter(category ->

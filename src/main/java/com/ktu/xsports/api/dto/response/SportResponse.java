@@ -13,6 +13,7 @@ public class SportResponse {
     String name;
     String photo;
     String publishStatus;
+    String contentStatus;
     LocalDate lastUpdated;
     int categoriesCount;
     List<VariantResponse> variants;
