@@ -34,6 +34,7 @@ public class CategoryToCategoryResponse extends PropertyMap<Category, CategoryRe
 
     private int mapTricksCount(Category category) {
         return (int) category.getTricks().stream()
+            .filter(trick -> trick.getUpdatedBy() == null)
             .mapToLong(trick -> trick.getTrickVariants().size())
             .sum();
     }

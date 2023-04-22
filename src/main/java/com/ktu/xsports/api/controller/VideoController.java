@@ -24,8 +24,10 @@ public class VideoController {
         log.info(String.format("Sending video: %s", fileName));
         byte[] video = videoService.getVideo(fileName);
         HttpHeaders headers = new HttpHeaders();
-        headers.setContentType(MediaType.APPLICATION_OCTET_STREAM);
-        headers.setContentLength(video.length);
+        headers.add("Content-Type", "video/mp4");
+        headers.add("Content-Length", String.valueOf(video.length));
+        headers.add("Cache-Control", "no-cache");
+        headers.add("Accept-Ranges", "bytes");
         return new ResponseEntity<>(video, headers, HttpStatus.OK);
     }
 }
