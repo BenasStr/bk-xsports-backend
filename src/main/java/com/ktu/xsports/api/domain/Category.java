@@ -39,10 +39,12 @@ public class Category {
     @NotNull
     private LocalDate lastUpdated;
 
+    @NotNull
     @ManyToOne
     @JoinColumn(name = "sport_id", nullable = false)
     private Sport sport;
 
+    @NotNull
     @OneToMany(mappedBy = "category")
     private List<Trick> tricks;
 

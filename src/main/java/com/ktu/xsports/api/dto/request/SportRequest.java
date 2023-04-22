@@ -27,6 +27,8 @@ public class SportRequest {
         return Sport.builder()
             .name(name)
             .variants(variants)
+            .categories(List.of())
+            .users(List.of())
             .build();
     }
 }

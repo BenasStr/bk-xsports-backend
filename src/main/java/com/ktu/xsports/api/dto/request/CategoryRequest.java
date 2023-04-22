@@ -6,6 +6,8 @@ import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
+import java.util.List;
+
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
@@ -16,7 +18,8 @@ public class CategoryRequest {
 
     public Category toCategory() {
         return Category.builder()
-                .name(name)
-                .build();
+            .name(name)
+            .tricks(List.of())
+            .build();
     }
 }

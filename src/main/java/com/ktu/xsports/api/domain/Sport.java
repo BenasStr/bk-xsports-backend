@@ -42,9 +42,11 @@ public class Sport {
     @NotNull
     private LocalDate lastUpdated;
 
+    @NotNull
     @OneToMany(mappedBy = "sport")
     private List<Category> categories;
 
+    @NotNull
     @ManyToMany
     @JoinTable(
         name = "sports_variants",
@@ -54,6 +56,10 @@ public class Sport {
             referencedColumnName = "id")
     )
     private List<Variant> variants;
+
+    @NotNull
+    @ManyToMany(mappedBy = "sports")
+    private List<User> users;
 
     @OneToOne
     @JoinColumn(name = "updated_by", referencedColumnName = "id")
