@@ -36,18 +36,19 @@ public class SportService {
     private final UserService userService;
 
     public List<Sport> findAll() {
-        return sportRepository.findAll();
+        List<Sport> sports = sportRepository.findAll();
+        return applyUpdatedFieldsToSports(sports);
     }
 
     public List<Sport> findSports(String search, String publishStatus, User user) {
         SportSpecification spec;
         if(user.getRole().equals(USER)) {
             spec = new SportSpecification(search, PUBLISHED, true);
-        } else {
-            spec = new SportSpecification(search, publishStatus, false);
+            return sportRepository.findAll(spec);
         }
-
-        return sportRepository.findAll(spec);
+        spec = new SportSpecification(search, publishStatus, false);
+        List<Sport> sports = sportRepository.findAll(spec);
+        return applyUpdatedFieldsToSports(sports);
     }
 
     public List<Sport> findMySports(long userId)
@@ -60,11 +61,11 @@ public class SportService {
                 .filter(sport -> sport.getPublishStatus().equals(PUBLISHED))
                 .toList();
         }
-
-        return user.getSports()
+        List<Sport> sports = user.getSports()
             .stream()
-            .filter(sport -> sport.getUpdatedBy() == null)
+            .filter(sport -> !sport.getPublishStatus().equals(UPDATED))
             .toList();
+        return applyUpdatedFieldsToSports(sports);
     }
 
     public List<Sport> findExploreSports(long userId) {
@@ -79,11 +80,12 @@ public class SportService {
                 .toList();
         }
 
-        return sportRepository.findAll().stream()
+        List<Sport> sports = sportRepository.findAll().stream()
             .filter(sport ->
-                sport.getUpdatedBy() == null
+                !sport.getPublishStatus().equals(UPDATED)
                 && !user.getSports().contains(sport))
             .toList();
+        return applyUpdatedFieldsToSports(sports);
     }
 
     public void addSportToUserList(int sportId, String email) {
@@ -112,25 +114,37 @@ public class SportService {
         return sportRepository.save(sport);
     }
 
-    @Transactional
     public Sport updateSport(Sport sport, long id) {
         Sport existingSport = findSportById(id);
         sport.setLastUpdated(LocalDate.now());
+
         if (existingSport.getPhotoUrl() != null) {
             sport.setPhotoUrl(existingSport.getPhotoUrl());
         }
 
         if (existingSport.getPublishStatus().equals(PUBLISHED)) {
-            sport.setPublishStatus(UPDATED);
-            Sport updated = sportRepository.save(sport);
-            existingSport.setUpdatedBy(updated);
-            sportRepository.save(existingSport);
-            return sportRepository.findById(updated.getId())
-                .orElseThrow(() -> new ServiceException("Failed updating sport!"));
+            if (existingSport.getUpdatedBy() == null) {
+                return updatePublishedSport(sport, existingSport);
+            }
+            return updateUpdatedSport(sport, existingSport);
         }
 
         sport.setId(id);
         sport.setPublishStatus(existingSport.getPublishStatus());
+        return sportRepository.save(sport);
+    }
+
+    @Transactional
+    private Sport updatePublishedSport(Sport sport, Sport published) {
+        sport.setPublishStatus(UPDATED);
+        sport = sportRepository.save(sport);
+        published.setUpdatedBy(sport);
+        return sportRepository.save(published);
+    }
+
+    private Sport updateUpdatedSport(Sport sport, Sport updated) {
+        sport.setId(updated.getUpdatedBy().getId());
+        sport.setPublishStatus(UPDATED);
         return sportRepository.save(sport);
     }
 
@@ -143,28 +157,46 @@ public class SportService {
         return sportRepository.save(sport);
     }
 
-    @Transactional
     public void removeSport(long id) {
         Sport sport = findSportById(id);
 
-        if (sport.getPublishStatus().equals(UPDATED)) {
-            Sport updated = findSportById(sport.getUpdates().getId());
-            updated.setUpdatedBy(null);
-            sportRepository.save(updated);
-            if(!sport.getPhotoUrl().equals(updated.getPhotoUrl())) {
-                imageService.deleteImage(sport.getPhotoUrl());
+        if (sport.getPublishStatus().equals(PUBLISHED)) {
+            if (sport.getUpdatedBy() == null) {
+                removePublishedSport(sport);
+                return;
             }
-            sportRepository.deleteById(sport.getId());
-        } else if (sport.getPublishStatus().equals(PUBLISHED)) {
-            if (sport.getCategories().size() == 0) {
-                sport.setPublishStatus(DELETED);
-                sportRepository.save(sport);
-            } else {
-                throw new ServiceException("Can't delete sport it contains categories!");
-            }
-        } else {
-            sportRepository.deleteById(sport.getId());
+            removeUpdatedSport(sport);
+            return;
         }
+
+        if (sport.getCategories().size() != 0) {
+            throw new ServiceException("Can't delete sport, because it contains categories!");
+        }
+        userService.removeSportFromModerators(sport);
+        sportRepository.deleteById(sport.getId());
+    }
+
+    private void removePublishedSport(Sport published) {
+        if (published.getCategories().size() != 0) {
+            throw new ServiceException("Can't delete sport, because it contains categories!");
+        }
+        userService.removeSportsFromAllUsers(published);
+    }
+
+    @Transactional
+    private void removeUpdatedSport(Sport sport) {
+        Sport updated = sport.getUpdatedBy();
+        sport.setUpdatedBy(null);
+        sportRepository.save(sport);
+
+        if (sport.getPhotoUrl() != null
+            && updated.getPhotoUrl() != null
+            && !updated.getPhotoUrl().equals(sport.getPhotoUrl())) {
+            imageService.deleteImage(sport.getPhotoUrl());
+        }
+
+        userService.removeSportFromModerators(updated);
+        sportRepository.deleteById(updated.getId());
     }
 
     public void removeMyListSport(long sportId, long userId) {
@@ -202,7 +234,6 @@ public class SportService {
 
         if (imageName != null
             && !imageName.equals(updatedBy.getPhotoUrl())) {
-            log.info("Uga buga :(");
             imageService.deleteImage(imageName);
         }
 
@@ -218,5 +249,25 @@ public class SportService {
         sport.setLastUpdated(LocalDate.now());
         sport.setPublishStatus(PUBLISHED);
         sportRepository.save(sport);
+    }
+
+    public List<Sport> applyUpdatedFieldsToSports(List<Sport> sports) {
+        return sports.stream()
+            .map(this::applyUpdatedFieldsToSport)
+            .toList();
+    }
+
+    private Sport applyUpdatedFieldsToSport(Sport sport) {
+        if (!sport.getPublishStatus().equals(PUBLISHED)
+            || sport.getUpdatedBy() == null) {
+            return sport;
+        }
+        Sport updated = sport.getUpdatedBy();
+        sport.setName(updated.getName());
+        sport.setPhotoUrl(updated.getPhotoUrl());
+        sport.setPublishStatus(updated.getPublishStatus());
+        sport.setLastUpdated(updated.getLastUpdated());
+        sport.setVariants(updated.getVariants());
+        return sport;
     }
 }

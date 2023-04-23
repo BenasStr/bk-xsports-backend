@@ -55,14 +55,7 @@ public class Sport {
     )
     private List<Variant> variants;
 
-    @NotNull
-    @ManyToMany(mappedBy = "sports")
-    private List<User> users;
-
     @OneToOne
     @JoinColumn(name = "updated_by", referencedColumnName = "id")
     private Sport updatedBy;
-
-    @OneToOne(mappedBy = "updatedBy")
-    private Sport updates;
 }

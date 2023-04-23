@@ -96,4 +96,24 @@ public class UserService {
         user.getSports().remove(sport);
         userRepository.save(user);
     }
+
+    public void removeSportsFromAllUsers(Sport sport) {
+        List<User> users = userRepository.findAll();
+        users.forEach(user -> {
+            if (user.getSports().contains(sport)) {
+                user.getSports().remove(sport);
+                userRepository.save(user);
+            }
+        });
+    }
+
+    public void removeSportFromModerators(Sport sport) {
+        List<User> users = userRepository.findAllModerators();
+        users.forEach(user -> {
+            if (user.getSports().contains(sport)) {
+                user.getSports().remove(sport);
+                userRepository.save(user);
+            }
+        });
+    }
 }

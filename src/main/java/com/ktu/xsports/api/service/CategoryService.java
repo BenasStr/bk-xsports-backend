@@ -2,7 +2,6 @@ package com.ktu.xsports.api.service;
 
 import com.ktu.xsports.api.domain.Category;
 import com.ktu.xsports.api.domain.Sport;
-import com.ktu.xsports.api.advice.exceptions.AlreadyExistsException;
 import com.ktu.xsports.api.advice.exceptions.ServiceException;
 import com.ktu.xsports.api.domain.User;
 import com.ktu.xsports.api.repository.CategoryRepository;
@@ -18,6 +17,7 @@ import java.util.List;
 import java.util.Optional;
 
 import static com.ktu.xsports.api.util.Prefix.CATEGORY_FILE;
+import static com.ktu.xsports.api.util.PublishStatus.DELETED;
 import static com.ktu.xsports.api.util.PublishStatus.NOT_PUBLISHED;
 import static com.ktu.xsports.api.util.PublishStatus.PUBLISHED;
 import static com.ktu.xsports.api.util.PublishStatus.SCHEDULED;
@@ -37,7 +37,9 @@ public class CategoryService {
 
     public List<Category> findCategories(long sportId, String search, String publishStatus, User user) {
         Sport sport = sportService.findSportById(sportId);
-        sportId = sport.getUpdates() == null ? sport.getId() : sport.getUpdates().getId();
+//        sportId = sport.getUpdates() == null ?
+//            sport.getId() :
+//            sport.getUpdates().getId();
 
         CategorySpecification spec;
         if (user.getRole().equals(USER)) {
@@ -50,7 +52,7 @@ public class CategoryService {
 
     public Category findCategory(long sportId, long categoryId) {
         Sport sport = sportService.findSportById(sportId);
-        sportId = sport.getUpdates() == null ? sport.getId() : sport.getUpdates().getId();
+//        sportId = sport.getUpdates() == null ? sport.getId() : sport.getUpdates().getId();
 
         return categoryRepository.findBySportIdAndId(sportId, categoryId)
             .orElseThrow(() -> new ServiceException("Category doesn't exist"));
@@ -58,11 +60,6 @@ public class CategoryService {
 
     public Category createCategory(long sportId, Category category) {
         Sport sport = sportService.findSportById(sportId);
-        Optional<Category> categoryExists = categoryRepository.findCategoryWithName(category.getName(), sportId);
-        if (categoryExists.isPresent()) {
-            throw new AlreadyExistsException(String.format("Category with name %s already exists.", category.getName()));
-        }
-
         category.setSport(sport);
         category.setPublishStatus(NOT_PUBLISHED);
         category.setLastUpdated(LocalDate.now());
@@ -73,14 +70,10 @@ public class CategoryService {
     public Category updateCategory(long sportId, Category category, long categoryId) {
         sportService.findSportById(sportId);
 
-        Optional<Category> existingName = categoryRepository.findCategoryWithName(category.getName(), sportId, categoryId);
-        if (existingName.isPresent()) {
-            throw new AlreadyExistsException(String.format("Category with name %s already exists.", category.getName()));
-        }
-
         Category existingCategory = findCategory(sportId, categoryId);
         category.setLastUpdated(LocalDate.now());
         category.setSport(existingCategory.getSport());
+        category.setUpdates(existingCategory.getUpdates());
         if (existingCategory.getPhotoUrl() != null) {
             category.setPhotoUrl(existingCategory.getPhotoUrl());
         }
@@ -108,6 +101,8 @@ public class CategoryService {
         return categoryRepository.save(category);
     }
 
+
+    //TODO look at this one tomorrow
     @Transactional
     public void removeCategory(long sportId, long id) {
         Category category = findCategory(sportId, id);
@@ -146,6 +141,8 @@ public class CategoryService {
             || category.getPublishStatus().equals(SCHEDULED)
         ) {
             publishCreatedCategory(category);
+        } else if (category.getPublishStatus().equals(DELETED)) {
+            categoryRepository.deleteById(category.getId());
         }
     }
 
@@ -166,7 +163,6 @@ public class CategoryService {
             && !imageName.equals(updatedBy.getPhotoUrl())) {
             imageService.deleteImage(imageName);
         }
-
         categoryRepository.delete(updatedBy);
     }
 

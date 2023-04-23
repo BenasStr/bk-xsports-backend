@@ -41,9 +41,9 @@ public class SportToSportResponse extends PropertyMap<Sport, SportResponse> {
     }
 
     private int mapCategoriesCount(Sport sport) {
-        return sport.getPublishStatus().equals(UPDATED) ?
-            countCategories(sport.getUpdates().getCategories()) :
-            countCategories(sport.getCategories());
+        return (int) sport.getCategories().stream()
+            .filter(category -> !category.getPublishStatus().equals(UPDATED))
+            .count();
     }
 
     private int countCategories(List<Category> categories) {

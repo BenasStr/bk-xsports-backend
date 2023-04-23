@@ -28,7 +28,6 @@ public class SportRequest {
             .name(name)
             .variants(variants == null ? List.of() : variants)
             .categories(List.of())
-            .users(List.of())
             .build();
     }
 }

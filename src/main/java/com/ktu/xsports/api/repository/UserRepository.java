@@ -8,6 +8,7 @@ import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.mapping.model.SpELExpressionEvaluator;
 import org.springframework.stereotype.Repository;
 
+import java.util.List;
 import java.util.Optional;
 
 @Repository
@@ -30,4 +31,10 @@ public interface UserRepository extends JpaRepository<User, Long> {
         + "SELECT u FROM users u "
         + "WHERE u.role = :role ")
     Page<User> findByRole(String role, Pageable pageable);
+
+    @Query(""
+        + "SELECT u FROM users u "
+        + "WHERE u.role = 'ADMIN' "
+        + "OR u.role = 'MODERATOR' ")
+    List<User> findAllModerators();
 }

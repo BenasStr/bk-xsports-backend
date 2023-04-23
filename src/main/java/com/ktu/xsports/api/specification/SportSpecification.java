@@ -14,6 +14,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import static com.ktu.xsports.api.util.PublishStatus.PUBLISHED;
+import static com.ktu.xsports.api.util.PublishStatus.UPDATED;
 
 @Builder
 @AllArgsConstructor
@@ -34,9 +35,9 @@ public class SportSpecification implements Specification<Sport> {
         }
 
         if (isBasicUser) {
-            predicates.add(criteriaBuilder.equal(root.get(publishStatus), PUBLISHED));
+            predicates.add(criteriaBuilder.equal(root.get("publishStatus"), PUBLISHED));
         } else {
-            predicates.add(criteriaBuilder.isNull(root.get("updatedBy")));
+            predicates.add(criteriaBuilder.notEqual(root.get("publishStatus"), UPDATED));
         }
 
         return criteriaBuilder.and(predicates.toArray(new Predicate[0]));
