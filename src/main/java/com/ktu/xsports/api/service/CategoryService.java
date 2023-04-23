@@ -14,7 +14,6 @@ import org.springframework.web.multipart.MultipartFile;
 
 import java.time.LocalDate;
 import java.util.List;
-import java.util.Optional;
 
 import static com.ktu.xsports.api.util.Prefix.CATEGORY_FILE;
 import static com.ktu.xsports.api.util.PublishStatus.DELETED;
@@ -70,6 +69,7 @@ public class CategoryService {
 
         Category existingCategory = findCategory(sportId, categoryId);
         category.setLastUpdated(LocalDate.now());
+        category.setSport(existingCategory.getSport());
 
         if (existingCategory.getPhotoUrl() != null) {
             category.setPhotoUrl(existingCategory.getPhotoUrl());
@@ -112,7 +112,8 @@ public class CategoryService {
 
     @Transactional
     public void removeCategory(long sportId, long id) {
-        Category category = findCategory(sportId, id);
+        Category category = categoryRepository.findBySportIdAndId(sportId, id)
+            .orElseThrow(() -> new ServiceException("Category does not exist!"));
 
         if (category.getPublishStatus().equals(PUBLISHED)) {
             if (category.getUpdatedBy() == null) {
@@ -216,6 +217,6 @@ public class CategoryService {
         category.setPhotoUrl(updated.getPhotoUrl());
         category.setPublishStatus(updated.getPublishStatus());
         category.setLastUpdated(updated.getLastUpdated());
-        return updated;
+        return category;
     }
 }

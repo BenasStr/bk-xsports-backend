@@ -9,6 +9,8 @@ import jakarta.persistence.criteria.Root;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import org.springframework.data.jpa.domain.Specification;
+import org.springframework.security.core.parameters.P;
+import org.springframework.security.core.userdetails.UserDetailsPasswordService;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -26,12 +28,18 @@ public class SportSpecification implements Specification<Sport> {
     @Override
     public Predicate toPredicate(Root<Sport> root, CriteriaQuery<?> query, CriteriaBuilder criteriaBuilder) {
         List<Predicate> predicates = new ArrayList<>();
+
         if (search != null && !search.isEmpty()) {
             predicates.add(criteriaBuilder.like(root.get("name"), "%" + search + "%"));
         }
 
         if (publishStatus != null && !publishStatus.isEmpty()) {
-            predicates.add(criteriaBuilder.equal(root.get("publishStatus"), publishStatus));
+            if (!publishStatus.equals(UPDATED)) {
+                predicates.add(criteriaBuilder.equal(root.get("publishStatus"), publishStatus));
+                predicates.add(criteriaBuilder.isNull(root.get("updatedBy")));
+            } else {
+                predicates.add(criteriaBuilder.isNotNull(root.get("updatedBy")));
+            }
         }
 
         if (isBasicUser) {

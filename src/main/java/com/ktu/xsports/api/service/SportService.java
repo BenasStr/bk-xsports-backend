@@ -46,7 +46,7 @@ public class SportService {
             spec = new SportSpecification(search, PUBLISHED, true);
             return sportRepository.findAll(spec);
         }
-        spec = new SportSpecification(search, publishStatus, false);
+        spec = new SportSpecification(search, publishStatus.toUpperCase(), false);
         List<Sport> sports = sportRepository.findAll(spec);
         return applyUpdatedFieldsToSports(sports);
     }
