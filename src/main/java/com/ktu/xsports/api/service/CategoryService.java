@@ -32,30 +32,29 @@ public class CategoryService {
     private final SportService sportService;
 
     public List<Category> findAll() {
-        return categoryRepository.findAll();
+        List<Category> categories = categoryRepository.findAll();
+        return applyUpdatedFieldsToCategories(categories);
     }
 
     public List<Category> findCategories(long sportId, String search, String publishStatus, User user) {
-        Sport sport = sportService.findSportById(sportId);
-//        sportId = sport.getUpdates() == null ?
-//            sport.getId() :
-//            sport.getUpdates().getId();
+        sportService.findSportById(sportId);
 
         CategorySpecification spec;
         if (user.getRole().equals(USER)) {
             spec = new CategorySpecification(sportId, search, PUBLISHED, true);
-        } else {
-            spec = new CategorySpecification(sportId, search, publishStatus, false);
+            return categoryRepository.findAll(spec);
         }
-        return categoryRepository.findAll(spec);
+        spec = new CategorySpecification(sportId, search, publishStatus, false);
+        List<Category> categories = categoryRepository.findAll(spec);
+        return applyUpdatedFieldsToCategories(categories);
     }
 
     public Category findCategory(long sportId, long categoryId) {
-        Sport sport = sportService.findSportById(sportId);
-//        sportId = sport.getUpdates() == null ? sport.getId() : sport.getUpdates().getId();
+        sportService.findSportById(sportId);
 
-        return categoryRepository.findBySportIdAndId(sportId, categoryId)
+        Category category = categoryRepository.findBySportIdAndId(sportId, categoryId)
             .orElseThrow(() -> new ServiceException("Category doesn't exist"));
+        return applyUpdatedFieldsToCategory(category);
     }
 
     public Category createCategory(long sportId, Category category) {
@@ -66,29 +65,39 @@ public class CategoryService {
         return categoryRepository.save(category);
     }
 
-    @Transactional
     public Category updateCategory(long sportId, Category category, long categoryId) {
         sportService.findSportById(sportId);
 
         Category existingCategory = findCategory(sportId, categoryId);
         category.setLastUpdated(LocalDate.now());
-        category.setSport(existingCategory.getSport());
-        category.setUpdates(existingCategory.getUpdates());
+
         if (existingCategory.getPhotoUrl() != null) {
             category.setPhotoUrl(existingCategory.getPhotoUrl());
         }
 
         if (existingCategory.getPublishStatus().equals(PUBLISHED)) {
-            category.setPublishStatus(UPDATED);
-            Category updated = categoryRepository.save(category);
-            existingCategory.setUpdatedBy(updated);
-            categoryRepository.save(existingCategory);
-            return categoryRepository.findById(updated.getId())
-                .orElseThrow(() -> new ServiceException("Failed updating category!"));
+            if (existingCategory.getUpdatedBy() == null) {
+                return updatePublishedCategory(category, existingCategory);
+            }
+            return updateUpdatedCategory(category, existingCategory);
         }
 
         category.setId(categoryId);
         category.setPublishStatus(existingCategory.getPublishStatus());
+        return categoryRepository.save(category);
+    }
+
+    @Transactional
+    private Category updatePublishedCategory(Category category, Category published) {
+        category.setPublishStatus(UPDATED);
+        category = categoryRepository.save(category);
+        published.setUpdatedBy(category);
+        return categoryRepository.save(published);
+    }
+
+    private Category updateUpdatedCategory(Category category, Category updated) {
+        category.setId(updated.getUpdatedBy().getId());
+        category.setPublishStatus(UPDATED);
         return categoryRepository.save(category);
     }
 
@@ -101,36 +110,55 @@ public class CategoryService {
         return categoryRepository.save(category);
     }
 
-
-    //TODO look at this one tomorrow
     @Transactional
     public void removeCategory(long sportId, long id) {
         Category category = findCategory(sportId, id);
 
-        if (category.getPublishStatus().equals(UPDATED)) {
-            Optional<Category> updated = categoryRepository.findUpdatedBy(category.getId());
-            if(updated.isPresent()) {
-                updated.get().setUpdatedBy(null);
-                categoryRepository.save(updated.get());
-                if(category.getPhotoUrl() != null &&
-                    updated.get().getUpdatedBy() != null &&
-                    !category.getPhotoUrl().equals(updated.get().getPhotoUrl())) {
-                    imageService.deleteImage(category.getPhotoUrl());
-                }
+        if (category.getPublishStatus().equals(PUBLISHED)) {
+            if (category.getUpdatedBy() == null) {
+                removePublishedCategory(category);
+                return;
             }
-        } else if (category.getUpdatedBy() != null) {
-            categoryRepository.findById(category.getId())
-                .ifPresent(updatedBy -> {
-                    updatedBy.setPublishStatus(PUBLISHED);
-                    categoryRepository.save(updatedBy);
-                });
+            removeUpdatedCategory(category);
+            return;
+        }
+        removeCategory(category);
+    }
+
+    private void removePublishedCategory(Category published) {
+        if (published.getTricks().size() != 0) {
+            throw new ServiceException("Can't delete category, because it contains tricks!");
         }
 
+        if (published.getPhotoUrl() != null) {
+            imageService.deleteImage(published.getPhotoUrl());
+        }
+
+        categoryRepository.deleteById(published.getId());
+    }
+
+    @Transactional
+    private void removeUpdatedCategory(Category category) {
+        Category updated = category.getUpdatedBy();
+        category.setUpdatedBy(null);
+        categoryRepository.save(category);
+
+        if (category.getPhotoUrl() != null
+            && updated.getPhotoUrl() != null
+            && !updated.getPhotoUrl().equals(category.getPhotoUrl())) {
+            imageService.deleteImage(category.getPhotoUrl());
+        }
+        categoryRepository.deleteById(updated.getId());
+    }
+
+    private void removeCategory(Category category) {
+        if (category.getTricks().size() != 0) {
+            throw new ServiceException("Can't delete category, because it contains tricks!");
+        }
         if (category.getPhotoUrl() != null) {
             imageService.deleteImage(category.getPhotoUrl());
         }
-
-        categoryRepository.delete(category);
+        categoryRepository.deleteById(category.getId());
     }
 
     public void publish(Category category) {
@@ -170,5 +198,24 @@ public class CategoryService {
         category.setLastUpdated(LocalDate.now());
         category.setPublishStatus(PUBLISHED);
         categoryRepository.save(category);
+    }
+
+    private List<Category> applyUpdatedFieldsToCategories(List<Category> categories) {
+        return categories.stream()
+            .map(this::applyUpdatedFieldsToCategory)
+            .toList();
+    }
+
+    private Category applyUpdatedFieldsToCategory(Category category) {
+        if (!category.getPublishStatus().equals(PUBLISHED)
+            || category.getUpdatedBy() == null) {
+            return category;
+        }
+        Category updated = category.getUpdatedBy();
+        category.setName(updated.getName());
+        category.setPhotoUrl(updated.getPhotoUrl());
+        category.setPublishStatus(updated.getPublishStatus());
+        category.setLastUpdated(updated.getLastUpdated());
+        return updated;
     }
 }

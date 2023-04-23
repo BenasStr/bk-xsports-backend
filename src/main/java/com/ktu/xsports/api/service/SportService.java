@@ -172,6 +172,9 @@ public class SportService {
         if (sport.getCategories().size() != 0) {
             throw new ServiceException("Can't delete sport, because it contains categories!");
         }
+        if (sport.getPhotoUrl() != null) {
+            imageService.deleteImage(sport.getPhotoUrl());
+        }
         userService.removeSportFromModerators(sport);
         sportRepository.deleteById(sport.getId());
     }
@@ -180,7 +183,13 @@ public class SportService {
         if (published.getCategories().size() != 0) {
             throw new ServiceException("Can't delete sport, because it contains categories!");
         }
+
+        if (published.getPhotoUrl() != null) {
+            imageService.deleteImage(published.getPhotoUrl());
+        }
+
         userService.removeSportsFromAllUsers(published);
+        sportRepository.deleteById(published.getId());
     }
 
     @Transactional

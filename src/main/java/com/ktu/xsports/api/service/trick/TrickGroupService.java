@@ -32,9 +32,6 @@ public class TrickGroupService {
 
     public List<TrickVariant> findTricks(long sportId, long categoryId, String variant, String search, String publishStatus, String difficulty, boolean missingVideo, User user) {
         Category category = categoryService.findCategory(sportId, categoryId);
-        categoryId = category.getPublishStatus().equals(UPDATED) ?
-            category.getUpdates().getId() :
-            category.getId();
 
         List<TrickVariant> tricks = trickVariantService.findTricks(categoryId, variant, search, publishStatus, difficulty, missingVideo, user);
         trickProgressFilterService.filterProgressByUser(tricks, user.getId());
@@ -43,9 +40,6 @@ public class TrickGroupService {
 
     public TrickVariant findTrickById(long sportId, long categoryId, long trickId, long userId) {
         Category category = categoryService.findCategory(sportId, categoryId);
-        categoryId = category.getPublishStatus().equals(UPDATED) ?
-            category.getUpdates().getId() :
-            category.getId();
 
         TrickVariant trick = trickVariantService.findTrickById(trickId, categoryId);
         trickProgressFilterService.filterProgressByUser(trick, userId);
@@ -54,18 +48,12 @@ public class TrickGroupService {
 
     public TrickVariant findTrickById(long sportId, long categoryId, long trickId) {
         Category category = categoryService.findCategory(sportId, categoryId);
-        categoryId = category.getPublishStatus().equals(UPDATED) ?
-            category.getUpdates().getId() :
-            category.getId();
         categoryService.findCategory(sportId, categoryId);
         return trickVariantService.findTrickById(trickId, categoryId);
     }
 
     public TrickVariant findStandardTrickById(long sportId, long categoryId, long trickId) {
         Category category = categoryService.findCategory(sportId, categoryId);
-        categoryId = category.getPublishStatus().equals(UPDATED) ?
-            category.getUpdates().getId() :
-            category.getId();
         categoryService.findCategory(sportId, categoryId);
         return trickVariantService.findStandardTrickVariantById(trickId, categoryId);
     }

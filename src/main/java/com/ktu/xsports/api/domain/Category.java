@@ -51,7 +51,4 @@ public class Category {
     @OneToOne
     @JoinColumn(name = "updated_by", referencedColumnName = "id")
     private Category updatedBy;
-
-    @OneToOne(mappedBy = "updatedBy")
-    private Category updates;
 }
