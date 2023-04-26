@@ -66,6 +66,9 @@ public class TrickService {
             .category(currentTrick.getCategory())
             .publishStatus(UPDATED)
             .lastUpdated(LocalDate.now())
+            .trickParents(List.of())
+            .trickChildren(List.of())
+            .trickVariants(List.of())
             .build();
         Trick updated = trickRepository.save(trick);
         currentTrick.setUpdatedBy(trick);

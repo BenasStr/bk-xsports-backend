@@ -114,7 +114,7 @@ public class TrickGroupService {
 
     private TrickVariant updatePublishedTrickVariant(TrickVariant trickVariant, TrickVariant updatedVariant) {
         Trick trick = trickService.createTrickCopy(updatedVariant.getTrick());
-        return trickVariantService.createVariantsCopies(trickVariant, updatedVariant, trick);
+        return trickVariantService.createVariantsCopies(updatedVariant, trickVariant, trick);
     }
 
     private TrickVariant updateTrickVariant(TrickVariant trickVariant, TrickVariant updatedVariant) {

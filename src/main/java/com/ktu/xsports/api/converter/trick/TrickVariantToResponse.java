@@ -32,10 +32,6 @@ public interface TrickVariantToResponse {
         return trick.getTrick().getPublishStatus();
     }
 
-    default long mapBaseVariantId(TrickVariant trickVariant) {
-        return trickVariant.getId();
-    }
-
     default long mapMainId(TrickVariant trickVariant) {
         return trickVariant.getTrick().getId();
     }
