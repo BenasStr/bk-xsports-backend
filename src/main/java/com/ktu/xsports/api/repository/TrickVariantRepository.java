@@ -14,13 +14,13 @@ public interface TrickVariantRepository extends JpaRepository<TrickVariant, Long
     @Query(""
         + "SELECT t FROM tricks_variants t "
         + "WHERE t.trick.category.id = :categoryId "
-        + "AND t.id = :trickId ")
+        + "AND t.trick.id = :trickId ")
     Optional<TrickVariant> findById(long trickId, long categoryId);
 
     @Query(""
         + "SELECT t FROM tricks_variants t "
         + "WHERE t.variant.name = 'Standard' "
-        + "AND t.id = :trickId "
+        + "AND t.trick.id = :trickId "
         + "AND t.trick.category.id = :categoryId ")
     Optional<TrickVariant> findStandardVariantById(long trickId, long categoryId);
 
@@ -44,5 +44,9 @@ public interface TrickVariantRepository extends JpaRepository<TrickVariant, Long
         + "AND t.variant.id <> :trickVariantId ")
     List<TrickVariant> findTrickVariants(long sportId, long categoryId, long trickVariantId, long trickId);
 
-//    List<TrickVariant> findAll(TrickVariantSpecification spec);
+    @Query(""
+        + "SELECT t FROM tricks_variants t "
+        + "WHERE t.trick.updatedBy.id = :trickVariantUpdatedBy "
+        + "AND t.variant.name = 'Standard' ")
+    Optional<TrickVariant> findTrickVariantByUpdatedBy(long trickVariantUpdatedBy);
 }

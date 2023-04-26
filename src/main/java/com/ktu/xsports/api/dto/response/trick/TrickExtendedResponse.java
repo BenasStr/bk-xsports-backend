@@ -1,5 +1,7 @@
 package com.ktu.xsports.api.dto.response.trick;
 
+import lombok.AllArgsConstructor;
+import lombok.Builder;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 import lombok.NoArgsConstructor;

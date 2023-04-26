@@ -33,10 +33,12 @@ public class Trick {
     @NotNull
     private String name;
 
+    @NotNull
     @ManyToOne
     @JoinColumn(name = "category_id", nullable = false)
     private Category category;
 
+    @NotNull
     @ManyToOne
     private Difficulty difficulty;
 
@@ -59,13 +61,11 @@ public class Trick {
     @ManyToMany(mappedBy = "trickParents")
     private List<Trick> trickChildren;
 
+    @NotNull
     @OneToMany(mappedBy = "trick")
     private List<TrickVariant> trickVariants;
 
     @OneToOne
     @JoinColumn(name = "updated_by", referencedColumnName = "id")
     private Trick updatedBy;
-
-    @OneToOne(mappedBy = "updatedBy")
-    private Trick updates;
 }

@@ -8,7 +8,6 @@ import com.ktu.xsports.api.dto.request.trick.TrickVariantRequest;
 import com.ktu.xsports.api.dto.response.trick.TrickBasicResponse;
 import com.ktu.xsports.api.dto.response.trick.TrickExtendedResponse;
 import com.ktu.xsports.api.service.ProgressService;
-import com.ktu.xsports.api.service.media.VideoService;
 import com.ktu.xsports.api.service.trick.TrickGroupService;
 import com.ktu.xsports.api.service.util.ResponseCleanerService;
 import jakarta.validation.Valid;
@@ -25,7 +24,6 @@ import java.util.List;
 import java.util.Map;
 
 import static com.ktu.xsports.api.util.ApiVersionPrefix.*;
-import static com.ktu.xsports.api.util.Prefix.TRICK_FILE;
 
 @Validated
 @RestController
@@ -38,6 +36,7 @@ public class TrickController {
     private final ResponseCleanerService responseCleanerService;
     private final ModelMapper modelMapper;
 
+    //TODO remove extended crap
     @GetMapping()
     public ResponseEntity<?> findTricks(
         @PathVariable long categoryId,
@@ -48,8 +47,8 @@ public class TrickController {
         @RequestParam(defaultValue = "") String search,
         @RequestParam(defaultValue = "") String publishStatus,
         @RequestParam(defaultValue = "") String difficulty,
-        @RequestParam(defaultValue = "false") boolean missingVideo,
-        @RequestParam(defaultValue = "") Boolean missingVariants
+        @RequestParam(defaultValue = "false") Boolean missingVideo,
+        @RequestParam(defaultValue = "false") Boolean missingVariants
     ) {
         log.info("User is fetching multiple tricks.");
         List<TrickVariant> tricks = trickGroupService.findTricks(sportId, categoryId, variant, search, publishStatus, difficulty, missingVideo, user);
@@ -120,14 +119,14 @@ public class TrickController {
         );
     }
 
-    @PostMapping("/{trickId}/video")
+    @PostMapping("/{trickVariantId}/video")
     public ResponseEntity<?> uploadTrickVideo(
         @PathVariable long categoryId,
         @PathVariable long sportId,
-        @PathVariable long trickId,
+        @PathVariable long trickVariantId,
         @RequestParam MultipartFile file
     ) {
-        TrickVariant trickVariant = trickGroupService.uploadVideo(sportId, categoryId, trickId, file);
+        TrickVariant trickVariant = trickGroupService.uploadVideo(sportId, categoryId, trickVariantId, file);
 
         return ResponseEntity.ok(
             Map.of("data", trickVariant.getVideoUrl())
@@ -185,7 +184,19 @@ public class TrickController {
         @PathVariable long sportId
     ) {
         log.info("User is deleting trick!");
-        trickGroupService.removeTrick(sportId, categoryId, trickId);
+        trickGroupService.removeStandardTrick(sportId, categoryId, trickId);
+        return ResponseEntity.noContent().build();
+    }
+
+    @DeleteMapping("/{trickId}/variant/{variantId}")
+    public ResponseEntity<?> deleteTrickVariant(
+        @PathVariable long trickId,
+        @PathVariable long categoryId,
+        @PathVariable long sportId,
+        @PathVariable long variantId
+    ) {
+        log.info("User is deleting trick variant!");
+        trickGroupService.removeTrickVariant(sportId, categoryId, trickId, variantId);
         return ResponseEntity.noContent().build();
     }
 }

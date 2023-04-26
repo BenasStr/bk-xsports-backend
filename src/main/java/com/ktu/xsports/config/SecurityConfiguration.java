@@ -100,7 +100,7 @@ public class SecurityConfiguration {
             .requestMatchers(GET, API_V1 + "/sports/{sportId}/categories/{categoryId}/tricks/{trickId}").hasAnyAuthority(USER, ADMIN, MODERATOR)
             .requestMatchers(POST, API_V1 + "/sports/{sportId}/categories/{categoryId}/tricks").hasAnyAuthority(ADMIN, MODERATOR)
             .requestMatchers(POST, API_V1 + "/sports/{sportId}/categories/{categoryId}/tricks/{trickId}/variant").hasAnyAuthority(ADMIN, MODERATOR)
-            .requestMatchers(POST, API_V1 + "/sports/{sportId}/categories/{categoryId}/tricks/{trickId}/video").hasAnyAuthority(ADMIN, MODERATOR)
+            .requestMatchers(POST, API_V1 + "/sports/{sportId}/categories/{categoryId}/tricks/{trickVariantId}/video").hasAnyAuthority(ADMIN, MODERATOR)
             .requestMatchers(PUT, API_V1 + "/sports/{sportId}/categories/{categoryId}/tricks/{trickId}").hasAnyAuthority(ADMIN, MODERATOR)
             .requestMatchers(PUT, API_V1 + "/sports/{sportId}/categories/{categoryId}/tricks/{trickId}/variant/{variantId}").hasAnyAuthority(ADMIN, MODERATOR)
             .requestMatchers(PUT, API_V1 + "/sports/{sportId}/categories/{categoryId}/tricks/{trickId}/progress").hasAnyAuthority(USER, ADMIN, MODERATOR)

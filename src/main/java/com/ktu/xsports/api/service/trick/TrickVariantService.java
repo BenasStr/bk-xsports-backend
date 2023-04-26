@@ -55,6 +55,11 @@ public class TrickVariantService {
             .orElseThrow(() -> new ServiceException("Trick doesn't exist"));
     }
 
+    public TrickVariant findTrickVariantById(long trickId) {
+        return trickVariantRepository.findById(trickId)
+            .orElseThrow(() -> new ServiceException("Trick doesn't exist"));
+    }
+
     public TrickVariant findStandardTrickVariantById(long trickId, long categoryId) {
         return trickVariantRepository.findStandardVariantById(trickId, categoryId)
             .orElseThrow(() -> new ServiceException("Trick doesn't exist"));
@@ -115,12 +120,12 @@ public class TrickVariantService {
         return trickVariantRepository.save(trickVariant);
     }
 
-    public TrickVariant updateStandardTrick(TrickVariant currentTrick, TrickVariant trickVariant) {
-        trickVariant.setId(currentTrick.getId());
-        trickVariant.setProgress(currentTrick.getProgress());
+    public TrickVariant updateStandardTrick(TrickVariant trickVariant, TrickVariant updated) {
+        trickVariant.setId(updated.getId());
+        trickVariant.setProgress(updated.getProgress());
         trickVariant.setVariant(variantService.getStandardVariant());
         if (trickVariant.getVideoUrl() == null) {
-            trickVariant.setVideoUrl(currentTrick.getVideoUrl());
+            trickVariant.setVideoUrl(updated.getVideoUrl());
         }
         return trickVariantRepository.save(trickVariant);
     }
@@ -128,7 +133,8 @@ public class TrickVariantService {
     public TrickVariant updateTrick(TrickVariant currentTrick, TrickVariant trickVariant) {
         trickVariant.setTrick(currentTrick.getTrick());
         trickVariant.setId(currentTrick.getId());
-        if (trickVariant.getVideoUrl() == null) {
+        trickVariant.setVariant(currentTrick.getVariant());
+        if (currentTrick.getVideoUrl() != null) {
             trickVariant.setVideoUrl(currentTrick.getVideoUrl());
         }
 
@@ -136,7 +142,7 @@ public class TrickVariantService {
     }
 
     public TrickVariant uploadVideo(long categoryId, long trickId, MultipartFile video) {
-        TrickVariant trickVariant = findTrickById(trickId, categoryId);
+        TrickVariant trickVariant = findTrickVariantById(trickId);
         String fileName = trickVariant.getVideoUrl() == null || trickVariant.getVideoUrl().equals("") ?
             videoService.uploadVideo(video, TRICK_FILE+trickVariant.getId()) :
             videoService.updateVideo(video, trickVariant.getVideoUrl());
@@ -147,6 +153,10 @@ public class TrickVariantService {
     public void removeTrickVariant(Long categoryId, Long trickId, Long variantId) {
         findTrickById(categoryId, variantId);
         trickVariantRepository.deleteById(variantId);
+    }
+
+    public void removeTrickVariant(TrickVariant trickVariant) {
+        trickVariantRepository.deleteById(trickVariant.getId());
     }
 
     public void removeTrickVariants(List<TrickVariant> trickVariants) {

@@ -13,8 +13,12 @@ import java.time.LocalDate;
 @NoArgsConstructor
 public class TrickBasicResponse {
     long id;
+    long baseVariantId;
     String name;
     String shortDescription;
+    String description;
+    String videoUrl;
+    int variantId;
     String status;
     String difficulty;
 }

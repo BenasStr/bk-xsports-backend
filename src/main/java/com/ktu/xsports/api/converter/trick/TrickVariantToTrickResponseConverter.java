@@ -100,17 +100,24 @@ public class TrickVariantToTrickResponseConverter extends PropertyMap<TrickVaria
     }
 
     private List<TrickBasicResponse> mapVariants(TrickVariant trickVariant) {
+        Variant variant = trickVariant.getVariant();
+
         return trickVariant.getTrick().getTrickVariants().stream()
+            .filter(trick -> !trick.getVariant().getName().equals(variant.getName()))
             .map(this::buildTrickBasicResponse)
             .toList();
     }
 
     private TrickBasicResponse buildTrickBasicResponse(TrickVariant trickVariant) {
         return TrickBasicResponse.builder()
-            .id(trickVariant.getId())
+            .id(trickVariant.getTrick().getId())
+            .baseVariantId(trickVariant.getId())
             .difficulty(mapDifficulty(trickVariant))
             .name(mapName(trickVariant))
             .shortDescription(trickVariant.getShortDescription())
+            .description(trickVariant.getDescription())
+            .videoUrl(trickVariant.getVideoUrl())
+            .variantId((int) trickVariant.getVariant().getId())
             .status(mapProgress(trickVariant))
             .build();
     }

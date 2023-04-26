@@ -1,7 +1,6 @@
 package com.ktu.xsports.api.repository;
 
 import com.ktu.xsports.api.domain.Trick;
-import jakarta.validation.constraints.NotNull;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.stereotype.Repository;
@@ -34,4 +33,9 @@ public interface TrickRepository extends JpaRepository<Trick, Long> {
     List<Trick> findByVariantIdAndTrickIds(Long variantId, List<Long> trickId);
 
     Optional<Trick> findByName(String name);
+
+    @Query(""
+        + "SELECT t FROM tricks t "
+        + "WHERE t.updatedBy.id = :updatedById ")
+    Optional<Trick> findByUpdated(long updatedById);
 }

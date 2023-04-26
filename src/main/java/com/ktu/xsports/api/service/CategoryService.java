@@ -51,9 +51,8 @@ public class CategoryService {
     public Category findCategory(long sportId, long categoryId) {
         sportService.findSportById(sportId);
 
-        Category category = categoryRepository.findBySportIdAndId(sportId, categoryId)
+        return categoryRepository.findBySportIdAndId(sportId, categoryId)
             .orElseThrow(() -> new ServiceException("Category doesn't exist"));
-        return applyUpdatedFieldsToCategory(category);
     }
 
     public Category createCategory(long sportId, Category category) {
@@ -67,8 +66,7 @@ public class CategoryService {
     public Category updateCategory(long sportId, Category category, long categoryId) {
         sportService.findSportById(sportId);
 
-        Category existingCategory = categoryRepository.findBySportIdAndId(sportId, categoryId)
-            .orElseThrow(() -> new ServiceException("Category does not exist!"));
+        Category existingCategory = findCategory(sportId, categoryId);
         category.setLastUpdated(LocalDate.now());
         category.setSport(existingCategory.getSport());
 
