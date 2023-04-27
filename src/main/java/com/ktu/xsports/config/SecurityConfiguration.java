@@ -143,6 +143,7 @@ public class SecurityConfiguration {
 
     private void videoEndpoints(HttpSecurity http) throws Exception {
         http.authorizeHttpRequests()
-            .requestMatchers(GET, "/api/videos/{fileName}").permitAll();
+            .requestMatchers(GET, "/api/videos/{fileName}").permitAll()
+            .requestMatchers(GET, "/api/videos").permitAll();
     }
 }

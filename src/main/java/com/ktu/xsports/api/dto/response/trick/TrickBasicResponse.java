@@ -13,6 +13,7 @@ import java.time.LocalDate;
 @NoArgsConstructor
 public class TrickBasicResponse {
     long id;
+    long trickId;
     String name;
     String shortDescription;
     String description;

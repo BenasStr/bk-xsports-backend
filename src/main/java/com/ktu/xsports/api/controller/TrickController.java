@@ -9,7 +9,6 @@ import com.ktu.xsports.api.dto.response.trick.TrickBasicResponse;
 import com.ktu.xsports.api.dto.response.trick.TrickExtendedResponse;
 import com.ktu.xsports.api.service.ProgressService;
 import com.ktu.xsports.api.service.trick.TrickGroupService;
-import com.ktu.xsports.api.service.util.ResponseCleanerService;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -33,7 +32,6 @@ import static com.ktu.xsports.api.util.ApiVersionPrefix.*;
 public class TrickController {
     private final TrickGroupService trickGroupService;
     private final ProgressService progressService;
-    private final ResponseCleanerService responseCleanerService;
     private final ModelMapper modelMapper;
 
     //TODO remove extended crap
@@ -57,7 +55,6 @@ public class TrickController {
         if (extended) {
             trickResponses = tricks.stream()
                 .map(trick -> modelMapper.map(trick, TrickExtendedResponse.class))
-                .peek(responseCleanerService::cleanResponse)
                 .toList();
         } else {
             trickResponses = tricks.stream()
@@ -80,7 +77,6 @@ public class TrickController {
         log.info("User is fetching trick.");
         TrickVariant trick = trickGroupService.findTrickById(sportId, categoryId, trickId, user.getId());
         TrickExtendedResponse response = modelMapper.map(trick, TrickExtendedResponse.class);
-        responseCleanerService.cleanResponse(response);
         return ResponseEntity.ok(
             Map.of("data", response)
         );
@@ -96,7 +92,6 @@ public class TrickController {
         TrickVariant trick = trickRequest.toTrick();
         TrickVariant newTrick = trickGroupService.createStandardTrick(sportId, categoryId, trick);
         TrickExtendedResponse response = modelMapper.map(newTrick, TrickExtendedResponse.class);
-        responseCleanerService.cleanResponse(response);
 
         return ResponseEntity.ok(
             Map.of("data", modelMapper.map(newTrick, TrickExtendedResponse.class))

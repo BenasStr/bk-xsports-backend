@@ -20,6 +20,10 @@ public class TrickVariantToTrickResponseConverter extends PropertyMap<TrickVaria
     protected void configure() {
         using(context ->
             mapMainId((TrickVariant) context.getSource())
+        ).map(source, destination.getTrickId());
+
+        using(context ->
+            mapStandardVariantId((TrickVariant) context.getSource())
         ).map(source, destination.getId());
 
         using(context ->
@@ -115,6 +119,7 @@ public class TrickVariantToTrickResponseConverter extends PropertyMap<TrickVaria
     private TrickBasicResponse buildTrickBasicResponse(TrickVariant trickVariant) {
         return TrickBasicResponse.builder()
             .id(trickVariant.getId())
+            .trickId(trickVariant.getTrick().getId())
             .difficulty(mapDifficulty(trickVariant))
             .name(mapName(trickVariant))
             .shortDescription(trickVariant.getShortDescription())
@@ -123,5 +128,9 @@ public class TrickVariantToTrickResponseConverter extends PropertyMap<TrickVaria
             .variantId((int) trickVariant.getVariant().getId())
             .status(mapProgress(trickVariant))
             .build();
+    }
+
+    private long mapStandardVariantId(TrickVariant trickVariant) {
+        return trickVariant.getId();
     }
 }
