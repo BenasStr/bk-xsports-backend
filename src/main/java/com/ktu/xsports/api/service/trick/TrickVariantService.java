@@ -4,6 +4,7 @@ import com.ktu.xsports.api.advice.exceptions.ServiceException;
 import com.ktu.xsports.api.domain.Trick;
 import com.ktu.xsports.api.domain.TrickVariant;
 import com.ktu.xsports.api.domain.User;
+import com.ktu.xsports.api.service.SportService;
 import com.ktu.xsports.api.service.media.VideoService;
 import com.ktu.xsports.api.specification.TrickVariantSpecification;
 import com.ktu.xsports.api.repository.TrickVariantRepository;
@@ -25,15 +26,15 @@ public class TrickVariantService {
     private final TrickVariantRepository trickVariantRepository;
     private final VariantService variantService;
     private final VideoService videoService;
+    private final SportService sportService;
 
-    public List<TrickVariant> findTricks(long categoryId, String variant, String search, String publishStatus, String difficulty, boolean missingVideo, User user) {
+    public List<TrickVariant> findTricks(long categoryId, String variant, String search, String publishStatus, String difficulty, Boolean missingVideo, Boolean missingVariants, User user, long maxVariantsCount) {
         TrickVariantSpecification spec;
         if (user.getRole().equals(USER)) {
             spec = TrickVariantSpecification.builder()
                 .categoryId(categoryId)
                 .search(search)
                 .publishStatus(PUBLISHED)
-                .filterUpdated(false)
                 .filterUpdated(false)
                 .build();
             return trickVariantRepository.findAll(spec);
@@ -45,9 +46,11 @@ public class TrickVariantService {
             .publishStatus(publishStatus)
             .variant(variant)
             .filterUpdated(true)
-            .missingVideo(missingVideo)
             .build();
-        return trickVariantRepository.findAll(spec);
+        List<TrickVariant> trickVariants = trickVariantRepository.findAll(spec);
+        trickVariants = filterMissingVariants(trickVariants, missingVariants, maxVariantsCount);
+        trickVariants = filterMissingVideos(trickVariants, missingVideo);
+        return trickVariants;
     }
 
     public TrickVariant findTrickById(long trickId, long categoryId) {
@@ -176,5 +179,42 @@ public class TrickVariantService {
                 }
             });
         });
+    }
+
+    private List<TrickVariant> filterMissingVideos(List<TrickVariant> trickVariants, Boolean missingVideos) {
+        if (missingVideos != null) {
+            if (missingVideos) {
+                return trickVariants.stream()
+                    .filter(variant -> variant.getTrick()
+                        .getTrickVariants()
+                        .stream()
+                        .anyMatch(v -> v.getVideoUrl() == null))
+                    .toList();
+            } else {
+                return trickVariants.stream()
+                    .filter(variant -> variant.getTrick()
+                        .getTrickVariants()
+                        .stream()
+                        .noneMatch(v -> v.getVideoUrl() == null)
+                    )
+                    .toList();
+            }
+        }
+        return trickVariants;
+    }
+
+    private List<TrickVariant> filterMissingVariants(List<TrickVariant> trickVariants, Boolean missingVariants, Long maxVariantCount) {
+        if (missingVariants != null) {
+            if (missingVariants) {
+                return trickVariants.stream()
+                    .filter(variant -> variant.getTrick().getTrickVariants().size() < maxVariantCount)
+                    .toList();
+            } else {
+                return trickVariants.stream()
+                    .filter(variant -> variant.getTrick().getTrickVariants().size() >= maxVariantCount)
+                    .toList();
+            }
+        }
+        return trickVariants;
     }
 }

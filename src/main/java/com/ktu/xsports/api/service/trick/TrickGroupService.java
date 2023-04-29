@@ -1,6 +1,7 @@
 package com.ktu.xsports.api.service.trick;
 
 import com.ktu.xsports.api.advice.exceptions.ServiceException;
+import com.ktu.xsports.api.domain.Category;
 import com.ktu.xsports.api.domain.Trick;
 import com.ktu.xsports.api.domain.TrickVariant;
 import com.ktu.xsports.api.domain.User;
@@ -14,7 +15,9 @@ import org.springframework.web.multipart.MultipartFile;
 import java.util.List;
 
 import static com.ktu.xsports.api.util.PublishStatus.DELETED;
+import static com.ktu.xsports.api.util.PublishStatus.NOT_PUBLISHED;
 import static com.ktu.xsports.api.util.PublishStatus.PUBLISHED;
+import static com.ktu.xsports.api.util.PublishStatus.SCHEDULED;
 import static com.ktu.xsports.api.util.PublishStatus.UPDATED;
 import static com.ktu.xsports.api.util.Role.USER;
 
@@ -27,10 +30,13 @@ public class TrickGroupService {
     private final CategoryService categoryService;
     private final VariantService variantService;
 
-    public List<TrickVariant> findTricks(long sportId, long categoryId, String variant, String search, String publishStatus, String difficulty, boolean missingVideo, User user) {
-        categoryService.findCategory(sportId, categoryId);
+    public List<TrickVariant> findTricks(long sportId, long categoryId, String variant, String search, String publishStatus, String difficulty, Boolean missingVideo, Boolean missingVariants, User user) {
+        Category category = categoryService.findCategory(sportId, categoryId);
 
-        List<TrickVariant> tricks = trickVariantService.findTricks(categoryId, variant, search, publishStatus, difficulty, missingVideo, user);
+        List<TrickVariant> tricks = trickVariantService.findTricks(
+            categoryId, variant, search, publishStatus, difficulty, missingVideo, missingVariants, user, category.getSport().getVariants().stream().count()
+        );
+        //Probably will have to revisit this.
         trickProgressFilterService.filterProgressByUser(tricks, user.getId());
 
         if (user.getRole().equals(USER)) {
@@ -181,31 +187,19 @@ public class TrickGroupService {
     }
 
     public void publish(List<Trick> tricks) {
-        List<Long> modifiedTricksIds = tricks.stream()
-                .filter(trick -> !trick.getPublishStatus().equals(PUBLISHED))
-                .map(Trick::getId)
-                .toList();
-
-        publishAll(modifiedTricksIds);
-    }
-
-    public void publishAll(List<Long> ids) {
-        //TODO redo this one. It should only copy data from objects and not change the object itself.
-//        ids.forEach(id -> {
-//                Trick trick = trickService.findTrick(id);
-//
-//                if (trick.getPublishStatus().equals(UPDATED)) {
-//                    trickVariantService.removeVideos(trick.getUpdates(), trick);
-//                    trickVariantService.removeTrickVariants(trick.getUpdates().getTrickVariants());
-//                    Trick updated = trickService.findTrick(trick.getUpdates().getId());
-//                    trickService.publishUpdatedTrick(trick);
-//                    trickService.removeUpdatedTrick(updated);
-//                } else if (trick.getPublishStatus().equals(SCHEDULED)
-//                    || trick.getPublishStatus().equals(NOT_PUBLISHED)) {
-//                    trickService.publishCreatedTrick(trick);
-//                }
-//            }
-//        );
+        tricks.forEach(trick -> {
+            if (trick.getPublishStatus().equals(SCHEDULED)
+                || trick.getPublishStatus().equals(NOT_PUBLISHED)) {
+                trickService.publishCreatedTrick(trick);
+            } else if (trick.getPublishStatus().equals(DELETED)) {
+                trickVariantService.removeTrickVariants(trick.getTrickVariants());
+                trickService.removeTrick(trick);
+            } else if (trick.getPublishStatus().equals(PUBLISHED)
+                        && trick.getUpdatedBy() != null) {
+                trickVariantService.removeTrickVariants(trick.getTrickVariants());
+                trickService.publishUpdatedTrick(trick);
+            }
+        });
     }
 
     private List<TrickVariant> applyUpdatedFieldsToTrickVariants(List<TrickVariant> trickVariants) {
@@ -217,5 +211,14 @@ public class TrickGroupService {
                     .findFirst()
                     .orElseThrow(() -> new ServiceException("Couldn't find standard trick"));
             }).toList();
+    }
+
+    private List<TrickVariant> convertToStandardVariants(List<Trick> tricks) {
+        return tricks.stream()
+            .map(trick -> trick.getTrickVariants().stream()
+                .filter(variant -> variant.getVariant().getName().equals("Standard"))
+                .findFirst()
+                .orElseThrow(() -> new ServiceException("Missing Standard variant!"))
+            ).toList();
     }
 }

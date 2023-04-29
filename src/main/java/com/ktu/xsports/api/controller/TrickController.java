@@ -45,11 +45,11 @@ public class TrickController {
         @RequestParam(defaultValue = "") String search,
         @RequestParam(defaultValue = "") String publishStatus,
         @RequestParam(defaultValue = "") String difficulty,
-        @RequestParam(defaultValue = "false") Boolean missingVideo,
-        @RequestParam(defaultValue = "false") Boolean missingVariants
+        @RequestParam(defaultValue = "") Boolean missingVideo,
+        @RequestParam(defaultValue = "") Boolean missingVariants
     ) {
         log.info("User is fetching multiple tricks.");
-        List<TrickVariant> tricks = trickGroupService.findTricks(sportId, categoryId, variant, search, publishStatus, difficulty, missingVideo, user);
+        List<TrickVariant> tricks = trickGroupService.findTricks(sportId, categoryId, variant, search, publishStatus, difficulty, missingVideo, missingVariants, user);
 
         List<?> trickResponses;
         if (extended) {

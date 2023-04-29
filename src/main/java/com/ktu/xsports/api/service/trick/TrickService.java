@@ -3,8 +3,12 @@ package com.ktu.xsports.api.service.trick;
 import com.ktu.xsports.api.domain.Category;
 import com.ktu.xsports.api.domain.Trick;
 import com.ktu.xsports.api.advice.exceptions.ServiceException;
+import com.ktu.xsports.api.domain.TrickVariant;
+import com.ktu.xsports.api.domain.User;
 import com.ktu.xsports.api.repository.TrickRepository;
 import com.ktu.xsports.api.service.CategoryService;
+import com.ktu.xsports.api.specification.TrickSpecification;
+import com.ktu.xsports.api.specification.TrickVariantSpecification;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -17,6 +21,7 @@ import static com.ktu.xsports.api.util.PublishStatus.DELETED;
 import static com.ktu.xsports.api.util.PublishStatus.NOT_PUBLISHED;
 import static com.ktu.xsports.api.util.PublishStatus.PUBLISHED;
 import static com.ktu.xsports.api.util.PublishStatus.UPDATED;
+import static com.ktu.xsports.api.util.Role.USER;
 
 @Service
 @RequiredArgsConstructor
@@ -30,9 +35,27 @@ public class TrickService {
             .orElseThrow(() -> new ServiceException("Trick not found!"));
     }
 
-    public Trick findTrick(long trickId, long categoryId) {
-        return trickRepository.findById(categoryId, trickId)
-            .orElseThrow(() -> new ServiceException("Trick not found!"));
+    public List<Trick> findTricks(long categoryId, String search, String publishStatus, String difficulty, Boolean missingVideo, Boolean missingVariants, User user) {
+        TrickSpecification spec;
+        if (user.getRole().equals(USER)) {
+            spec = TrickSpecification.builder()
+                .categoryId(categoryId)
+                .search(search)
+                .publishStatus(PUBLISHED)
+                .filterUpdated(false)
+                .build();
+            return trickRepository.findAll(spec);
+        }
+        spec = TrickSpecification.builder()
+            .categoryId(categoryId)
+            .search(search)
+            .difficulty(difficulty)
+            .publishStatus(publishStatus)
+            .filterUpdated(true)
+            .missingVideo(missingVideo)
+            .missingVariants(missingVariants)
+            .build();
+        return trickRepository.findAll(spec);
     }
 
     public Trick createTrick(long sportId, long categoryId, Trick trick) {
@@ -75,16 +98,6 @@ public class TrickService {
         trickRepository.save(currentTrick);
         return updated;
     }
-
-//    public Trick updateTrick(Trick currentTrick, Trick trick) {
-//        trick.setId(currentTrick.getId());
-//        trick.setPublishStatus(currentTrick.getPublishStatus());
-//        trick.setTrickVariants(currentTrick.getTrickVariants());
-//        trick.setTrickChildren(currentTrick.getTrickChildren());
-//        trick.setCategory(currentTrick.getCategory());
-//        trick.setLastUpdated(LocalDate.now());
-//        return trickRepository.save(trick);
-//    }
 
     @Transactional
     public Trick updatePublishedTrick(Trick trick, Trick published) {
@@ -144,9 +157,16 @@ public class TrickService {
 
     @Transactional
     public void publishUpdatedTrick(Trick trick) {
-        trick.setPublishStatus(PUBLISHED);
+        Trick update = trick.getUpdatedBy();
+
+        trick.setUpdatedBy(null);
+        trick.setTrickParents(update.getTrickParents()); //This will present issues... As parent id is done differently
+        trick.setTrickVariants(update.getTrickVariants()); //Delete other trick varaints
+        trick.setName(update.getName());
+        trick.setDifficulty(update.getDifficulty());
         trick.setLastUpdated(LocalDate.now());
         trickRepository.save(trick);
+        trickRepository.deleteById(update.getId());
     }
 
     public void removeUpdatedTrick(Trick trick) {

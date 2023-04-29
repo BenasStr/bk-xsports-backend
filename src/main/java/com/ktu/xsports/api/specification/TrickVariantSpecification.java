@@ -8,8 +8,10 @@ import com.ktu.xsports.api.domain.Variant;
 import jakarta.persistence.criteria.CriteriaBuilder;
 import jakarta.persistence.criteria.CriteriaQuery;
 import jakarta.persistence.criteria.Join;
+import jakarta.persistence.criteria.JoinType;
 import jakarta.persistence.criteria.Predicate;
 import jakarta.persistence.criteria.Root;
+import jakarta.persistence.criteria.Subquery;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import org.springframework.data.jpa.domain.Specification;
@@ -25,24 +27,21 @@ public class TrickVariantSpecification implements Specification<TrickVariant> {
     private String difficulty;
     private String publishStatus;
     private String variant;
-    private boolean filterUpdated;
-    private boolean missingVideo;
-    private boolean missingVariants;
+    private Boolean filterUpdated;
 
     @Override
     public Predicate toPredicate(Root<TrickVariant> root, CriteriaQuery<?> query, CriteriaBuilder criteriaBuilder) {
         List<Predicate> predicates = new ArrayList<>();
         Join<TrickVariant, Trick> trickJoin = root.join("trick");
-        Join<Trick, Category> categoryJoin = trickJoin.join("category");
 
-        predicates.add(criteriaBuilder.equal(categoryJoin.get("id"), categoryId));
+        predicates.add(criteriaBuilder.equal(trickJoin.get("category").get("id"), categoryId));
 
         if (search != null && !search.isEmpty()) {
             predicates.add(criteriaBuilder.like(trickJoin.get("name"), "%" + search + "%"));
         }
 
         if (difficulty != null && !difficulty.isEmpty()) {
-            Join<TrickVariant, Difficulty> difficultyJoin = root.join("difficulty");
+            Join<Trick, Difficulty> difficultyJoin = trickJoin.join("difficulty");
             predicates.add(criteriaBuilder.equal(difficultyJoin.get("name"), difficulty));
         }
 
@@ -58,14 +57,6 @@ public class TrickVariantSpecification implements Specification<TrickVariant> {
         if (filterUpdated) {
             predicates.add(criteriaBuilder.isNull(trickJoin.get("updatedBy")));
         }
-
-        if (missingVideo) {
-            predicates.add(criteriaBuilder.isNotNull(root.get("videoUrl")));
-        }
-
-//        if (missingVariants) {
-//            predicates.add(criteriaBuilder.);
-//        }
 
         return criteriaBuilder.and(predicates.toArray(new Predicate[0]));
     }
