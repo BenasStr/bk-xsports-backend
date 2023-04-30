@@ -38,7 +38,6 @@ public class SportController {
     private final SportService sportService;
     private final ModelMapper modelMapper;
 
-    //TODO change filtering a bit
     @GetMapping()
     public ResponseEntity<?> findSports(
         @RequestParam(defaultValue = "") String search,

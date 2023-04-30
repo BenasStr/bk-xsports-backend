@@ -157,8 +157,6 @@ public class TrickController {
         );
     }
 
-
-    //TODO update this
     @PutMapping("/{trickId}/progress")
     public ResponseEntity<?> updateTrickProgress (
         @PathVariable long categoryId,
@@ -167,8 +165,7 @@ public class TrickController {
         @AuthenticationPrincipal User user
     ) {
         log.info("User is updating progress on trick!");
-        trickGroupService.findTrickById(sportId, categoryId, trickId);
-        Trick trick = progressService.updateProgress(user.getId(), trickId);
+        TrickVariant trick = progressService.updateProgress(sportId, categoryId, trickId, user.getId());
         return ResponseEntity.ok(Map.of("data", modelMapper.map(trick, TrickExtendedResponse.class)));
     }
 

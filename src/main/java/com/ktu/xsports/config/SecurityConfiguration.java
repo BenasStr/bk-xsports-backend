@@ -38,6 +38,7 @@ public class SecurityConfiguration {
         publishEndpoints(http);
         imageEndpoints(http);
         videoEndpoints(http);
+        statisticsEndpoints(http);
         healthEndpoint(http);
 
         http.sessionManagement().sessionCreationPolicy(SessionCreationPolicy.STATELESS);
@@ -143,7 +144,11 @@ public class SecurityConfiguration {
 
     private void videoEndpoints(HttpSecurity http) throws Exception {
         http.authorizeHttpRequests()
-            .requestMatchers(GET, "/api/videos/{fileName}").permitAll()
-            .requestMatchers(GET, "/api/videos").permitAll();
+            .requestMatchers(GET, "/api/videos/{fileName}").permitAll();
+    }
+
+    private void statisticsEndpoints(HttpSecurity http) throws Exception {
+        http.authorizeHttpRequests()
+            .requestMatchers(GET, API_V1 + "/statistics").hasAnyAuthority(USER, ADMIN, MODERATOR);
     }
 }

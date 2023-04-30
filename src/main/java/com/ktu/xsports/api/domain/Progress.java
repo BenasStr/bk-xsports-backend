@@ -11,6 +11,8 @@ import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
+import java.time.LocalDate;
+
 @Data
 @Entity(name = "progress")
 @Builder
@@ -33,4 +35,6 @@ public class Progress {
     @NotNull
     @ManyToOne
     private User user;
+
+    private LocalDate dateLearned;
 }
