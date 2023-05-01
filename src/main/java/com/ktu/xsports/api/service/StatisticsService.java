@@ -12,8 +12,10 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDate;
+import java.util.Comparator;
 import java.util.List;
 import java.util.Map;
+import java.util.Map.Entry;
 import java.util.stream.Collectors;
 
 import static com.ktu.xsports.api.service.StatusService.DONE;
@@ -51,7 +53,7 @@ public class StatisticsService {
 
     private int countLearningInSports(List<SportStatisticResponse> sports) {
         return sports.stream()
-            .mapToInt(SportStatisticResponse::getLearnedCount)
+            .mapToInt(SportStatisticResponse::getLearningCount)
             .sum();
     }
 
@@ -125,7 +127,14 @@ public class StatisticsService {
 
     private List<LearningTimeStampsResponse> getTimeStamps(List<Progress> progress) {
         Map<LocalDate, Long> countByDate = progress.stream()
+            .sorted(Comparator.comparing(Progress::getDateLearned).reversed())
             .collect(Collectors.groupingBy(Progress::getDateLearned, Collectors.counting()));
+
+        long count = 0;
+        for (Entry<LocalDate, Long> entry : countByDate.entrySet()) {
+            count += entry.getValue();
+            entry.setValue(count);
+        }
 
         return countByDate.entrySet().stream()
             .map(entity -> new LearningTimeStampsResponse(entity.getKey(), entity.getValue().intValue()))
