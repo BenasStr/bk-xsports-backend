@@ -115,19 +115,16 @@ public class TrickService {
         trick.setId(updated.getUpdatedBy().getId());
         trick.setPublishStatus(UPDATED);
         trick.setLastUpdated(LocalDate.now());
-        //TODO trick parents???
         trick.setTrickChildren(updated.getTrickChildren());
         trick.setTrickVariants(updated.getTrickVariants());
         trick.setCategory(updated.getCategory());
         return trickRepository.save(trick);
     }
 
-    //TODO update
     public Trick updateTrick(Trick trick, Trick updated) {
         trick.setId(updated.getId());
         trick.setLastUpdated(LocalDate.now());
         trick.setPublishStatus(updated.getPublishStatus());
-        //TODO trick parents???
         trick.setTrickChildren(updated.getTrickChildren());
         trick.setTrickVariants(updated.getTrickVariants());
         trick.setCategory(updated.getCategory());
