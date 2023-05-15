@@ -66,7 +66,9 @@ public class TrickService {
 
         Optional<Trick> existing = trickRepository.findByName(trick.getName());
         if(existing.isPresent()) {
-            throw new ServiceException("Trick already exists");
+            if (existing.get().getCategory().getId() == categoryId) {
+                throw new ServiceException("Trick already exists");
+            }
         }
         return trickRepository.save(trick);
     }
@@ -161,7 +163,6 @@ public class TrickService {
 
         trick.setUpdatedBy(null);
         trick.setTrickParents(update.getTrickParents()); //This will present issues... As parent id is done differently
-        trick.setTrickVariants(update.getTrickVariants()); //Delete other trick varaints
         trick.setName(update.getName());
         trick.setDifficulty(update.getDifficulty());
         trick.setLastUpdated(LocalDate.now());

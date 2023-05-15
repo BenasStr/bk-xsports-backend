@@ -2,9 +2,7 @@ package com.ktu.xsports.api.service;
 
 import com.ktu.xsports.api.domain.Sport;
 import com.ktu.xsports.api.domain.User;
-import com.ktu.xsports.api.advice.exceptions.AlreadyExistsException;
 import com.ktu.xsports.api.advice.exceptions.ServiceException;
-import com.ktu.xsports.api.domain.Variant;
 import com.ktu.xsports.api.repository.SportRepository;
 import com.ktu.xsports.api.repository.UserRepository;
 import com.ktu.xsports.api.service.media.ImageService;
@@ -169,7 +167,7 @@ public class SportService {
             return;
         }
 
-        if (sport.getCategories().size() != 0) {
+        if (!sport.getCategories().isEmpty()) {
             throw new ServiceException("Can't delete sport, because it contains categories!");
         }
         if (sport.getPhotoUrl() != null) {
@@ -180,7 +178,7 @@ public class SportService {
     }
 
     private void removePublishedSport(Sport published) {
-        if (published.getCategories().size() != 0) {
+        if (!published.getCategories().isEmpty()) {
             throw new ServiceException("Can't delete sport, because it contains categories!");
         }
 

@@ -1,8 +1,10 @@
 package com.ktu.xsports.api.service;
 
+import com.ktu.xsports.api.domain.Progress;
 import com.ktu.xsports.api.domain.Sport;
 import com.ktu.xsports.api.domain.User;
 import com.ktu.xsports.api.advice.exceptions.ServiceException;
+import com.ktu.xsports.api.repository.ProgressRepository;
 import com.ktu.xsports.api.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -23,6 +25,7 @@ import static com.ktu.xsports.api.util.Role.*;
 public class UserService {
     private final UserRepository userRepository;
     private final PasswordEncoder passwordEncoder;
+    private final ProgressRepository progressRepository;
 
     public Page<User> findUsers(Pageable pageable, String search) {
         return search == null || search.equals("") ?
@@ -86,6 +89,8 @@ public class UserService {
         if(deletedUser.getRole().equals(ADMIN)) {
             throw new ServiceException("Deletion of ADMIN user is forbidden!");
         }
+        List<Progress> progresses = progressRepository.findProgressByUser(id);
+        progressRepository.deleteAll(progresses);
         userRepository.delete(deletedUser);
         return deletedUser;
     }

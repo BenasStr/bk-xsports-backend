@@ -25,7 +25,7 @@ services:
       - ${MYSQLDB_LOCAL_PORT}:${MYSQLDB_DOCKER_PORT}
     volumes:
       - db:/var/lib/mysql
-  app:
+  spring-app:
     depends_on:
       - mysqldb
     build: ./
@@ -43,6 +43,14 @@ services:
       - .m2:/root/.m2
     stdin_open: true
     tty: true
+
+  react-app:
+    build: ./../bk-xsports-dashboard
+    restart: on-failure
+    ports:
+     - "3000:3000"
+    depends_on:
+      - spring-app
 
 volumes:
   minio_storage: {}

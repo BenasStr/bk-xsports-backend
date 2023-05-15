@@ -43,7 +43,7 @@ public class CategorySpecification implements Specification<Category> {
         }
 
         if (isBasicUser) {
-            predicates.add(criteriaBuilder.equal(root.get(publishStatus), PUBLISHED));
+            predicates.add(criteriaBuilder.equal(root.get("publishStatus"), PUBLISHED));
         } else {
             predicates.add(criteriaBuilder.notEqual(root.get("publishStatus"), UPDATED));
         }

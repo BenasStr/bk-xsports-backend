@@ -20,6 +20,7 @@ import java.util.stream.Collectors;
 
 import static com.ktu.xsports.api.service.StatusService.DONE;
 import static com.ktu.xsports.api.service.StatusService.STARTED;
+import static com.ktu.xsports.api.util.PublishStatus.UPDATED;
 
 @Service
 @RequiredArgsConstructor

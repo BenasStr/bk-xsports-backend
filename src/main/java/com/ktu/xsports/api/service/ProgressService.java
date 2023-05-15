@@ -20,10 +20,6 @@ public class ProgressService {
     private final UserService userService;
     private final StatusService statusService;
 
-    public Optional<Progress> findTrickProgressByUser(Long trickVariantId, Long userId) {
-        return progressRepository.findTrickAndUserId(trickVariantId, userId);
-    }
-
     public List<Progress> findProgressByUser(long userId) {
         return progressRepository.findProgressByUser(userId);
     }

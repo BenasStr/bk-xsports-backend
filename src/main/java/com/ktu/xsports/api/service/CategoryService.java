@@ -40,7 +40,7 @@ public class CategoryService {
 
         CategorySpecification spec;
         if (user.getRole().equals(USER)) {
-            spec = new CategorySpecification(sportId, search, PUBLISHED, true);
+            spec = new CategorySpecification(sportId, search, null, true);
             return categoryRepository.findAll(spec);
         }
         spec = new CategorySpecification(sportId, search, publishStatus, false);

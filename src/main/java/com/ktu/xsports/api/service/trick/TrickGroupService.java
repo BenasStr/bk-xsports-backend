@@ -197,6 +197,7 @@ public class TrickGroupService {
             } else if (trick.getPublishStatus().equals(PUBLISHED)
                         && trick.getUpdatedBy() != null) {
                 trickVariantService.removeTrickVariants(trick.getTrickVariants());
+                trickVariantService.publishMoveTrickVariantsToPublishedTrick(trick);
                 trickService.publishUpdatedTrick(trick);
             }
         });

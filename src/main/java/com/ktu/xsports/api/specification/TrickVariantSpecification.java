@@ -19,6 +19,8 @@ import org.springframework.data.jpa.domain.Specification;
 import java.util.ArrayList;
 import java.util.List;
 
+import static com.ktu.xsports.api.util.PublishStatus.DELETED;
+
 @Builder
 @AllArgsConstructor
 public class TrickVariantSpecification implements Specification<TrickVariant> {

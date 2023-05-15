@@ -18,10 +18,6 @@ public class StatusService {
     public final static String DONE = "Done";
     public final static String STARTED = "Started";
 
-    public List<Status> getStatuses() {
-        return statusRepository.findAll();
-    }
-
     public Status getStatusByName(String name) {
         return statusRepository.findByName(name)
             .orElseThrow(() -> new ServiceException(String.format("There's no status with name: %s", name)));

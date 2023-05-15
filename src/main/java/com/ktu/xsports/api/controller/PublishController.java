@@ -1,12 +1,10 @@
 package com.ktu.xsports.api.controller;
 
-import com.ktu.xsports.api.domain.Category;
 import com.ktu.xsports.api.domain.Publish;
 import com.ktu.xsports.api.domain.Sport;
 import com.ktu.xsports.api.dto.request.PublishRequest;
 import com.ktu.xsports.api.dto.response.publish.PublishAvailableCategoriesResponse;
 import com.ktu.xsports.api.dto.response.publish.PublishResponse;
-import com.ktu.xsports.api.dto.response.publish.PublishSportResponse;
 import com.ktu.xsports.api.service.PublishService;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;

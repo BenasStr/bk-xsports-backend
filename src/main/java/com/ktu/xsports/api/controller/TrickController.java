@@ -1,6 +1,5 @@
 package com.ktu.xsports.api.controller;
 
-import com.ktu.xsports.api.domain.Trick;
 import com.ktu.xsports.api.domain.TrickVariant;
 import com.ktu.xsports.api.domain.User;
 import com.ktu.xsports.api.dto.request.trick.TrickRequest;

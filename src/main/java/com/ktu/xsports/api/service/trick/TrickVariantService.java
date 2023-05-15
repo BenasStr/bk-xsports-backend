@@ -26,7 +26,6 @@ public class TrickVariantService {
     private final TrickVariantRepository trickVariantRepository;
     private final VariantService variantService;
     private final VideoService videoService;
-    private final SportService sportService;
 
     public List<TrickVariant> findTricks(long categoryId, String variant, String search, String publishStatus, String difficulty, Boolean missingVideo, Boolean missingVariants, User user, long maxVariantsCount) {
         TrickVariantSpecification spec;
@@ -35,6 +34,7 @@ public class TrickVariantService {
                 .categoryId(categoryId)
                 .search(search)
                 .publishStatus(PUBLISHED)
+                .variant("Standard")
                 .filterUpdated(false)
                 .build();
             return trickVariantRepository.findAll(spec);
@@ -216,5 +216,13 @@ public class TrickVariantService {
             }
         }
         return trickVariants;
+    }
+
+    public void publishMoveTrickVariantsToPublishedTrick(Trick trick) {
+        trick.getUpdatedBy().getTrickVariants()
+            .forEach(variant -> {
+                variant.setTrick(trick);
+                trickVariantRepository.save(variant);
+            });
     }
 }
